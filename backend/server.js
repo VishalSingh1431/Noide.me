@@ -44,7 +44,9 @@ app.use(compression());
 // CORS configuration
 const corsOptions = {
   origin: NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL || process.env.CLIENT_URL || 'https://varanasihub.com'
+    ? (process.env.FRONTEND_URL 
+        ? [process.env.FRONTEND_URL] 
+        : ['https://varanasihub.com', 'https://www.varanasihub.com'])
     : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
   credentials: true,
   optionsSuccessStatus: 200,
@@ -219,7 +221,10 @@ app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`📝 Environment: ${NODE_ENV}`);
   console.log(`📝 Database: PostgreSQL (Aiven)`);
-  console.log(`🌐 API Base URL: http://localhost:${PORT}/api`);
+  const apiUrl = NODE_ENV === 'production' 
+    ? `https://${process.env.BASE_DOMAIN || 'varanasihub.com'}/api`
+    : `http://localhost:${PORT}/api`;
+  console.log(`🌐 API Base URL: ${apiUrl}`);
   if (NODE_ENV === 'production') {
     console.log(`🔒 Security: Enabled (Helmet, Rate Limiting)`);
     console.log(`📊 Logging: Enabled (Morgan)`);

@@ -56,7 +56,7 @@ export const sendWelcomeEmail = async (userEmail, userName) => {
                 <li>Showcase your business with photos and videos</li>
                 <li>Connect with customers via WhatsApp and phone</li>
               </ul>
-              <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/create-website" class="button">Create Your Website</a>
+              <a href="${process.env.FRONTEND_URL || 'https://varanasihub.com'}/create-website" class="button">Create Your Website</a>
               <p>If you have any questions, feel free to reach out to us.</p>
               <p>Best regards,<br>The VaranasiHub Team</p>
             </div>
@@ -176,7 +176,7 @@ export const sendRejectionEmail = async (businessEmail, businessName, reason) =>
               <p>We reviewed your business listing for <strong>"${businessName}"</strong> and need some additional information or corrections.</p>
               ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
               <p>Please update your business information and resubmit for review.</p>
-              <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/profile" class="button">Update Business</a>
+              <a href="${process.env.FRONTEND_URL || 'https://varanasihub.com'}/profile" class="button">Update Business</a>
               <p>If you have any questions, please contact our support team.</p>
               <p>Best regards,<br>The VaranasiHub Team</p>
             </div>
