@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Share2, X, Copy, Check, Facebook, Twitter, Linkedin, Mail, MessageCircle } from 'lucide-react';
 import { trackShare } from '../utils/analytics';
 import { useToast } from '../contexts/ToastContext';
+import { API_BASE_URL } from '../config/constants';
 
 const ShareButton = ({ url, title, description, businessId, businessName }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,7 +45,7 @@ const ShareButton = ({ url, title, description, businessId, businessName }) => {
     if (businessId) {
       // Track business share analytics
       try {
-        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/analytics/track`, {
+        await fetch(`${API_BASE_URL}/analytics/track`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
