@@ -1,5 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import { ToastProvider } from './contexts/ToastContext'
+import ErrorBoundary from './components/ErrorBoundary'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
@@ -16,14 +18,33 @@ import Analytics from './pages/Analytics'
 import QRCodeGenerator from './pages/QRCodeGenerator'
 import VaranasiHighlight from './pages/VaranasiHighlight'
 import WhatsAppWidget from './components/WhatsAppWidget'
+import { initGoogleAnalytics, trackPageView } from './utils/analytics'
 import './App.css'
+
+// Component to track page views
+const PageTracker = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    // Initialize Google Analytics
+    initGoogleAnalytics();
+    
+    // Track page view
+    const pageName = location.pathname;
+    trackPageView(pageName);
+  }, [location]);
+
+  return null;
+};
 
 function App() {
   return (
     <ToastProvider>
       <Router>
-        <WhatsAppWidget />
-        <Routes>
+        <ErrorBoundary>
+          <PageTracker />
+          <WhatsAppWidget />
+          <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
@@ -39,7 +60,8 @@ function App() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/varanasi/:slug" element={<VaranasiHighlight />} />
-        </Routes>
+          </Routes>
+        </ErrorBoundary>
       </Router>
     </ToastProvider>
   )

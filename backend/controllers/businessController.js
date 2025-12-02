@@ -3,6 +3,7 @@ import User from '../models/User.js';
 import { slugify } from '../utils/slugify.js';
 import { getCloudinaryUrl } from '../middleware/cloudinaryUpload.js';
 import { generateBusinessHTML } from '../views/businessTemplate.js';
+import pool from '../config/database.js';
 
 /**
  * Check subdomain/slug availability
@@ -15,11 +16,11 @@ export const checkSubdomainAvailability = async (req, res) => {
       return res.status(400).json({ error: 'Slug is required' });
     }
 
-    // Validate slug format (alphanumeric and hyphens only, 3-50 chars)
-    const slugRegex = /^[a-z0-9-]{3,50}$/;
+    // Validate slug format (alphanumeric only, no hyphens, 3-50 chars)
+    const slugRegex = /^[a-z0-9]{3,50}$/;
     if (!slugRegex.test(slug)) {
       return res.status(400).json({ 
-        error: 'Invalid slug format. Use only lowercase letters, numbers, and hyphens (3-50 characters).',
+        error: 'Invalid slug format. Use only lowercase letters and numbers (3-50 characters, no spaces or hyphens).',
         available: false 
       });
     }
@@ -27,10 +28,10 @@ export const checkSubdomainAvailability = async (req, res) => {
     const exists = await Business.slugExists(slug);
     
     if (exists) {
-      // Generate suggestions
+      // Generate suggestions with numbers (no hyphens)
       const suggestions = [];
-      for (let i = 1; i <= 5; i++) {
-        const suggestedSlug = `${slug}-${i}`;
+      for (let i = 1; i <= 10; i++) {
+        const suggestedSlug = `${slug}${i}`;
         const suggestedExists = await Business.slugExists(suggestedSlug);
         if (!suggestedExists) {
           suggestions.push(suggestedSlug);
@@ -126,7 +127,7 @@ export const createBusiness = async (req, res) => {
     if (preferredSlug && typeof preferredSlug === 'string') {
       // Use preferred slug if provided and valid
       const preferredSlugClean = preferredSlug.toLowerCase().trim();
-      const slugRegex = /^[a-z0-9-]{3,50}$/;
+      const slugRegex = /^[a-z0-9]{3,50}$/;
       if (slugRegex.test(preferredSlugClean)) {
         const preferredExists = await Business.slugExists(preferredSlugClean);
         if (!preferredExists) {
@@ -152,7 +153,7 @@ export const createBusiness = async (req, res) => {
     let slugExists = await Business.slugExists(slug);
     let counter = 1;
     while (slugExists) {
-      slug = `${slugify(businessName)}-${counter}`;
+      slug = `${slugify(businessName)}${counter}`;
       slugExists = await Business.slugExists(slug);
       counter++;
     }
@@ -593,5 +594,45 @@ export const getAllBusinesses = async (req, res) => {
   } catch (error) {
     console.error('Error fetching businesses:', error);
     res.status(500).json({ error: 'Failed to fetch businesses' });
+  }
+};
+
+/**
+ * Get public statistics for homepage
+ * No authentication required
+ */
+export const getPublicStats = async (req, res) => {
+  try {
+    const [
+      totalBusinesses,
+      approvedBusinesses,
+      totalUsers,
+    ] = await Promise.all([
+      pool.query('SELECT COUNT(*) FROM businesses'),
+      pool.query("SELECT COUNT(*) FROM businesses WHERE status = 'approved'"),
+      pool.query('SELECT COUNT(*) FROM users'),
+    ]);
+
+    const totalBusinessesCount = parseInt(totalBusinesses.rows[0].count);
+    const approvedBusinessesCount = parseInt(approvedBusinesses.rows[0].count);
+    const totalUsersCount = parseInt(totalUsers.rows[0].count);
+
+    // Calculate trust percentage (approved businesses / total businesses * 100)
+    // If no businesses, default to 98%
+    const trustPercentage = totalBusinessesCount > 0 
+      ? Math.round((approvedBusinessesCount / totalBusinessesCount) * 100)
+      : 98;
+
+    res.json({
+      stats: {
+        totalBusinesses: totalBusinessesCount,
+        approvedBusinesses: approvedBusinessesCount,
+        totalUsers: totalUsersCount,
+        trustPercentage: trustPercentage,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching public stats:', error);
+    res.status(500).json({ error: 'Failed to fetch stats' });
   }
 };

@@ -4,22 +4,29 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { SEOHead } from '../components/SEOHead';
+import { getOrigin } from '../utils/urlHelper';
 
 const Pricing = () => {
   const plans = [
     {
       name: 'Basic',
-      price: '₹499',
-      period: '/month',
+      price: '₹1,000',
+      period: '/year',
       description: 'Perfect for small businesses getting started',
       icon: Zap,
       features: [
-        'Basic website listing',
-        'Contact information display',
-        'Social media links',
-        'Mobile responsive design',
-        'Basic SEO optimization',
-        'Email support'
+        'Domain (Subdomain)',
+        'Hosting Included',
+        'Database Storage',
+        'Mobile Responsive Design',
+        'SSL Certificate',
+        'WhatsApp Integration',
+        'Google Maps',
+        'Photo Gallery (up to 10 images)',
+        'Video Embedding',
+        'Basic SEO Optimization',
+        'Analytics Dashboard',
+        'Email Support'
       ],
       popular: false,
       gradient: 'from-blue-500 to-cyan-500',
@@ -27,19 +34,20 @@ const Pricing = () => {
     },
     {
       name: 'Professional',
-      price: '₹1,499',
-      period: '/month',
+      price: '₹2,000',
+      period: '/year',
       description: 'Ideal for growing businesses',
       icon: Star,
       features: [
         'Everything in Basic',
-        'Custom domain support',
-        'Advanced SEO features',
-        'Analytics dashboard',
-        'Priority support',
-        'Social media integration',
-        'Photo gallery (up to 20 images)',
-        'Online booking system'
+        'Photo Gallery (up to 30 images)',
+        'Advanced SEO Features',
+        'Custom Themes',
+        'Priority Support',
+        'Social Media Integration',
+        'Cloud Storage (Enhanced)',
+        'Advanced Analytics',
+        'Online Booking System'
       ],
       popular: true,
       gradient: 'from-purple-500 to-pink-500',
@@ -47,20 +55,21 @@ const Pricing = () => {
     },
     {
       name: 'Enterprise',
-      price: '₹2,999',
-      period: '/month',
+      price: '₹3,000',
+      period: '/year',
       description: 'For established businesses with advanced needs',
       icon: Crown,
       features: [
         'Everything in Professional',
-        'Unlimited images & media',
-        'Custom design & branding',
-        'E-commerce integration',
-        'Multi-language support',
-        '24/7 priority support',
-        'Dedicated account manager',
-        'Custom integrations',
-        'Advanced analytics'
+        'Unlimited Images & Media',
+        'Custom Design & Branding',
+        'E-commerce Integration',
+        'Multi-language Support',
+        '24/7 Priority Support',
+        'Dedicated Account Manager',
+        'Custom Integrations',
+        'Advanced Analytics & Reports',
+        'API Access'
       ],
       popular: false,
       gradient: 'from-orange-500 to-red-500',
@@ -93,76 +102,73 @@ const Pricing = () => {
   return (
     <>
       <SEOHead
-        title="Pricing - VaranasiHub Plans & Pricing"
-        description="Choose the perfect plan for your business. All plans include a 14-day free trial. Simple, transparent pricing for Varanasi businesses."
+        title="Pricing Plans - Affordable Website Builder for Varanasi Businesses | VaranasiHub"
+        description="Choose the perfect plan for your Varanasi business. Starting at ₹1,000/year. All plans include domain, hosting, database, and 14-day free trial. Mobile-responsive design, SEO optimization, and WhatsApp integration included. Transparent pricing, no hidden fees."
         image="/og-image.jpg"
-        url={`${window.location.origin}/pricing`}
+        url={`${getOrigin()}/pricing`}
+        keywords="Varanasi website pricing, business website cost, affordable website builder Varanasi, website plans, pricing plans Varanasi, cheap website builder"
+        breadcrumbs={[
+          { name: 'Home', path: '/', url: '/' },
+          { name: 'Pricing', path: '/pricing', url: '/pricing' }
+        ]}
+        faqItems={[
+          {
+            question: 'What is included in the free trial?',
+            answer: 'All plans include a 14-day free trial with full access to all features. No credit card required. Cancel anytime during the trial period.'
+          },
+          {
+            question: 'Can I change plans later?',
+            answer: 'Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we\'ll prorate the billing.'
+          },
+          {
+            question: 'What payment methods do you accept?',
+            answer: 'We accept all major credit cards, debit cards, UPI, and bank transfers. All payments are secure and encrypted.'
+          },
+          {
+            question: 'Is there a setup fee?',
+            answer: 'No, there are no setup fees or hidden charges. You only pay the yearly subscription fee for your chosen plan.'
+          },
+          {
+            question: 'What happens if I cancel?',
+            answer: 'You can cancel anytime. Your website will remain active until the end of your billing period. No cancellation fees.'
+          },
+          {
+            question: 'What payment methods do you accept?',
+            answer: 'We accept all major credit cards, debit cards, UPI, and bank transfers. All payments are secure and encrypted.'
+          },
+          {
+            question: 'What happens after one year?',
+            answer: 'Your plan will automatically renew at the same yearly rate. You can cancel anytime before renewal.'
+          }
+        ]}
       />
       <Navbar />
       <div className="min-h-screen bg-white">
-        {/* Hero Section - Gradient */}
-        <section className="relative overflow-hidden bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900">
-          <div className="absolute inset-0 overflow-hidden">
-            <motion.div
-              className="absolute top-20 left-20 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-              animate={{
-                scale: [1, 1.2, 1],
-                x: [0, 100, 0],
-                y: [0, 50, 0],
-              }}
-              transition={{
-                duration: 20,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-            />
-            <motion.div
-              className="absolute top-40 right-20 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
-              animate={{
-                scale: [1, 1.3, 1],
-                x: [0, -80, 0],
-                y: [0, 80, 0],
-              }}
-              transition={{
-                duration: 25,
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
-            />
-          </div>
-        <motion.div
+        {/* Hero Section */}
+        <section className="relative overflow-hidden bg-white py-8 md:py-10 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32 text-center"
+            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
           >
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 tracking-tight"
-            >
-              Simple, Transparent <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Pricing</span>
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto font-light"
-        >
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
+              Simple, Transparent <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Pricing</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light">
               Choose the perfect plan for your business. All plans include a 14-day free trial.
-            </motion.p>
-        </motion.div>
+            </p>
+          </motion.div>
         </section>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
           {/* Pricing Cards */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-8"
           >
             {plans.map((plan, index) => {
               const Icon = plan.icon;
@@ -184,15 +190,14 @@ const Pricing = () => {
                     </div>
                   )}
                   
-                  <div className={`bg-gradient-to-br ${plan.bgGradient} p-8 text-center relative overflow-hidden`}>
-                    <div className={`absolute top-0 right-0 w-40 h-40 bg-gradient-to-br ${plan.gradient} opacity-10 rounded-full blur-3xl`}></div>
+                  <div className="bg-white p-8 text-center relative overflow-hidden border-b border-gray-100">
                     <div className="relative z-10">
                       <div className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${plan.gradient} rounded-2xl mb-4 shadow-lg`}>
                         <Icon className="w-10 h-10 text-white" />
-                    </div>
+                      </div>
                       <h3 className="text-3xl font-black text-gray-900 mb-2">{plan.name}</h3>
-                      <p className="text-gray-600 mb-6 font-medium">{plan.description}</p>
-                    <div className="mb-6">
+                      <p className="text-gray-600 mb-4 font-medium">{plan.description}</p>
+                      <div className="mb-4">
                         <span className="text-5xl font-black text-gray-900">{plan.price}</span>
                         <span className="text-gray-600 ml-2 text-lg">{plan.period}</span>
                       </div>
@@ -200,7 +205,7 @@ const Pricing = () => {
                   </div>
 
                   <div className="p-8">
-                    <ul className="space-y-4 mb-8">
+                    <ul className="space-y-3 mb-6">
                       {plan.features.map((feature, featureIndex) => (
                         <motion.li
                           key={featureIndex}
@@ -239,26 +244,21 @@ const Pricing = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12"
+            className="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
           >
-            <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight">
-                Frequently Asked Questions
-              </h2>
-              </div>
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight mb-6">
+              Frequently Asked Questions
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {[
-                {
-                  question: 'Can I change plans later?',
-                  answer: 'Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle.'
-                },
-                {
-                  question: 'Is there a setup fee?',
-                  answer: 'No, there are no setup fees. You only pay the monthly subscription fee for your chosen plan.'
-                },
+          {
+            question: 'Can I change plans later?',
+            answer: 'Yes, you can upgrade or downgrade your plan at any time. Changes will be reflected in your next billing cycle. We\'ll prorate the difference.'
+          },
+          {
+            question: 'Is there a setup fee?',
+            answer: 'No, there are no setup fees. You only pay the yearly subscription fee for your chosen plan.'
+          },
                 {
                   question: 'What payment methods do you accept?',
                   answer: 'We accept all major credit cards, debit cards, UPI, and bank transfers.'

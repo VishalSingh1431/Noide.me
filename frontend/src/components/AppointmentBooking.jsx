@@ -242,7 +242,7 @@ export const AppointmentBooking = ({ businessId, businessName, appointmentSettin
             onChange={handleChange}
             required
             className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white text-gray-900"
-            placeholder="+91 9876543210"
+            placeholder="+91 9305715031"
           />
         </div>
 

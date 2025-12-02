@@ -5,6 +5,7 @@ import Footer from '../components/Footer';
 import { SEOHead } from '../components/SEOHead';
 import { getHighlightBySlug } from '../data/varanasiHighlights';
 import { ArrowLeft, MapPin, Sparkles, Camera, PlayCircle, Globe, Info } from 'lucide-react';
+import { getOrigin } from '../utils/urlHelper';
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 30 },
@@ -46,7 +47,7 @@ const VaranasiHighlight = () => {
         title={`${highlight.title} | Varanasi Experiences`}
         description={highlight.description}
         image={highlight.heroImage}
-        url={`${window.location.origin}/varanasi/${highlight.slug}`}
+        url={`${getOrigin()}/varanasi/${highlight.slug}`}
         type="article"
       />
       <Navbar />

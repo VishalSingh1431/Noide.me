@@ -8,7 +8,213 @@ import CategorySelect from '../components/forms/CategorySelect';
 import FileUploader from '../components/forms/FileUploader';
 import SubmitButton from '../components/forms/SubmitButton';
 import WebsitePreview from '../components/WebsitePreview';
+import PlacesAutocomplete from '../components/google/PlacesAutocomplete';
 import { businessAPI } from '../config/api';
+import { API_BASE_URL } from '../config/constants';
+import { formatPhoneNumber } from '../services/googlePlaces';
+
+/**
+ * Get default business description based on category
+ * @param {string} category - Business category
+ * @param {string} businessName - Business name (optional, for personalization)
+ * @returns {string} Default description
+ */
+const getDefaultDescription = (category, businessName = '') => {
+  const name = businessName || 'We';
+  const descriptions = {
+    'Restaurant': `${name} is a delightful restaurant offering authentic flavors and exceptional dining experiences. Our carefully crafted menu features a variety of delicious dishes made with fresh, locally sourced ingredients. Whether you're looking for a casual meal or a special occasion, we provide warm hospitality and a welcoming atmosphere. Visit us for an unforgettable culinary journey in the heart of the city.`,
+    
+    'Hotel': `${name} offers comfortable and affordable accommodation for travelers. Our well-appointed rooms provide a relaxing stay with modern amenities and excellent service. Located in a convenient area, we ensure easy access to local attractions and business centers. Experience hospitality at its finest with us.`,
+    
+    'Clinic': `${name} is a trusted healthcare facility dedicated to providing quality medical care. Our experienced team of healthcare professionals is committed to your well-being and offers comprehensive medical services. We prioritize patient comfort and ensure a caring environment for all your healthcare needs. Your health is our priority.`,
+    
+    'Shop': `${name} is your one-stop destination for quality products and excellent service. We offer a wide range of items to meet your needs, from everyday essentials to special finds. Our friendly staff is always ready to assist you in finding exactly what you're looking for. Visit us for a great shopping experience.`,
+    
+    'Library': `${name} is a community resource center providing access to books, digital resources, and educational materials. We offer a quiet and welcoming space for reading, research, and learning. Our collection includes a diverse range of books and resources for all ages. Join us in fostering a love for reading and knowledge.`,
+    
+    'Services': `${name} provides professional and reliable services to meet your needs. Our experienced team is dedicated to delivering high-quality solutions with attention to detail and customer satisfaction. We pride ourselves on excellent service and building lasting relationships with our clients. Trust us for all your service requirements.`,
+    
+    'Temple': `${name} is a sacred place of worship and spiritual guidance. We welcome devotees from all walks of life to experience peace, devotion, and divine blessings. Our temple serves as a center for religious activities, festivals, and community gatherings. Join us in prayer and spiritual growth.`,
+    
+    'School': `${name} is committed to providing quality education and holistic development for students. Our experienced faculty and modern facilities create an environment where students can excel academically and personally. We focus on nurturing young minds and preparing them for a bright future.`,
+    
+    'College': `${name} offers comprehensive higher education programs designed to prepare students for successful careers. Our experienced faculty, modern infrastructure, and industry-relevant curriculum ensure students receive the best education. We are dedicated to academic excellence and student success.`,
+    
+    'Gym': `${name} is a modern fitness center equipped with state-of-the-art equipment and professional trainers. We offer personalized fitness programs, group classes, and expert guidance to help you achieve your health and fitness goals. Join us on your journey to a healthier lifestyle.`,
+    
+    'Salon': `${name} offers professional hair styling, beauty treatments, and grooming services. Our skilled stylists and beauticians use quality products and latest techniques to help you look and feel your best. Experience luxury and pampering at our salon.`,
+    
+    'Spa': `${name} provides rejuvenating spa treatments and wellness services. Our expert therapists offer a range of massages, facials, and body treatments designed to relax, refresh, and restore. Escape the daily stress and indulge in ultimate relaxation with us.`,
+    
+    'Pharmacy': `${name} is your trusted pharmacy providing genuine medicines and healthcare products. Our qualified pharmacists offer expert advice and ensure you get the right medications. We stock a wide range of prescription and over-the-counter medicines for all your health needs.`,
+    
+    'Bank': `${name} offers comprehensive banking services including savings accounts, loans, investments, and digital banking solutions. Our experienced staff provides personalized service and expert financial advice. We are committed to helping you achieve your financial goals.`,
+    
+    'Travel Agency': `${name} is your trusted travel partner for all your vacation and business travel needs. We offer customized travel packages, flight bookings, hotel reservations, and visa assistance. Let us help you plan your perfect trip with the best deals and services.`,
+    
+    'Real Estate': `${name} specializes in buying, selling, and renting properties. Our experienced real estate agents help you find your dream home or investment property. We offer transparent transactions, legal assistance, and expert guidance throughout the process.`,
+    
+    'Law Firm': `${name} provides expert legal services and representation. Our experienced lawyers handle various legal matters including property disputes, family law, business law, and criminal cases. We are committed to protecting your rights and achieving the best outcomes for our clients.`,
+    
+    'Accounting': `${name} offers professional accounting, tax, and financial consulting services. Our certified accountants help businesses and individuals with bookkeeping, tax filing, audits, and financial planning. Trust us for accurate and reliable financial services.`,
+    
+    'IT Services': `${name} provides comprehensive IT solutions including software development, website design, digital marketing, and technical support. Our expert team helps businesses establish a strong online presence and streamline their operations with modern technology.`,
+    
+    'Photography': `${name} specializes in professional photography services for weddings, events, portraits, and commercial projects. Our skilled photographers capture your precious moments with creativity and artistry. We deliver high-quality images that you'll treasure forever.`,
+    
+    'Event Management': `${name} is a full-service event management company specializing in weddings, corporate events, and celebrations. We handle every detail from planning to execution, ensuring your event is memorable and successful. Let us make your special day perfect.`,
+    
+    'Catering': `${name} offers professional catering services for weddings, parties, corporate events, and special occasions. Our delicious food, professional service, and attention to detail ensure your guests are satisfied. We create memorable dining experiences tailored to your needs.`,
+    
+    'Bakery': `${name} is a delightful bakery offering fresh, handmade baked goods including cakes, pastries, breads, and sweets. We use quality ingredients and traditional recipes to create delicious treats. Visit us for your daily bread or special occasion cakes.`,
+    
+    'Jewelry': `${name} offers exquisite jewelry collections including gold, silver, diamonds, and precious stones. Our skilled craftsmen create beautiful designs for every occasion. We provide authentic jewelry with proper certification and guarantee. Find your perfect piece with us.`,
+    
+    'Fashion': `${name} is a fashion boutique offering trendy clothing, accessories, and style solutions. We curate the latest fashion trends and help you express your unique style. From casual wear to formal attire, we have something for every occasion and taste.`,
+    
+    'Electronics': `${name} is your trusted electronics store offering the latest gadgets, appliances, and technology products. We provide genuine products with warranty and excellent after-sales service. Our knowledgeable staff helps you choose the right products for your needs.`,
+    
+    'Furniture': `${name} offers quality furniture for home and office including sofas, beds, tables, and storage solutions. We provide stylish and durable furniture that fits your space and budget. Visit our showroom to explore our wide range of furniture collections.`,
+    
+    'Automobile': `${name} is an automobile dealership offering new and used vehicles, spare parts, and servicing. Our experienced team helps you find the perfect vehicle and provides comprehensive after-sales support. We ensure quality vehicles and excellent customer service.`,
+    
+    'Repair Services': `${name} provides professional repair services for appliances, electronics, vehicles, and more. Our skilled technicians diagnose and fix issues quickly and efficiently. We use quality parts and offer warranty on our services. Trust us for reliable repair solutions.`,
+    
+    'Education': `${name} is an educational institution committed to providing quality learning experiences. We offer various courses, training programs, and educational services designed to enhance knowledge and skills. Our experienced educators ensure effective learning outcomes.`,
+    
+    'Healthcare': `${name} is a healthcare facility providing comprehensive medical services and wellness programs. Our team of healthcare professionals is dedicated to improving your health and well-being. We offer quality care with compassion and expertise.`,
+    
+    'Beauty': `${name} is a beauty salon offering a wide range of beauty treatments and services. Our expert beauticians provide facials, hair treatments, makeup, and grooming services. We use quality products and latest techniques to enhance your natural beauty.`,
+    
+    'Fitness': `${name} is a fitness center offering personalized training, group classes, and wellness programs. Our certified trainers help you achieve your fitness goals with customized workout plans. Join us for a healthier and fitter lifestyle.`,
+    
+    'Entertainment': `${name} provides entertainment services and experiences for all ages. We organize events, shows, and activities that bring joy and excitement. Whether it's music, dance, or fun activities, we create memorable entertainment experiences.`,
+    
+    'Tourism': `${name} offers tourism services including guided tours, travel packages, and local experiences. We help visitors explore the city's rich culture, heritage, and attractions. Discover the best of the region with our expert tour guides and services.`,
+    
+    'Food & Beverage': `${name} offers delicious food and beverages prepared with fresh ingredients and authentic recipes. We serve a variety of dishes and drinks to satisfy your cravings. Experience great taste and quality service at our establishment.`,
+    
+    'Retail': `${name} is a retail store offering a wide variety of products for your daily needs. We provide quality goods at competitive prices with excellent customer service. Visit us for all your shopping needs in one convenient location.`,
+    
+    'Wholesale': `${name} is a wholesale supplier offering bulk products at competitive prices. We serve retailers, businesses, and institutions with quality goods and reliable supply. Our extensive inventory and efficient service make us your trusted wholesale partner.`,
+    
+    'Manufacturing': `${name} is a manufacturing company producing quality products for various industries. We use modern technology and quality control processes to ensure excellence. Our products meet high standards and customer specifications.`,
+    
+    'Construction': `${name} is a construction company providing building, renovation, and infrastructure services. Our experienced team handles projects of all sizes with quality workmanship and timely completion. We build your dreams into reality.`,
+    
+    'Other': `${name} is a trusted local business committed to providing excellent products and services to our community. We value our customers and strive to exceed expectations with every interaction. Visit us to experience quality service and personalized attention.`,
+  };
+  
+  return descriptions[category] || `${name} is a trusted local business committed to providing excellent products and services to our community. We value our customers and strive to exceed expectations with every interaction. Visit us to experience quality service and personalized attention.`;
+};
+
+/**
+ * Get default navbar tagline/slogan based on category
+ * @param {string} category - Business category
+ * @returns {string} Default tagline
+ */
+const getDefaultTagline = (category) => {
+  const taglines = {
+    'Restaurant': 'Serving Authentic Flavors with a Smile',
+    'Hotel': 'Your Home Away From Home',
+    'Clinic': 'Caring for Your Health, Always',
+    'Shop': 'Quality Products, Exceptional Service',
+    'Library': 'Knowledge for Everyone, Always',
+    'Services': 'Professional Service, Trusted Results',
+    'Temple': 'A Place of Peace and Devotion',
+    'School': 'Nurturing Young Minds for Tomorrow',
+    'College': 'Excellence in Higher Education',
+    'Gym': 'Transform Your Body, Transform Your Life',
+    'Salon': 'Beauty and Style, Redefined',
+    'Spa': 'Relax, Rejuvenate, Restore',
+    'Pharmacy': 'Your Health, Our Priority',
+    'Bank': 'Your Trusted Financial Partner',
+    'Travel Agency': 'Your Journey, Our Passion',
+    'Real Estate': 'Finding Your Perfect Property',
+    'Law Firm': 'Justice, Integrity, Excellence',
+    'Accounting': 'Your Financial Success Partner',
+    'IT Services': 'Technology Solutions for Your Business',
+    'Photography': 'Capturing Life\'s Precious Moments',
+    'Event Management': 'Making Your Events Memorable',
+    'Catering': 'Delicious Food, Perfect Service',
+    'Bakery': 'Fresh Baked, Daily Delivered',
+    'Jewelry': 'Timeless Beauty, Enduring Value',
+    'Fashion': 'Style That Speaks Your Language',
+    'Electronics': 'Technology at Your Fingertips',
+    'Furniture': 'Furnishing Your Dreams',
+    'Automobile': 'Your Trusted Auto Partner',
+    'Repair Services': 'Fixing It Right, Every Time',
+    'Education': 'Empowering Minds, Shaping Futures',
+    'Healthcare': 'Your Health, Our Commitment',
+    'Beauty': 'Enhancing Your Natural Beauty',
+    'Fitness': 'Your Journey to Fitness Starts Here',
+    'Entertainment': 'Fun, Excitement, Memories',
+    'Tourism': 'Explore, Experience, Enjoy',
+    'Food & Beverage': 'Taste the Difference',
+    'Retail': 'Everything You Need, One Place',
+    'Wholesale': 'Quality Products, Best Prices',
+    'Manufacturing': 'Quality Made, Trust Delivered',
+    'Construction': 'Building Dreams, Creating Spaces',
+    'Other': 'Excellence in Every Detail',
+  };
+  
+  return taglines[category] || 'Excellence in Every Detail';
+};
+
+/**
+ * Get default footer description based on category
+ * @param {string} category - Business category
+ * @param {string} businessName - Business name
+ * @returns {string} Default footer description
+ */
+const getDefaultFooterDescription = (category, businessName = '') => {
+  const name = businessName || 'We';
+  const descriptions = {
+    'Restaurant': `${name} is committed to providing exceptional dining experiences with authentic flavors and warm hospitality.`,
+    'Hotel': `${name} offers comfortable accommodation and excellent service for all travelers.`,
+    'Clinic': `${name} is dedicated to providing quality healthcare services with care and compassion.`,
+    'Shop': `${name} offers quality products and excellent customer service for all your needs.`,
+    'Library': `${name} provides access to knowledge and resources for the entire community.`,
+    'Services': `${name} delivers professional and reliable services you can trust.`,
+    'Temple': `${name} is a sacred place of worship serving the community with devotion and spiritual guidance.`,
+    'School': `${name} is committed to providing quality education and holistic development for every student.`,
+    'College': `${name} offers comprehensive higher education programs designed for student success and career readiness.`,
+    'Gym': `${name} is dedicated to helping you achieve your fitness goals with expert guidance and modern facilities.`,
+    'Salon': `${name} provides professional beauty and grooming services to help you look and feel your best.`,
+    'Spa': `${name} offers rejuvenating spa treatments and wellness services for ultimate relaxation and renewal.`,
+    'Pharmacy': `${name} is your trusted pharmacy providing genuine medicines and expert healthcare advice.`,
+    'Bank': `${name} offers comprehensive banking services and financial solutions for all your needs.`,
+    'Travel Agency': `${name} is your trusted travel partner helping you explore the world with the best deals and services.`,
+    'Real Estate': `${name} specializes in helping you find your perfect property with transparent and professional service.`,
+    'Law Firm': `${name} provides expert legal services and representation to protect your rights and interests.`,
+    'Accounting': `${name} offers professional accounting and financial services to help you manage your finances effectively.`,
+    'IT Services': `${name} provides comprehensive IT solutions to help your business thrive in the digital world.`,
+    'Photography': `${name} specializes in capturing your precious moments with creativity, artistry, and professionalism.`,
+    'Event Management': `${name} creates memorable events with meticulous planning and flawless execution.`,
+    'Catering': `${name} offers delicious food and professional catering services for all your special occasions.`,
+    'Bakery': `${name} creates fresh, handmade baked goods using quality ingredients and traditional recipes.`,
+    'Jewelry': `${name} offers exquisite jewelry collections with authentic certification and guaranteed quality.`,
+    'Fashion': `${name} curates the latest fashion trends to help you express your unique style and personality.`,
+    'Electronics': `${name} provides genuine electronics products with warranty and excellent after-sales service.`,
+    'Furniture': `${name} offers quality furniture solutions for home and office that combine style and functionality.`,
+    'Automobile': `${name} is your trusted automobile partner offering quality vehicles and comprehensive support.`,
+    'Repair Services': `${name} provides reliable repair services with skilled technicians and quality parts.`,
+    'Education': `${name} is committed to providing quality education and learning experiences for all students.`,
+    'Healthcare': `${name} is dedicated to improving your health and well-being with quality medical care.`,
+    'Beauty': `${name} enhances your natural beauty with professional treatments and quality products.`,
+    'Fitness': `${name} helps you achieve your fitness goals with personalized training and expert guidance.`,
+    'Entertainment': `${name} creates fun and memorable entertainment experiences for all ages.`,
+    'Tourism': `${name} helps you explore and experience the best of the region with expert guidance.`,
+    'Food & Beverage': `${name} serves delicious food and beverages prepared with fresh ingredients and care.`,
+    'Retail': `${name} provides quality products and excellent service for all your shopping needs.`,
+    'Wholesale': `${name} offers quality products at competitive prices for retailers and businesses.`,
+    'Manufacturing': `${name} produces quality products using modern technology and strict quality control.`,
+    'Construction': `${name} provides quality construction services with skilled workmanship and timely completion.`,
+    'Other': `${name} is committed to excellence and customer satisfaction in all that we do.`,
+  };
+  
+  return descriptions[category] || `${name} is committed to excellence and customer satisfaction.`;
+};
 
 const CreateWebsite = () => {
   const [loading, setLoading] = useState(false);
@@ -41,14 +247,15 @@ const CreateWebsite = () => {
     services: [],
     specialOffers: [],
     businessHours: {
-      monday: { open: false, start: '09:00', end: '18:00' },
-      tuesday: { open: false, start: '09:00', end: '18:00' },
-      wednesday: { open: false, start: '09:00', end: '18:00' },
-      thursday: { open: false, start: '09:00', end: '18:00' },
-      friday: { open: false, start: '09:00', end: '18:00' },
-      saturday: { open: false, start: '09:00', end: '18:00' },
-      sunday: { open: false, start: '09:00', end: '18:00' },
+      monday: { open: true, start: '09:00', end: '18:00' },
+      tuesday: { open: true, start: '09:00', end: '18:00' },
+      wednesday: { open: true, start: '09:00', end: '18:00' },
+      thursday: { open: true, start: '09:00', end: '18:00' },
+      friday: { open: true, start: '09:00', end: '18:00' },
+      saturday: { open: true, start: '09:00', end: '18:00' },
+      sunday: { open: true, start: '09:00', end: '18:00' },
     },
+    googlePlacesData: null, // Store Google Places extracted data (reviews, attributes, etc.)
     appointmentSettings: {
       contactMethod: 'whatsapp', // 'whatsapp' or 'call'
       availableSlots: [],
@@ -56,18 +263,17 @@ const CreateWebsite = () => {
     theme: 'modern', // 'modern', 'classic', 'minimal'
   });
 
-  // Slugify function (matches backend)
+  // Slugify function - no hyphens, just remove spaces and special chars
   const slugify = (text) => {
     if (!text) return '';
     return text
       .toString()
       .toLowerCase()
       .trim()
-      .replace(/\s+/g, '-')        // Replace spaces with -
-      .replace(/[^\w\-]+/g, '')    // Remove all non-word chars
-      .replace(/\-\-+/g, '-')      // Replace multiple - with single -
-      .replace(/^-+/, '')          // Trim - from start of text
-      .replace(/-+$/, '');         // Trim - from end of text
+      .replace(/\s+/g, '')        // Remove spaces (no hyphens)
+      .replace(/[^\w]+/g, '')      // Remove all non-word chars (keep only letters and numbers)
+      .replace(/^[^a-z]+/, '')     // Remove non-letters from start
+      .substring(0, 50);            // Limit to 50 chars
   };
 
   // Check subdomain availability
@@ -101,10 +307,27 @@ const CreateWebsite = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData(prev => {
+      const updated = {
+        ...prev,
+        [name]: value,
+      };
+      
+      // Auto-fill description, tagline, and footer description based on category if empty
+      if (name === 'category' && value) {
+        if (!prev.description.trim()) {
+          updated.description = getDefaultDescription(value, prev.businessName);
+        }
+        if (!prev.navbarTagline.trim()) {
+          updated.navbarTagline = getDefaultTagline(value);
+        }
+        if (!prev.footerDescription.trim()) {
+          updated.footerDescription = getDefaultFooterDescription(value, prev.businessName);
+        }
+      }
+      
+      return updated;
+    });
     
     // Clear error when user starts typing
     if (errors[name]) {
@@ -318,11 +541,8 @@ const CreateWebsite = () => {
       newErrors.address = 'Full address is required';
     }
 
-    if (!formData.description.trim()) {
-      newErrors.description = 'Business description is required';
-    } else if (formData.description.trim().length < 50) {
-      newErrors.description = 'Description must be at least 50 characters';
-    }
+    // Description is optional - no validation needed
+    // Users can leave it empty or Google Places will auto-fill it if available
 
     // Validate subdomain availability
     const finalSlug = showCustomSlug ? customSlug : slugify(formData.businessName);
@@ -336,9 +556,10 @@ const CreateWebsite = () => {
       newErrors.businessName = 'Please wait while we check subdomain availability...';
     }
 
-    if (!formData.logo) {
-      newErrors.logo = 'Logo is required';
-    }
+    // Logo is optional - will use first letter of business name if not provided
+    // if (!formData.logo) {
+    //   newErrors.logo = 'Logo is required';
+    // }
 
     if (formData.images.length === 0) {
       newErrors.images = 'At least one image is required';
@@ -391,6 +612,7 @@ const CreateWebsite = () => {
       submitData.append('businessHours', JSON.stringify(formData.businessHours || {}));
       submitData.append('appointmentSettings', JSON.stringify(formData.appointmentSettings || {}));
       submitData.append('theme', formData.theme || 'modern');
+      submitData.append('googlePlacesData', JSON.stringify(formData.googlePlacesData || null));
 
       if (formData.logo) {
         submitData.append('logo', formData.logo);
@@ -409,7 +631,7 @@ const CreateWebsite = () => {
 
       // Send to backend API
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/business/create', {
+      const response = await fetch(`${API_BASE_URL}/business/create`, {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
@@ -456,13 +678,13 @@ const CreateWebsite = () => {
         services: [],
         specialOffers: [],
         businessHours: {
-          monday: { open: false, start: '09:00', end: '18:00' },
-          tuesday: { open: false, start: '09:00', end: '18:00' },
-          wednesday: { open: false, start: '09:00', end: '18:00' },
-          thursday: { open: false, start: '09:00', end: '18:00' },
-          friday: { open: false, start: '09:00', end: '18:00' },
-          saturday: { open: false, start: '09:00', end: '18:00' },
-          sunday: { open: false, start: '09:00', end: '18:00' },
+          monday: { open: true, start: '09:00', end: '18:00' },
+          tuesday: { open: true, start: '09:00', end: '18:00' },
+          wednesday: { open: true, start: '09:00', end: '18:00' },
+          thursday: { open: true, start: '09:00', end: '18:00' },
+          friday: { open: true, start: '09:00', end: '18:00' },
+          saturday: { open: true, start: '09:00', end: '18:00' },
+          sunday: { open: true, start: '09:00', end: '18:00' },
         },
         appointmentSettings: {
           contactMethod: 'whatsapp',
@@ -560,6 +782,174 @@ const CreateWebsite = () => {
           {/* Form Card */}
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10 border border-gray-100">
             <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Quick Search - Auto Fill Section */}
+              <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 md:p-8 border-2 border-blue-200 mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Quick Start: Search Your Business</h2>
+                    <p className="text-sm text-gray-600">Find your business and auto-fill all details instantly</p>
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    🔍 Search Your Business Here
+                  </label>
+                  <PlacesAutocomplete
+                    value={formData.address}
+                    onChange={handleChange}
+                    onPlaceSelect={async (businessData) => {
+                      if (businessData) {
+                        console.log('📥 Received business data:', businessData);
+                        
+                        // Download and add images if available
+                        let newImages = [...formData.images];
+                        let newLogo = formData.logo; // Keep existing logo if user already set one
+                        
+                        if ((businessData.photos?.length > 0 || businessData.photoUrl) && formData.images.length === 0) {
+                          try {
+                            // Use photos array if available, otherwise fall back to photoUrl
+                            const photoUrls = businessData.photos?.length > 0
+                              ? businessData.photos.map(p => typeof p === 'string' ? p : (p.url || p))
+                              : businessData.photoUrl ? [businessData.photoUrl] : [];
+                            
+                            console.log('📸 Downloading images:', photoUrls.length);
+                            setLoading(true);
+                            
+                            // Download first image as logo (if logo not already set)
+                            if (photoUrls.length > 0 && !formData.logo) {
+                              try {
+                                const logoResponse = await fetch(photoUrls[0]);
+                                if (logoResponse.ok) {
+                                  const logoBlob = await logoResponse.blob();
+                                  const logoFileName = `google-place-logo-${Date.now()}.jpg`;
+                                  const logoFile = new File([logoBlob], logoFileName, { type: logoBlob.type || 'image/jpeg' });
+                                  newLogo = logoFile;
+                                  console.log('✅ Logo downloaded from first image');
+                                }
+                              } catch (error) {
+                                console.warn('⚠️ Failed to download logo:', error);
+                              }
+                            }
+                            
+                            // Download all photos (up to 5) for gallery
+                            const downloadedFiles = [];
+                            for (const photoUrl of photoUrls.slice(0, 5)) {
+                              try {
+                                const response = await fetch(photoUrl);
+                                if (response.ok) {
+                                  const blob = await response.blob();
+                                  // Create a File object from the blob
+                                  const fileName = `google-place-${Date.now()}-${downloadedFiles.length}.jpg`;
+                                  const file = new File([blob], fileName, { type: blob.type || 'image/jpeg' });
+                                  downloadedFiles.push(file);
+                                }
+                              } catch (error) {
+                                console.warn('⚠️ Failed to download one image:', error);
+                                // Continue with other images
+                              }
+                            }
+                            
+                            if (downloadedFiles.length > 0) {
+                              newImages = downloadedFiles;
+                              console.log(`✅ ${downloadedFiles.length} image(s) downloaded successfully`);
+                            }
+                          } catch (error) {
+                            console.error('❌ Error downloading images:', error);
+                            // Continue without images - don't block the form
+                          } finally {
+                            setLoading(false);
+                          }
+                        }
+                        
+                        // Auto-fill form fields with place data
+                        setFormData(prev => ({
+                          ...prev,
+                          address: businessData.address || prev.address,
+                          googleMapLink: businessData.googleMapLink || prev.googleMapLink,
+                          // Only auto-fill business name if it's empty
+                          businessName: prev.businessName || businessData.businessName || '',
+                          // Only auto-fill phone if it's empty
+                          mobileNumber: prev.mobileNumber || formatPhoneNumber(businessData.phoneNumber) || '',
+                          // Only auto-fill website if it's empty
+                          website: prev.website || businessData.website || '',
+                          // Auto-fill description: Google Places first, then category-based, then keep existing
+                          description: prev.description || businessData.description || (prev.category ? getDefaultDescription(prev.category, businessData.businessName || prev.businessName) : ''),
+                          // Auto-fill tagline: category-based if empty
+                          navbarTagline: prev.navbarTagline || (prev.category ? getDefaultTagline(prev.category) : ''),
+                          // Auto-fill footer description: category-based if empty
+                          footerDescription: prev.footerDescription || (prev.category ? getDefaultFooterDescription(prev.category, businessData.businessName || prev.businessName) : ''),
+                          // Add downloaded images
+                          images: newImages,
+                          // Set logo from first image (if not already set)
+                          logo: newLogo,
+                          // Auto-fill business hours if available and form is empty
+                          businessHours: (() => {
+                            if (businessData.businessHours && Object.keys(businessData.businessHours).length > 0) {
+                              // Check if form has any hours set
+                              const hasHours = Object.values(prev.businessHours).some(day => day.open);
+                              return hasHours ? prev.businessHours : businessData.businessHours;
+                            }
+                            return prev.businessHours;
+                          })(),
+                          // Store additional data for website display (reviews, attributes, etc.)
+                          googlePlacesData: {
+                            rating: businessData.rating,
+                            totalRatings: businessData.totalRatings,
+                            reviews: businessData.reviews || [],
+                            attributes: businessData.attributes || {},
+                            paymentOptions: businessData.paymentOptions,
+                            parkingOptions: businessData.parkingOptions,
+                            priceLevel: businessData.priceLevel,
+                            primaryType: businessData.primaryType,
+                            primaryTypeDisplayName: businessData.primaryTypeDisplayName,
+                            businessStatus: businessData.businessStatus,
+                            plusCode: businessData.plusCode,
+                            currentOpeningHours: businessData.currentOpeningHours,
+                          },
+                        }));
+
+                        // Show success message
+                        setSuccessMessage({
+                          title: '✅ Business Details Extracted!',
+                          message: `We've auto-filled your business details from Google. Please review and update as needed.`,
+                          temporary: true,
+                        });
+
+                        // Clear temporary message after 5 seconds
+                        setTimeout(() => {
+                          setSuccessMessage(prev => 
+                            prev?.temporary ? null : prev
+                          );
+                        }, 5000);
+                      }
+                    }}
+                    placeholder="Type your business name or address (e.g., 'Restaurant in Varanasi', 'Kashi Vishwanath Temple')"
+                    error={errors.address}
+                    className="text-lg"
+                  />
+                  <div className="mt-4 p-4 bg-white rounded-xl border border-blue-200">
+                    <p className="text-sm font-medium text-gray-800 mb-2">
+                      ✨ What gets auto-filled:
+                    </p>
+                    <ul className="text-xs text-gray-600 space-y-1 ml-4 list-disc">
+                      <li>Business Name</li>
+                      <li>Complete Address (with City, State, Country)</li>
+                      <li>Phone Number</li>
+                      <li>Website URL</li>
+                      <li>Google Maps Link</li>
+                      <li>Business Description (if available)</li>
+                      <li>Business Photos (up to 5 images)</li>
+                    </ul>
+                    <p className="text-xs text-gray-500 mt-3 italic">
+                      Note: Some fields like Email, Owner Name, and Category need to be filled manually as they're not available from Google Places.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               {/* Theme Selection Section */}
               <div className="border-b border-gray-200 pb-8">
                 <div className="flex items-center gap-3 mb-6">
@@ -889,11 +1279,17 @@ const CreateWebsite = () => {
 
               {/* Location Information Section */}
               <div className="border-b border-gray-200 pb-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-purple-600" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Location Information</h2>
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Location Information</h2>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                    <MapPin className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-700">Auto-Fill Available</span>
+                  </div>
                 </div>
                 <div className="space-y-6">
                   <FormInput
@@ -906,13 +1302,16 @@ const CreateWebsite = () => {
                     error={errors.address}
                     icon={MapPin}
                   />
+                  <p className="text-sm text-gray-500 -mt-4">
+                    💡 <strong>Tip:</strong> Use the search box at the top of the form to auto-fill this and other details.
+                  </p>
                   <FormInput
                     label="Google Map Link"
                     name="googleMapLink"
                     type="url"
                     value={formData.googleMapLink}
                     onChange={handleChange}
-                    placeholder="https://maps.google.com/... (optional)"
+                    placeholder="https://maps.google.com/... (auto-filled if address found)"
                     error={errors.googleMapLink}
                     icon={LinkIcon}
                   />
@@ -925,24 +1324,23 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-pink-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Business Description</h2>
+                  <h2 className="text-2xl font-bold text-gray-900">Business Description <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
                 <TextArea
                   label="Description"
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder="Describe your business in detail (minimum 50 characters)..."
-                  required
+                  placeholder="Describe your business in detail. This will be auto-filled from Google Places if available..."
                   rows={6}
                   error={errors.description}
                 />
-                <div className="mt-2 flex items-center justify-between">
+                <div className="mt-2">
                   <p className="text-sm text-gray-500">
-                    {formData.description.length >= 50 ? (
-                      <span className="text-green-600 font-medium">✓ Minimum length met</span>
+                    {formData.description ? (
+                      <span className="text-gray-600">{formData.description.length} characters</span>
                     ) : (
-                      <span>{formData.description.length}/50 characters minimum</span>
+                      <span className="text-gray-400">Leave empty or let Google Places auto-fill it</span>
                     )}
                   </p>
                 </div>
@@ -1074,7 +1472,7 @@ const CreateWebsite = () => {
                       name="footerDescription"
                       value={formData.footerDescription}
                       onChange={handleChange}
-                      placeholder="Add a custom description or message for your footer (e.g., 'We are committed to providing the best service to our customers...')"
+                      placeholder="Add a custom description or message for your footer (Auto-filled based on category)"
                       rows={4}
                       error={errors.footerDescription}
                     />

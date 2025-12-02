@@ -116,7 +116,7 @@ const Privacy = () => {
                 Email: privacy@varanasihub.com
               </p>
               <p className="text-blue-600">
-                Phone: +91 9876543210
+                Phone: +91 9305715031
               </p>
             </motion.div>
           </motion.div>

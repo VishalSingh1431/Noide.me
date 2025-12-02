@@ -9,6 +9,7 @@ import {
   getBusinessById,
   updateBusiness,
   checkSubdomainAvailability,
+  getPublicStats,
 } from '../controllers/businessController.js';
 import { uploadBusinessMedia, processCloudinaryUploads } from '../middleware/cloudinaryUpload.js';
 import { verifyToken } from '../middleware/auth.js';
@@ -35,6 +36,9 @@ router.post('/create', uploadLimiter, (req, res, next) => {
     next();
   });
 }, processCloudinaryUploads, createBusiness);
+
+// Get public statistics (must come before /:slug to avoid conflicts)
+router.get('/stats', getPublicStats);
 
 // Get all businesses (must come before /:slug to avoid conflicts)
 router.get('/', getAllBusinesses);

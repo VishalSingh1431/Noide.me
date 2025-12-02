@@ -8,7 +8,9 @@ import TextArea from '../components/forms/TextArea';
 import CategorySelect from '../components/forms/CategorySelect';
 import FileUploader from '../components/forms/FileUploader';
 import SubmitButton from '../components/forms/SubmitButton';
+import PlacesAutocomplete from '../components/google/PlacesAutocomplete';
 import { businessAPI } from '../config/api';
+import { formatPhoneNumber } from '../services/googlePlaces';
 
 const EditWebsite = () => {
   const { id } = useParams();
@@ -93,13 +95,13 @@ const EditWebsite = () => {
           services: business.services || [],
           specialOffers: business.specialOffers || [],
           businessHours: business.businessHours || {
-            monday: { open: false, start: '09:00', end: '18:00' },
-            tuesday: { open: false, start: '09:00', end: '18:00' },
-            wednesday: { open: false, start: '09:00', end: '18:00' },
-            thursday: { open: false, start: '09:00', end: '18:00' },
-            friday: { open: false, start: '09:00', end: '18:00' },
-            saturday: { open: false, start: '09:00', end: '18:00' },
-            sunday: { open: false, start: '09:00', end: '18:00' },
+            monday: { open: true, start: '09:00', end: '18:00' },
+            tuesday: { open: true, start: '09:00', end: '18:00' },
+            wednesday: { open: true, start: '09:00', end: '18:00' },
+            thursday: { open: true, start: '09:00', end: '18:00' },
+            friday: { open: true, start: '09:00', end: '18:00' },
+            saturday: { open: true, start: '09:00', end: '18:00' },
+            sunday: { open: true, start: '09:00', end: '18:00' },
           },
           appointmentSettings: business.appointmentSettings || {
             contactMethod: 'whatsapp',
@@ -446,6 +448,71 @@ const EditWebsite = () => {
           {/* Form Card - Reuse CreateWebsite form structure */}
           <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10 border border-gray-100">
             <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Quick Search - Auto Fill Section */}
+              <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 md:p-8 border-2 border-blue-200 mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900">Quick Start: Search Your Business</h2>
+                    <p className="text-sm text-gray-600">Find your business and auto-fill all details instantly</p>
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">
+                    🔍 Search Your Business Here
+                  </label>
+                  <PlacesAutocomplete
+                    value={formData.address}
+                    onChange={handleChange}
+                    onPlaceSelect={(businessData) => {
+                      if (businessData) {
+                        // Auto-fill form fields with place data
+                        setFormData(prev => ({
+                          ...prev,
+                          address: businessData.address || prev.address,
+                          googleMapLink: businessData.googleMapLink || prev.googleMapLink,
+                          // Only auto-fill if field is empty
+                          businessName: prev.businessName || businessData.businessName || '',
+                          mobileNumber: prev.mobileNumber || formatPhoneNumber(businessData.phoneNumber) || '',
+                          website: prev.website || businessData.website || '',
+                        }));
+
+                        // Show success message
+                        setSuccessMessage({
+                          title: '✅ Business Details Extracted!',
+                          message: `We've auto-filled your business details from Google. Please review and update as needed.`,
+                          temporary: true,
+                        });
+
+                        // Clear temporary message after 5 seconds
+                        setTimeout(() => {
+                          setSuccessMessage(prev => 
+                            prev?.temporary ? null : prev
+                          );
+                        }, 5000);
+                      }
+                    }}
+                    placeholder="Type your business name or address (e.g., 'Restaurant in Varanasi', 'Kashi Vishwanath Temple')"
+                    error={errors.address}
+                    className="text-lg"
+                  />
+                  <div className="mt-4 p-4 bg-white rounded-xl border border-blue-200">
+                    <p className="text-sm font-medium text-gray-800 mb-2">
+                      ✨ What gets auto-filled:
+                    </p>
+                    <ul className="text-xs text-gray-600 space-y-1 ml-4 list-disc">
+                      <li>Business Name</li>
+                      <li>Complete Address</li>
+                      <li>Phone Number</li>
+                      <li>Website URL</li>
+                      <li>Google Maps Link</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
               {/* Theme Selection Section */}
               <div className="border-b border-gray-200 pb-8">
                 <div className="flex items-center gap-3 mb-6">
@@ -629,32 +696,82 @@ const EditWebsite = () => {
 
               {/* Location Information Section */}
               <div className="border-b border-gray-200 pb-8">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-purple-600" />
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Location Information</h2>
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Location Information</h2>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                    <MapPin className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-700">Auto-Fill Available</span>
+                  </div>
                 </div>
                 <div className="space-y-6">
-                  <FormInput
-                    label="Full Address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    placeholder="Enter complete business address"
-                    required
-                    error={errors.address}
-                    icon={MapPin}
-                  />
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Full Address <span className="text-red-500">*</span>
+                      </label>
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        🔍 Search & Auto-Fill
+                      </span>
+                    </div>
+                    <PlacesAutocomplete
+                      value={formData.address}
+                      onChange={handleChange}
+                      onPlaceSelect={(businessData) => {
+                        if (businessData) {
+                          // Auto-fill form fields with place data
+                          setFormData(prev => ({
+                            ...prev,
+                            address: businessData.address || prev.address,
+                            googleMapLink: businessData.googleMapLink || prev.googleMapLink,
+                            // Only auto-fill if field is empty
+                            businessName: prev.businessName || businessData.businessName || '',
+                            mobileNumber: prev.mobileNumber || formatPhoneNumber(businessData.phoneNumber) || '',
+                            website: prev.website || businessData.website || '',
+                          }));
+
+                          // Show success message
+                          setSuccessMessage({
+                            title: '✅ Business Details Extracted!',
+                            message: `We've auto-filled your business details from Google. Please review and update as needed.`,
+                            temporary: true,
+                          });
+
+                          // Clear temporary message after 5 seconds
+                          setTimeout(() => {
+                            setSuccessMessage(prev => 
+                              prev?.temporary ? null : prev
+                            );
+                          }, 5000);
+                        }
+                      }}
+                      placeholder="Type your business name or address (e.g., 'Restaurant in Varanasi')"
+                      error={errors.address}
+                    />
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        <strong>💡 How to Extract Business Details:</strong>
+                      </p>
+                      <ol className="text-xs text-blue-700 mt-1 ml-4 list-decimal space-y-1">
+                        <li>Start typing your business name or address in the field above</li>
+                        <li>Select your business from the dropdown suggestions</li>
+                        <li>We'll automatically fill: Business Name, Address, Phone, Website, and Map Link</li>
+                      </ol>
+                    </div>
+                  </div>
                   <FormInput
                     label="Google Map Link"
                     name="googleMapLink"
                     type="url"
                     value={formData.googleMapLink}
                     onChange={handleChange}
-                    placeholder="https://maps.google.com/..."
+                    placeholder="https://maps.google.com/... (auto-filled if address found)"
                     error={errors.googleMapLink}
-                    icon={MapPin}
+                    icon={LinkIcon}
                   />
                 </div>
               </div>

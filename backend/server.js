@@ -13,6 +13,7 @@ import analyticsRoutes from './routes/analyticsRoutes.js';
 import ecommerceRoutes from './routes/ecommerceRoutes.js';
 import abTestRoutes from './routes/abTestRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
+import googlePlacesRoutes from './routes/googlePlacesRoutes.js';
 
 dotenv.config();
 
@@ -119,6 +120,7 @@ app.use('/api/ab-test', abTestRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/google-places', googlePlacesRoutes);
 
 // Subdomain routing handler (for business websites)
 // This will be called when accessing: business-slug.varanasihub.com
@@ -217,10 +219,15 @@ app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`📝 Environment: ${NODE_ENV}`);
   console.log(`📝 Database: PostgreSQL (Aiven)`);
-  console.log(`🌐 API Base URL: http://localhost:${PORT}/api`);
   if (NODE_ENV === 'production') {
+    const apiUrl = process.env.FRONTEND_URL 
+      ? `${process.env.FRONTEND_URL.replace('www.', 'api.')}/api`
+      : `https://api.varanasihub.com/api`;
+    console.log(`🌐 API Base URL: ${apiUrl}`);
     console.log(`🔒 Security: Enabled (Helmet, Rate Limiting)`);
     console.log(`📊 Logging: Enabled (Morgan)`);
+  } else {
+    console.log(`🌐 API Base URL: http://localhost:${PORT}/api`);
   }
 }).on('error', (err) => {
   if (err.code === 'EADDRINUSE') {

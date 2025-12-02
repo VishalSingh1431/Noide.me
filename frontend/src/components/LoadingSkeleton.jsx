@@ -143,3 +143,82 @@ export const PageSkeleton = () => {
   );
 };
 
+export const StatsSkeleton = () => {
+  return (
+    <section className="relative mt-12 z-20 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-white rounded-3xl p-8 md:p-12 border-2 border-gray-200 shadow-xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[1, 2, 3].map((index) => (
+              <div key={index} className="text-center">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-200 rounded-2xl mb-4">
+                  <motion.div
+                    className="w-10 h-10 bg-gray-300 rounded-lg"
+                    animate={{
+                      opacity: [0.5, 1, 0.5],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: 'easeInOut',
+                    }}
+                  />
+                </div>
+                <div className="h-16 w-24 bg-gray-200 rounded-lg mx-auto mb-3">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    animate={{
+                      x: ['-100%', '100%'],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: 'linear',
+                    }}
+                  />
+                </div>
+                <div className="h-6 w-32 bg-gray-200 rounded-lg mx-auto">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    animate={{
+                      x: ['-100%', '100%'],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: 'linear',
+                      delay: index * 0.2,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export const SearchSkeleton = () => {
+  return (
+    <div className="max-w-2xl mx-auto mb-6">
+      <div className="relative">
+        <div className="h-14 bg-gray-200 rounded-2xl">
+          <motion.div
+            className="h-full bg-gradient-to-r from-transparent via-white/20 to-transparent"
+            animate={{
+              x: ['-100%', '100%'],
+            }}
+            transition={{
+              duration: 1.5,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+

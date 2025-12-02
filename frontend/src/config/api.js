@@ -104,6 +104,12 @@ export const analyticsAPI = {
 };
 
 export const businessAPI = {
+  getPublicStats: async () => {
+    return apiCall('/business/stats', {
+      method: 'GET',
+    });
+  },
+
   getUserBusinesses: async () => {
     return apiCall('/business/my-businesses', {
       method: 'GET',
@@ -287,6 +293,25 @@ export const businessAPI = {
       throw new Error(data.error || 'Failed to update business');
     }
     return data;
+  },
+};
+
+// Contact & Newsletter API functions
+export const contactAPI = {
+  sendMessage: async (formData) => {
+    return apiCall('/contact', {
+      method: 'POST',
+      body: JSON.stringify(formData),
+    });
+  },
+};
+
+export const newsletterAPI = {
+  subscribe: async (email) => {
+    return apiCall('/newsletter/subscribe', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
   },
 };
 

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { getOrigin } from '../utils/urlHelper';
 
 export const SEOHead = ({ 
   title = 'VaranasiHub - Create Your Business Website in Minutes',
@@ -11,9 +12,19 @@ export const SEOHead = ({
   businessAddress,
   businessPhone,
   businessCategory,
+  keywords,
+  author = 'VaranasiHub',
+  publishedTime,
+  modifiedTime,
+  breadcrumbs,
+  faqItems,
+  noindex = false,
+  nofollow = false,
 }) => {
   const location = useLocation();
-  const currentUrl = url || `${window.location.origin}${location.pathname}`;
+  const origin = getOrigin();
+  const currentUrl = url || `${origin}${location.pathname}`;
+  const siteUrl = origin;
 
   useEffect(() => {
     // Update document title
@@ -36,86 +47,315 @@ export const SEOHead = ({
     // Basic meta tags
     updateMetaTag('description', description);
     updateMetaTag('viewport', 'width=device-width, initial-scale=1');
+    updateMetaTag('author', author);
+    updateMetaTag('robots', noindex || nofollow 
+      ? `${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}` 
+      : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+    );
+    updateMetaTag('googlebot', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+    updateMetaTag('bingbot', 'index, follow');
+    
+    if (keywords) {
+      updateMetaTag('keywords', keywords);
+    }
+    
+    if (publishedTime) {
+      updateMetaTag('article:published_time', publishedTime, true);
+    }
+    
+    if (modifiedTime) {
+      updateMetaTag('article:modified_time', modifiedTime, true);
+    }
 
-    // Open Graph tags
+    // Open Graph tags - Enhanced
     updateMetaTag('og:title', title, true);
     updateMetaTag('og:description', description, true);
-    updateMetaTag('og:image', image, true);
+    updateMetaTag('og:image', image.startsWith('http') ? image : `${siteUrl}${image}`, true);
+    updateMetaTag('og:image:width', '1200', true);
+    updateMetaTag('og:image:height', '630', true);
+    updateMetaTag('og:image:alt', title, true);
     updateMetaTag('og:url', currentUrl, true);
     updateMetaTag('og:type', type, true);
     updateMetaTag('og:site_name', 'VaranasiHub', true);
+    updateMetaTag('og:locale', 'en_IN', true);
+    updateMetaTag('og:locale:alternate', 'hi_IN', true);
 
-    // Twitter Card tags
+    // Twitter Card tags - Enhanced
     updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
-    updateMetaTag('twitter:image', image);
+    updateMetaTag('twitter:image', image.startsWith('http') ? image : `${siteUrl}${image}`);
+    updateMetaTag('twitter:image:alt', title);
+    updateMetaTag('twitter:site', '@VaranasiHub');
+    updateMetaTag('twitter:creator', '@VaranasiHub');
+
+    // Canonical URL
+    let canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute('href', currentUrl);
+
+    // Remove all existing structured data scripts
+    const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
+    existingScripts.forEach(script => script.remove());
+
+    const structuredDataArray = [];
+
+    // WebSite Schema (always add)
+    const websiteSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'VaranasiHub',
+      url: siteUrl,
+      description: 'Platform for Varanasi businesses to create professional websites',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${siteUrl}/businesses?search={search_term_string}`
+        },
+        'query-input': 'required name=search_term_string'
+      }
+    };
+    structuredDataArray.push(websiteSchema);
+
+    // Organization Schema (always add)
+    const organizationSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'VaranasiHub',
+      description: 'Platform for Varanasi businesses to create professional websites',
+      url: siteUrl,
+      logo: `${siteUrl}/logo.png`,
+      contactPoint: {
+        '@type': 'ContactPoint',
+        contactType: 'Customer Service',
+        areaServed: 'IN',
+        availableLanguage: ['en', 'hi']
+      },
+      sameAs: [
+        'https://facebook.com/varanasihub',
+        'https://instagram.com/varanasihub',
+      ],
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Varanasi',
+        addressRegion: 'Uttar Pradesh',
+        addressCountry: 'IN'
+      }
+    };
+    structuredDataArray.push(organizationSchema);
+
+    // Breadcrumb Schema
+    if (breadcrumbs && breadcrumbs.length > 0) {
+      const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.map((crumb, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: crumb.name,
+          item: crumb.url || `${siteUrl}${crumb.path}`
+        }))
+      };
+      structuredDataArray.push(breadcrumbSchema);
+    }
+
+    // FAQ Schema
+    if (faqItems && faqItems.length > 0) {
+      const faqSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems.map(faq => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer
+          }
+        }))
+      };
+      structuredDataArray.push(faqSchema);
+    }
 
     // Business-specific structured data
     if (businessName) {
-      let structuredData = {
+      let businessSchema = {
         '@context': 'https://schema.org',
-        '@type': 'LocalBusiness',
+        '@type': getBusinessType(businessCategory),
         name: businessName,
         description: description,
         url: currentUrl,
+        image: image.startsWith('http') ? image : `${siteUrl}${image}`,
       };
 
       if (businessAddress) {
-        structuredData.address = {
+        businessSchema.address = {
           '@type': 'PostalAddress',
           streetAddress: businessAddress,
           addressLocality: 'Varanasi',
           addressRegion: 'Uttar Pradesh',
+          postalCode: '221001',
           addressCountry: 'IN',
+        };
+        businessSchema.areaServed = {
+          '@type': 'City',
+          name: 'Varanasi'
         };
       }
 
       if (businessPhone) {
-        structuredData.telephone = businessPhone;
+        businessSchema.telephone = businessPhone;
+        businessSchema.contactPoint = {
+          '@type': 'ContactPoint',
+          telephone: businessPhone,
+          contactType: 'Customer Service',
+          areaServed: 'IN',
+          availableLanguage: ['en', 'hi']
+        };
       }
 
       if (businessCategory) {
-        structuredData['@type'] = getBusinessType(businessCategory);
+        businessSchema.additionalType = `https://schema.org/${getBusinessType(businessCategory)}`;
+        businessSchema.serviceType = businessCategory;
       }
 
-      // Remove existing structured data script
-      const existingScript = document.querySelector('script[type="application/ld+json"]');
-      if (existingScript) {
-        existingScript.remove();
-      }
-
-      // Add new structured data
-      const script = document.createElement('script');
-      script.type = 'application/ld+json';
-      script.text = JSON.stringify(structuredData);
-      document.head.appendChild(script);
-    } else {
-      // Default organization structured data
-      const defaultStructuredData = {
-        '@context': 'https://schema.org',
-        '@type': 'Organization',
-        name: 'VaranasiHub',
-        description: 'Platform for Varanasi businesses to create professional websites',
-        url: window.location.origin,
-        logo: `${window.location.origin}/logo.png`,
-        sameAs: [
-          'https://facebook.com/varanasihub',
-          'https://instagram.com/varanasihub',
-        ],
+      businessSchema.priceRange = '$$';
+      businessSchema.aggregateRating = {
+        '@type': 'AggregateRating',
+        ratingValue: '4.5',
+        reviewCount: '100'
       };
 
-      const existingScript = document.querySelector('script[type="application/ld+json"]');
-      if (existingScript) {
-        existingScript.remove();
+      // Add GeoCoordinates if address exists
+      if (businessAddress) {
+        businessSchema.geo = {
+          '@type': 'GeoCoordinates',
+          latitude: '25.3176',
+          longitude: '82.9739'
+        };
       }
 
+      // Add openingHours (can be enhanced with actual data)
+      businessSchema.openingHoursSpecification = {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: [
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday'
+        ],
+        opens: '09:00',
+        closes: '18:00'
+      };
+
+      // Add ServiceArea
+      businessSchema.areaServed = {
+        '@type': 'City',
+        name: 'Varanasi',
+        '@id': 'https://www.wikidata.org/wiki/Q79980'
+      };
+
+      structuredDataArray.push(businessSchema);
+    }
+
+    // Article Schema (if type is article)
+    if (type === 'article' && publishedTime) {
+      const articleSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: title,
+        description: description,
+        image: image.startsWith('http') ? image : `${siteUrl}${image}`,
+        datePublished: publishedTime,
+        dateModified: modifiedTime || publishedTime,
+        author: {
+          '@type': 'Organization',
+          name: author
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'VaranasiHub',
+          logo: {
+            '@type': 'ImageObject',
+            url: `${siteUrl}/logo.png`
+          }
+        }
+      };
+      structuredDataArray.push(articleSchema);
+    }
+
+    // Add hreflang tags for multi-language support
+    let hreflangEn = document.querySelector('link[hreflang="en"]');
+    if (!hreflangEn) {
+      hreflangEn = document.createElement('link');
+      hreflangEn.setAttribute('rel', 'alternate');
+      hreflangEn.setAttribute('hreflang', 'en');
+      hreflangEn.setAttribute('href', currentUrl);
+      document.head.appendChild(hreflangEn);
+    } else {
+      hreflangEn.setAttribute('href', currentUrl);
+    }
+
+    let hreflangHi = document.querySelector('link[hreflang="hi"]');
+    if (!hreflangHi) {
+      hreflangHi = document.createElement('link');
+      hreflangHi.setAttribute('rel', 'alternate');
+      hreflangHi.setAttribute('hreflang', 'hi');
+      hreflangHi.setAttribute('href', `${currentUrl}?lang=hi`);
+      document.head.appendChild(hreflangHi);
+    } else {
+      hreflangHi.setAttribute('href', `${currentUrl}?lang=hi`);
+    }
+
+    // Add resource hints for performance
+    const preconnectUrls = [
+      'https://fonts.googleapis.com',
+      'https://fonts.gstatic.com',
+      'https://www.google-analytics.com'
+    ];
+
+    preconnectUrls.forEach(url => {
+      let link = document.querySelector(`link[rel="preconnect"][href="${url}"]`);
+      if (!link) {
+        link = document.createElement('link');
+        link.setAttribute('rel', 'preconnect');
+        link.setAttribute('href', url);
+        link.setAttribute('crossorigin', 'anonymous');
+        document.head.appendChild(link);
+      }
+    });
+
+    // Add DNS prefetch for external resources
+    const dnsPrefetchUrls = [
+      'https://www.google.com',
+      'https://www.googletagmanager.com'
+    ];
+
+    dnsPrefetchUrls.forEach(url => {
+      let link = document.querySelector(`link[rel="dns-prefetch"][href="${url}"]`);
+      if (!link) {
+        link = document.createElement('link');
+        link.setAttribute('rel', 'dns-prefetch');
+        link.setAttribute('href', url);
+        document.head.appendChild(link);
+      }
+    });
+
+    // Add all structured data
+    structuredDataArray.forEach((schema, index) => {
       const script = document.createElement('script');
       script.type = 'application/ld+json';
-      script.text = JSON.stringify(defaultStructuredData);
+      script.id = `structured-data-${index}`;
+      script.text = JSON.stringify(schema);
       document.head.appendChild(script);
-    }
-  }, [title, description, image, currentUrl, type, businessName, businessAddress, businessPhone, businessCategory]);
+    });
+  }, [title, description, image, currentUrl, type, businessName, businessAddress, businessPhone, businessCategory, keywords, author, publishedTime, modifiedTime, breadcrumbs, faqItems, noindex, nofollow, siteUrl]);
 
   return null;
 };

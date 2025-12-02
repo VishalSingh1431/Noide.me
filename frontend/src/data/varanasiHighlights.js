@@ -6,7 +6,7 @@ export const varanasiHighlights = [
     description:
       'Dashashwamedh Ghat is the most spectacular ghat in Varanasi. Mythology says Lord Brahma performed ten Ashwamedh yajnas here, giving the ghat its name. Today it hosts the famous Ganga Aarti every evening, where fire, chants, and devotion light up the night sky.',
     heroImage:
-      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=1200&h=800&fit=crop',
+      '/images/Dashashwamedh Ghat.jpg',
     stats: [
       { label: 'Daily Visitors', value: '5,000+' },
       { label: 'Aarti Lamps', value: '1,000+' },
@@ -45,7 +45,7 @@ export const varanasiHighlights = [
     description:
       'Assi Ghat marks the confluence of the Assi River with the Ganges. Each dawn begins with “Subah-e-Banaras” – an immersive wellness experience of yoga, music, and chanting. Locals and travelers gather to stretch, meditate, sip lemon tea, and watch the sky turn pink.',
     heroImage:
-      'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=1200&h=800&fit=crop',
+      '/images/Assi Ghat.jpg',
     stats: [
       { label: 'Daily Participants', value: '500+' },
       { label: 'Yoga Sessions', value: '2 daily' },
@@ -84,7 +84,7 @@ export const varanasiHighlights = [
     description:
       'Banarasi silk sarees are prized heirlooms, woven with intricate zari motifs and shimmering textures. The looms in Madanpura, Lallapura, and Pilikothi neighborhoods are run by families who have practiced this art for generations.',
     heroImage:
-      'https://images.unsplash.com/photo-1504593811423-6dd665756598?w=1200&h=800&fit=crop',
+      '/images/Banarasi Silk.webp',
     stats: [
       { label: 'Weaving Families', value: '800+' },
       { label: 'Weaving Time', value: '15-30 days' },
@@ -123,7 +123,7 @@ export const varanasiHighlights = [
     description:
       'Banaras is a foodie’s pilgrimage. Savor piping hot kachori-sabzi at Kedar Gali, creamy malaiyyo in winter, thandai sprinkled with rose petals, and the iconic Banarasi paan. The Chowk area comes alive with sizzling griddles and laughter every evening.',
     heroImage:
-      'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=1200&h=800&fit=crop',
+      '/images/Street Food.webp',
     stats: [
       { label: 'Legacy Eateries', value: '200+' },
       { label: 'Street Food Tours', value: 'Daily' },

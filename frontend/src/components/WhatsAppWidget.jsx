@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 const WhatsAppWidget = () => {
   // WhatsApp number for VaranasiHub support
-  const whatsappNumber = '919876543210'; // Remove + and spaces for wa.me link
+  const whatsappNumber = '919305715031'; // Remove + and spaces for wa.me link
   
   return (
     <div 

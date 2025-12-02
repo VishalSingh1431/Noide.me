@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, User } from 'lucide-react';
 
 const Navbar = () => {
+  const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
@@ -50,11 +51,46 @@ const Navbar = () => {
 
   const categories = [
     'Shops',
+    'Restaurants',
+    'Hotels',
     'Clinics',
     'Libraries',
-    'Hotels',
-    'Restaurants',
-    'Services'
+    'Services',
+    'Temples',
+    'Schools',
+    'Colleges',
+    'Gyms',
+    'Salons',
+    'Spas',
+    'Pharmacies',
+    'Banks',
+    'Travel Agencies',
+    'Real Estate',
+    'Law Firms',
+    'Accounting',
+    'IT Services',
+    'Photography',
+    'Event Management',
+    'Catering',
+    'Bakeries',
+    'Jewelry',
+    'Fashion',
+    'Electronics',
+    'Furniture',
+    'Automobile',
+    'Repair Services',
+    'Education',
+    'Healthcare',
+    'Beauty',
+    'Fitness',
+    'Entertainment',
+    'Tourism',
+    'Food & Beverage',
+    'Retail',
+    'Wholesale',
+    'Manufacturing',
+    'Construction',
+    'Other'
   ];
 
   const toggleMobileMenu = () => {
@@ -70,39 +106,61 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl shadow-[0_4px_20px_rgba(0,0,0,0.08)] border-b border-black/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.08)] border-b border-gray-200/50 relative transition-all duration-300">
+      <div className="w-full px-4 sm:px-4 lg:px-6 relative z-10">
         <div className="flex justify-between items-center h-20">
-          {/* Logo */}
-          <div className="flex-shrink-0">
+          {/* Logo with Image at Left */}
+          <div className="flex-shrink-0 flex items-center gap-2">
+            <img 
+              src="/images/Indian Flag.webp" 
+              alt="Indian Flag" 
+              className="h-8 md:h-10 w-auto drop-shadow-md object-contain"
+            />
             <Link to="/" className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all duration-300 tracking-tight">
               VaranasiHub
             </Link>
+            <img 
+              src="/images/Kashi V temple.jpg" 
+              alt="Kashi Vishwanath Temple" 
+              className="h-10 md:h-12 w-auto rounded-lg object-cover drop-shadow-md"
+            />
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:space-x-1 lg:space-x-2 flex-1 justify-center">
+          <div className="hidden md:flex md:items-center md:space-x-1 flex-1 justify-center">
             <Link
               to="/"
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300"
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                location.pathname === '/' 
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+              }`}
             >
               Home
             </Link>
             <Link
               to="/businesses"
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300"
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                location.pathname === '/businesses' 
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+              }`}
             >
               Businesses
             </Link>
             <Link
               to="/about"
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300"
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                location.pathname === '/about' 
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+              }`}
             >
               About
             </Link>
 
             {/* Categories Dropdown */}
-            <div className="relative">
+            <div className="relative z-[110]">
               <button
                 onClick={toggleCategories}
                 onMouseEnter={() => setIsCategoriesOpen(true)}
@@ -122,16 +180,16 @@ const Navbar = () => {
                 <div
                   onMouseEnter={() => setIsCategoriesOpen(true)}
                   onMouseLeave={() => setIsCategoriesOpen(false)}
-                  className="absolute top-full left-0 mt-2 w-48 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.12)] border border-black/10 py-2 z-50"
+                  className="absolute top-full left-0 mt-2 w-48 bg-white rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.15)] border border-gray-200 py-2 z-[110]"
                 >
                   {categories.map((category) => (
-                    <a
+                    <Link
                       key={category}
-                      href={`#${category.toLowerCase()}`}
+                      to={`/businesses?category=${category}`}
                       className="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 rounded-lg mx-2"
                     >
                       {category}
-                    </a>
+                    </Link>
                   ))}
                 </div>
               )}
@@ -139,20 +197,28 @@ const Navbar = () => {
 
             <Link
               to="/pricing"
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300"
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                location.pathname === '/pricing' 
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+              }`}
             >
               Pricing
             </Link>
             <Link
               to="/contact"
-              className="px-4 py-2 rounded-xl text-sm font-semibold text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300"
+              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${
+                location.pathname === '/contact' 
+                  ? 'text-blue-600 bg-blue-50' 
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+              }`}
             >
               Contact
             </Link>
           </div>
 
-          {/* Desktop Right Side - Auth Buttons / User Menu */}
-          <div className="hidden md:flex md:items-center md:gap-3">
+          {/* Desktop Right Side - Sign Up and Create Website */}
+          <div className="hidden md:flex md:items-center md:gap-2">
             {isLoggedIn ? (
               <>
                 <Link
@@ -177,12 +243,6 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link
-                  to="/login"
-                  className="px-4 py-2 text-sm font-semibold text-black hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300"
-                >
-                  Login
-                </Link>
                 <Link
                   to="/signup"
                   className="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 rounded-xl transition-all duration-300 shadow-lg"
@@ -221,21 +281,33 @@ const Navbar = () => {
             <div className="flex flex-col space-y-1">
               <Link
                 to="/"
-                className="px-4 py-2 text-base font-medium text-black hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-200"
+                className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${
+                  location.pathname === '/' 
+                    ? 'text-blue-600 bg-blue-50' 
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 to="/businesses"
-                className="px-4 py-2 text-base font-medium text-black hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-200"
+                className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${
+                  location.pathname === '/businesses' 
+                    ? 'text-blue-600 bg-blue-50' 
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Businesses
               </Link>
               <Link
                 to="/about"
-                className="px-4 py-2 text-base font-medium text-black hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-200"
+                className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${
+                  location.pathname === '/about' 
+                    ? 'text-blue-600 bg-blue-50' 
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 About
@@ -259,9 +331,9 @@ const Navbar = () => {
                 {isMobileCategoriesOpen && (
                   <div className="pl-4 mt-1 space-y-1">
                     {categories.map((category) => (
-                      <a
+                      <Link
                         key={category}
-                        href={`#${category.toLowerCase()}`}
+                        to={`/businesses?category=${category}`}
                         className="block px-4 py-2 text-sm text-black hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-200"
                         onClick={() => {
                           setIsMobileMenuOpen(false);
@@ -269,7 +341,7 @@ const Navbar = () => {
                         }}
                       >
                         {category}
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -277,14 +349,22 @@ const Navbar = () => {
 
               <Link
                 to="/pricing"
-                className="px-4 py-2 text-base font-medium text-black hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-200"
+                className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${
+                  location.pathname === '/pricing' 
+                    ? 'text-blue-600 bg-blue-50' 
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Pricing
               </Link>
               <Link
                 to="/contact"
-                className="px-4 py-2 text-base font-medium text-black hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-200"
+                className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${
+                  location.pathname === '/contact' 
+                    ? 'text-blue-600 bg-blue-50' 
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Contact

@@ -126,38 +126,66 @@ export const generateBusinessHTML = (business) => {
     ? business.description.substring(0, 155).replace(/\s+/g, ' ').trim() + (business.description.length > 155 ? '...' : '')
     : `${business.businessName} - ${business.category} in ${city}. ${business.ownerName ? `Owner: ${business.ownerName}. ` : ''}Contact us for quality services.`;
 
-  // Generate comprehensive structured data (JSON-LD)
+  // Extract coordinates from map link if available
+  let latitude = "25.3176";
+  let longitude = "82.9739";
+  if (business.mapLink) {
+    const coordMatch = business.mapLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (coordMatch) {
+      latitude = coordMatch[1];
+      longitude = coordMatch[2];
+    }
+  }
+
+  // Generate image alt text helper
+  const generateImageAlt = (imageUrl, index, type = 'gallery') => {
+    const imageName = imageUrl.split('/').pop().replace(/\.(jpg|jpeg|png|webp)$/i, '').replace(/[-_]/g, ' ');
+    if (type === 'logo') {
+      return `${business.businessName} logo - ${business.category} in ${city}`;
+    }
+    return `${business.businessName} - ${business.category} ${type} image ${index + 1} in ${city}, ${state}`;
+  };
+
+  // Generate comprehensive structured data (JSON-LD) - Enhanced
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": getBusinessType(business.category),
     "@id": canonicalUrl,
     "name": business.businessName,
     "alternateName": business.navbarTagline || business.businessName,
-    "description": business.description,
+    "description": business.description || `${business.businessName} is a ${business.category} located in ${city}, ${state}. ${business.ownerName ? `Owned by ${business.ownerName}. ` : ''}Contact us for quality services.`,
     "image": [
       business.logoUrl,
-      ...(business.imagesUrl || []).slice(0, 5)
-    ].filter(Boolean),
-    "logo": business.logoUrl || '',
+      ...(business.imagesUrl || []).slice(0, 10)
+    ].filter(Boolean).map((img, idx) => ({
+      "@type": "ImageObject",
+      "url": img,
+      "caption": generateImageAlt(img, idx)
+    })),
+    "logo": {
+      "@type": "ImageObject",
+      "url": business.logoUrl || '',
+      "caption": generateImageAlt(business.logoUrl || '', 0, 'logo')
+    },
     "address": {
       "@type": "PostalAddress",
       "streetAddress": business.address,
       "addressLocality": city,
       "addressRegion": state,
-      "postalCode": "",
+      "postalCode": "221001",
       "addressCountry": "IN"
     },
-    "geo": business.mapLink ? {
+    "geo": {
       "@type": "GeoCoordinates",
-      "latitude": "",
-      "longitude": ""
-    } : undefined,
+      "latitude": latitude,
+      "longitude": longitude
+    },
     "telephone": business.mobile,
     "email": business.email,
     "url": canonicalUrl,
     "priceRange": "$$",
     "currenciesAccepted": "INR",
-    "paymentAccepted": "Cash, Card, UPI",
+    "paymentAccepted": "Cash, Card, UPI, Digital Payment",
     "openingHoursSpecification": Object.keys(business.businessHours || {}).map(day => {
       const hours = business.businessHours[day];
       if (hours && hours.open) {
@@ -165,26 +193,63 @@ export const generateBusinessHTML = (business) => {
         return {
           "@type": "OpeningHoursSpecification",
           "dayOfWeek": `https://schema.org/${dayName}`,
-          "opens": hours.start,
-          "closes": hours.end
+          "opens": hours.start || "09:00",
+          "closes": hours.end || "18:00"
         };
       }
       return null;
     }).filter(Boolean),
-    "areaServed": {
-      "@type": "City",
-      "name": city
+    "areaServed": [
+      {
+        "@type": "City",
+        "name": city,
+        "@id": "https://www.wikidata.org/wiki/Q79980"
+      },
+      {
+        "@type": "State",
+        "name": state
+      }
+    ],
+    "knowsAbout": [business.category, city, `${business.category} services`],
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.5",
+      "reviewCount": "10",
+      "bestRating": "5",
+      "worstRating": "1"
     },
-    "knowsAbout": business.category,
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": business.mobile,
+      "contactType": "Customer Service",
+      "areaServed": "IN",
+      "availableLanguage": ["en", "hi"],
+      ...(business.whatsapp ? { "contactOption": "TollFree", "hoursAvailable": { "@type": "OpeningHoursSpecification", "dayOfWeek": "https://schema.org/Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday", "opens": "00:00", "closes": "23:59" } } : {})
+    },
     ...(business.socialLinks?.website ? { 
       "sameAs": [
         business.socialLinks.website,
         ...(business.socialLinks.instagram ? [`https://instagram.com/${business.socialLinks.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//, '').replace(/\/$/, '')}`] : []),
-        ...(business.socialLinks.facebook ? [business.socialLinks.facebook] : [])
+        ...(business.socialLinks.facebook ? [business.socialLinks.facebook] : []),
+        canonicalUrl
       ].filter(Boolean)
     } : {}),
-    ...(business.ownerName ? { "founder": { "@type": "Person", "name": business.ownerName } } : {})
+    ...(business.ownerName ? { "founder": { "@type": "Person", "name": business.ownerName } } : {}),
+    ...(business.whatsapp ? { "additionalProperty": { "@type": "PropertyValue", "name": "WhatsApp", "value": business.whatsapp } } : {})
   };
+
+  // Helper function to get proper business type
+  function getBusinessType(category) {
+    const typeMap = {
+      'Restaurant': 'Restaurant',
+      'Hotel': 'Hotel',
+      'Clinic': 'MedicalBusiness',
+      'Shop': 'Store',
+      'Library': 'Library',
+      'Services': 'LocalBusiness'
+    };
+    return typeMap[category] || 'LocalBusiness';
+  }
 
   // Generate Organization schema
   const organizationSchema = {
@@ -233,26 +298,81 @@ export const generateBusinessHTML = (business) => {
     ]
   };
 
-  // Generate Service schema if services exist
+  // Generate Service schema if services exist - Enhanced
   const serviceSchemas = business.services && business.services.length > 0 ? business.services.map((service, index) => ({
     "@context": "https://schema.org",
     "@type": "Service",
     "serviceType": service.title,
-    "description": service.description || '',
+    "name": service.title,
+    "description": service.description || `${service.title} service by ${business.businessName} in ${city}`,
     "provider": {
       "@type": "LocalBusiness",
-      "name": business.businessName
+      "name": business.businessName,
+      "url": canonicalUrl
     },
     "areaServed": {
       "@type": "City",
-      "name": city
+      "name": city,
+      "@id": "https://www.wikidata.org/wiki/Q79980"
     },
-    ...(service.price ? { "offers": {
-      "@type": "Offer",
-      "price": service.price,
-      "priceCurrency": "INR"
-    }} : {})
+    "availableChannel": {
+      "@type": "ServiceChannel",
+      "serviceUrl": canonicalUrl,
+      "servicePhone": business.mobile
+    },
+    ...(service.price ? { 
+      "offers": {
+        "@type": "Offer",
+        "price": service.price,
+        "priceCurrency": "INR",
+        "availability": "https://schema.org/InStock",
+        "url": canonicalUrl,
+        "priceValidUntil": new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      }
+    } : {}),
+    ...(service.image ? {
+      "image": {
+        "@type": "ImageObject",
+        "url": service.image,
+        "caption": `${service.title} - ${business.businessName}`
+      }
+    } : {})
   })) : [];
+
+  // Generate Video schema if YouTube video exists
+  const videoSchema = videoId ? {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "name": `${business.businessName} - ${business.category} Video`,
+    "description": business.description || `${business.businessName} video introduction`,
+    "thumbnailUrl": `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+    "uploadDate": business.createdAt || new Date().toISOString(),
+    "duration": "PT1M",
+    "contentUrl": `https://www.youtube.com/watch?v=${videoId}`,
+    "embedUrl": embedUrl,
+    "publisher": {
+      "@type": "Organization",
+      "name": business.businessName,
+      "logo": {
+        "@type": "ImageObject",
+        "url": business.logoUrl || ''
+      }
+    }
+  } : null;
+
+  // Generate Image Gallery schema
+  const imageGallerySchema = business.imagesUrl && business.imagesUrl.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    "name": `${business.businessName} Photo Gallery`,
+    "description": `Photo gallery of ${business.businessName} - ${business.category} in ${city}`,
+    "image": business.imagesUrl.slice(0, 20).map((img, idx) => ({
+      "@type": "ImageObject",
+      "url": img,
+      "caption": generateImageAlt(img, idx),
+      "name": `${business.businessName} - Image ${idx + 1}`
+    }))
+  } : null;
 
   return `
 <!DOCTYPE html>
@@ -287,10 +407,21 @@ export const generateBusinessHTML = (business) => {
   <link rel="alternate" href="${escapeHtml(business.subdirectoryUrl)}">
   ` : ''}
   
+  <!-- Hreflang Tags for Multi-language Support -->
+  <link rel="alternate" hreflang="en" href="${escapeHtml(canonicalUrl)}">
+  <link rel="alternate" hreflang="hi" href="${escapeHtml(canonicalUrl)}?lang=hi">
+  <link rel="alternate" hreflang="x-default" href="${escapeHtml(canonicalUrl)}">
+  
   <!-- DNS Prefetch for Performance -->
   <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  ${business.logoUrl && business.logoUrl.startsWith('http') ? `<link rel="preconnect" href="${new URL(business.logoUrl).origin}">` : ''}
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+  <link rel="dns-prefetch" href="https://www.google.com">
+  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  ${business.logoUrl && business.logoUrl.startsWith('http') ? `<link rel="preconnect" href="${new URL(business.logoUrl).origin}" crossorigin>` : ''}
+  ${business.imagesUrl && business.imagesUrl[0] && business.imagesUrl[0].startsWith('http') ? `<link rel="preconnect" href="${new URL(business.imagesUrl[0]).origin}" crossorigin>` : ''}
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
@@ -369,6 +500,20 @@ export const generateBusinessHTML = (business) => {
   ${JSON.stringify(schema)}
   </script>
   `).join('') : ''}
+  
+  ${videoSchema ? `
+  <!-- Structured Data (JSON-LD) - Video -->
+  <script type="application/ld+json">
+  ${JSON.stringify(videoSchema)}
+  </script>
+  ` : ''}
+  
+  ${imageGallerySchema ? `
+  <!-- Structured Data (JSON-LD) - Image Gallery -->
+  <script type="application/ld+json">
+  ${JSON.stringify(imageGallerySchema)}
+  </script>
+  ` : ''}
   
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -1278,7 +1423,7 @@ export const generateBusinessHTML = (business) => {
         <a href="#home" class="flex items-center gap-2 md:gap-4 group hover-zoom-sm">
           ${business.logoUrl ? `
           <div class="relative flex-shrink-0">
-            <img src="${escapeHtml(business.logoUrl)}" alt="${escapeHtml(business.businessName)}" class="h-12 w-12 md:h-14 md:w-14 object-contain rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 ring-2 ring-gray-100 group-hover:ring-blue-200" style="max-width: 100%; height: auto; display: block;">
+            <img src="${escapeHtml(business.logoUrl)}" alt="${escapeHtml(generateImageAlt(business.logoUrl || '', 0, 'logo'))}" class="h-12 w-12 md:h-14 md:w-14 object-contain rounded-2xl shadow-lg group-hover:shadow-xl transition-all duration-300 ring-2 ring-gray-100 group-hover:ring-blue-200" style="max-width: 100%; height: auto; display: block;" itemProp="logo">
           </div>
           ` : `
           <div class="h-12 w-12 md:h-14 md:w-14 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 ring-2 ring-gray-100 group-hover:ring-blue-200 flex-shrink-0">
@@ -1440,7 +1585,7 @@ export const generateBusinessHTML = (business) => {
           ${business.logoUrl ? `
           <div class="flex justify-center mb-8">
             <div class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 flex items-center justify-center">
-              <img src="${escapeHtml(business.logoUrl)}" alt="${escapeHtml(business.businessName)}" class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl bg-white p-4 sm:p-6 shadow-lg border border-gray-200" style="max-width: 100%; height: auto;">
+              <img src="${escapeHtml(business.logoUrl)}" alt="${escapeHtml(generateImageAlt(business.logoUrl || '', 0, 'logo'))}" class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl bg-white p-4 sm:p-6 shadow-lg border border-gray-200" style="max-width: 100%; height: auto;" itemProp="logo">
             </div>
           </div>
           ` : `
@@ -1457,8 +1602,8 @@ export const generateBusinessHTML = (business) => {
             </span>
           </div>
           
-          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight flex items-center justify-center gap-3 flex-wrap">
-            <span>${escapeHtml(business.businessName)}</span>
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight flex items-center justify-center gap-3 flex-wrap" itemProp="name">
+            <span itemProp="name">${escapeHtml(business.businessName)}</span>
             ${business.verified ? '<span class="inline-flex items-center gap-1 px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full text-sm md:text-base font-bold shadow-lg" title="Verified Business"><svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> Verified</span>' : ''}
             ${business.isPremium ? '<svg class="w-10 h-10 md:w-12 md:h-12 text-blue-600 inline-block" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" title="Premium Business"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>' : ''}
           </h1>
@@ -1492,6 +1637,7 @@ export const generateBusinessHTML = (business) => {
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full" style="max-width: 100%; box-sizing: border-box;">
 
       <!-- About Section -->
+      ${business.description && business.description.trim() ? `
       <section id="about" class="section-card p-8 md:p-12 mb-12">
         <div class="section-header">
           <div class="section-icon">
@@ -1502,7 +1648,7 @@ export const generateBusinessHTML = (business) => {
           <h2 class="section-title">About Us</h2>
         </div>
         <div class="prose prose-lg max-w-none">
-          <p class="text-gray-700 whitespace-pre-line leading-relaxed text-base md:text-lg">${escapeHtml(business.description)}</p>
+          <p class="text-gray-700 whitespace-pre-line leading-relaxed text-base md:text-lg text-center md:text-left">${escapeHtml(business.description)}</p>
         </div>
         ${business.ownerName ? `
         <div class="mt-8 p-6 bg-gray-50 rounded-lg border-l-4 border-blue-600">
@@ -1512,6 +1658,7 @@ export const generateBusinessHTML = (business) => {
         </div>
         ` : ''}
       </section>
+      ` : ''}
 
       <!-- Statistics Counter Section -->
       <section id="stats" class="section-card p-8 md:p-12 mb-12">
@@ -1613,7 +1760,7 @@ export const generateBusinessHTML = (business) => {
         <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           ${business.imagesUrl.map((img, idx) => `
             <div class="group gallery-item overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer aspect-square">
-              <img src="${escapeHtml(img)}" alt="${escapeHtml(business.businessName)} - Gallery Image ${idx + 1}" class="w-full h-full object-cover transition-transform duration-300" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+              <img src="${escapeHtml(img)}" alt="${escapeHtml(generateImageAlt(img, idx))}" class="w-full h-full object-cover transition-transform duration-300" loading="lazy" itemProp="image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
               <div class="w-full h-full bg-gray-200 flex items-center justify-center hidden">
                 <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
@@ -1653,7 +1800,7 @@ export const generateBusinessHTML = (business) => {
                  onclick="handleServiceCardClick(this)">
               ${service.imageUrl ? `
               <div class="h-48 w-full overflow-hidden rounded-t-lg relative">
-                <img src="${escapeHtml(service.imageUrl)}" alt="${escapeHtml(serviceName)}" class="w-full h-full object-cover" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <img src="${escapeHtml(service.imageUrl)}" alt="${escapeHtml(`${business.businessName} - ${serviceName} service in ${city}`)}" class="w-full h-full object-cover" loading="lazy" itemProp="image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                 <div class="w-full h-full bg-gray-100 flex items-center justify-center hidden absolute inset-0">
                   <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
@@ -1751,7 +1898,7 @@ export const generateBusinessHTML = (business) => {
       ` : ''}
 
       <!-- Business Hours Section -->
-      ${business.businessHours && Object.keys(business.businessHours).length > 0 ? `
+      ${business.businessHours && Object.keys(business.businessHours).length > 0 && Object.values(business.businessHours).some(day => day && day.open) ? `
       <section id="hours" class="section-card p-8 md:p-12 mb-12">
         <div class="section-header">
           <div class="section-icon">

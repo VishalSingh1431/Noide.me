@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, MapPin, Phone, Mail, ExternalLink, Grid, List, Building2, X, BadgeCheck } from 'lucide-react';
+import { Search, MapPin, Phone, Mail, ExternalLink, Grid, List, Building2, X, BadgeCheck, ArrowUpDown, Filter } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { BusinessesGridSkeleton } from '../components/LoadingSkeleton';
@@ -8,15 +9,24 @@ import { LazyImage } from '../components/LazyImage';
 import { VerifiedBadge } from '../components/VerifiedBadge';
 import { useToast } from '../contexts/ToastContext';
 import { API_BASE_URL } from '../config/constants';
+import { SEOHead } from '../components/SEOHead';
+import { getBusinessUrl, getOrigin } from '../utils/urlHelper';
+import Pagination from '../components/Pagination';
+import ShareButton from '../components/ShareButton';
+import { trackSearch, trackButtonClick } from '../utils/analytics';
 
 const Businesses = () => {
   const toast = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [businesses, setBusinesses] = useState([]);
   const [filteredBusinesses, setFilteredBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
+  const [sortBy, setSortBy] = useState('name'); // 'name', 'category', 'newest'
   const [viewMode, setViewMode] = useState('grid');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   const categories = ['All', 'Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
 
@@ -25,8 +35,24 @@ const Businesses = () => {
   }, []);
 
   useEffect(() => {
+    // Update URL params
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('search', searchTerm);
+    if (selectedCategory !== 'All') params.set('category', selectedCategory);
+    setSearchParams(params, { replace: true });
+    
     filterBusinesses();
-  }, [searchTerm, selectedCategory, businesses]);
+    setCurrentPage(1); // Reset to first page on filter change
+  }, [searchTerm, selectedCategory, businesses, sortBy]);
+
+  // Handle URL search param on mount
+  useEffect(() => {
+    const urlSearch = searchParams.get('search');
+    if (urlSearch && urlSearch !== searchTerm) {
+      setSearchTerm(urlSearch);
+      trackSearch(urlSearch);
+    }
+  }, []);
 
   const fetchBusinesses = async () => {
     try {
@@ -52,10 +78,12 @@ const Businesses = () => {
   const filterBusinesses = () => {
     let filtered = [...businesses];
 
+    // Category filter
     if (selectedCategory !== 'All') {
       filtered = filtered.filter(business => business.category === selectedCategory);
     }
 
+    // Search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(business =>
@@ -66,8 +94,28 @@ const Businesses = () => {
       );
     }
 
+    // Sort
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'name':
+          return (a.businessName || '').localeCompare(b.businessName || '');
+        case 'category':
+          return (a.category || '').localeCompare(b.category || '');
+        case 'newest':
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        default:
+          return 0;
+      }
+    });
+
     setFilteredBusinesses(filtered);
   };
+
+  // Pagination
+  const totalPages = Math.ceil(filteredBusinesses.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedBusinesses = filteredBusinesses.slice(startIndex, endIndex);
 
   const getCategoryColor = (category) => {
     const colors = {
@@ -103,27 +151,37 @@ const Businesses = () => {
 
   return (
     <>
+      <SEOHead
+        title="Businesses in Varanasi - Discover Local Shops, Clinics, Hotels & More | VaranasiHub"
+        description="Discover amazing businesses in Varanasi. Browse shops, clinics, hotels, restaurants, libraries, and services. Find local businesses with verified listings, contact information, and direct website links."
+        image="/og-image.jpg"
+        url={`${getOrigin()}/businesses`}
+        keywords="Varanasi businesses, shops in Varanasi, clinics Varanasi, hotels Varanasi, restaurants Varanasi, local business directory Varanasi, business listings Varanasi"
+        breadcrumbs={[
+          { name: 'Home', path: '/', url: '/' },
+          { name: 'Businesses', path: '/businesses', url: '/businesses' }
+        ]}
+      />
       <Navbar />
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
+      <div className="min-h-screen bg-white">
         {/* Hero Section */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white py-20 md:py-28"
+          className="bg-white text-gray-900 py-8 md:py-10 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <Building2 className="w-16 h-16 mx-auto mb-6 opacity-90" />
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              Businesses
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-3 tracking-tight leading-tight" itemProp="name">
+              Businesses in Varanasi
             </h1>
-            <p className="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light">
               Discover amazing businesses. Find shops, clinics, hotels, and more.
             </p>
           </div>
         </motion.div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           {/* Search and Filter Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -139,7 +197,12 @@ const Businesses = () => {
                   type="text"
                   placeholder="Search by business name, category, or location..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    if (e.target.value) {
+                      trackSearch(e.target.value);
+                    }
+                  }}
                   className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-lg transition-all bg-white text-gray-900 placeholder-gray-400"
                 />
                 {searchTerm && (
@@ -160,7 +223,10 @@ const Businesses = () => {
                 {categories.map((category) => (
                   <button
                     key={category}
-                    onClick={() => setSelectedCategory(category)}
+                    onClick={() => {
+                      setSelectedCategory(category);
+                      trackButtonClick(`filter_category_${category}`, 'businesses_page');
+                    }}
                     className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
                       selectedCategory === category
                         ? 'bg-blue-600 text-white shadow-lg scale-105'
@@ -172,26 +238,52 @@ const Businesses = () => {
                 ))}
               </div>
 
-              {/* View Mode Toggle */}
-              <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded transition-all ${
-                    viewMode === 'grid' ? 'bg-white shadow-md text-blue-600' : 'text-gray-600'
-                  }`}
-                  title="Grid View"
-                >
-                  <Grid className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 rounded transition-all ${
-                    viewMode === 'list' ? 'bg-white shadow-md text-blue-600' : 'text-gray-600'
-                  }`}
-                  title="List View"
-                >
-                  <List className="w-5 h-5" />
-                </button>
+              {/* Sort & View Controls */}
+              <div className="flex items-center gap-3">
+                {/* Sort Dropdown */}
+                <div className="relative">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => {
+                      setSortBy(e.target.value);
+                      trackButtonClick('sort_businesses', 'businesses_page');
+                    }}
+                    className="appearance-none px-4 py-2 pr-8 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm font-semibold bg-white cursor-pointer"
+                  >
+                    <option value="name">Sort by Name</option>
+                    <option value="category">Sort by Category</option>
+                    <option value="newest">Newest First</option>
+                  </select>
+                  <ArrowUpDown className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                </div>
+
+                {/* View Mode Toggle */}
+                <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => {
+                      setViewMode('grid');
+                      trackButtonClick('grid_view', 'businesses_page');
+                    }}
+                    className={`p-2 rounded transition-all ${
+                      viewMode === 'grid' ? 'bg-white shadow-md text-blue-600' : 'text-gray-600'
+                    }`}
+                    title="Grid View"
+                  >
+                    <Grid className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setViewMode('list');
+                      trackButtonClick('list_view', 'businesses_page');
+                    }}
+                    className={`p-2 rounded transition-all ${
+                      viewMode === 'list' ? 'bg-white shadow-md text-blue-600' : 'text-gray-600'
+                    }`}
+                    title="List View"
+                  >
+                    <List className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -244,7 +336,7 @@ const Businesses = () => {
                   : 'space-y-4'
               }
             >
-              {filteredBusinesses.map((business, index) => (
+              {paginatedBusinesses.map((business, index) => (
                 <motion.div
                   key={business.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -362,9 +454,10 @@ const Businesses = () => {
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-2 mt-auto pt-4 border-t border-gray-100">
                       <a
-                        href={business.subdomainUrl || `http://${business.slug}.localhost:5000`}
+                        href={business.subdomainUrl || getBusinessUrl(business.slug)}
                         target="_blank"
                         rel="noopener noreferrer"
+                        onClick={() => trackButtonClick('visit_website', `business_${business.id}`)}
                         className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
                       >
                         <ExternalLink className="w-4 h-4" />
@@ -375,6 +468,7 @@ const Businesses = () => {
                           href={`https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}`}
                           target="_blank"
                           rel="noopener noreferrer"
+                          onClick={() => trackButtonClick('whatsapp_click', `business_${business.id}`)}
                           className="px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-all duration-200 font-semibold text-center flex items-center justify-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap"
                         >
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -383,11 +477,32 @@ const Businesses = () => {
                           WhatsApp
                         </a>
                       )}
+                      <ShareButton
+                        url={business.subdomainUrl || getBusinessUrl(business.slug)}
+                        title={business.businessName}
+                        description={business.description}
+                        businessId={business.id}
+                        businessName={business.businessName}
+                      />
                     </div>
                   </div>
                 </motion.div>
               ))}
             </div>
+          )}
+
+          {/* Pagination */}
+          {filteredBusinesses.length > 0 && (
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => {
+                setCurrentPage(page);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              itemsPerPage={itemsPerPage}
+              totalItems={filteredBusinesses.length}
+            />
           )}
         </div>
       </div>
