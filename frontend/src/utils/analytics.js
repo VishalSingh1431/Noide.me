@@ -3,7 +3,7 @@
  * Tracks user interactions and page views
  */
 
-import { API_BASE_URL } from '../config/constants';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 /**
  * Track an analytics event

@@ -10,7 +10,6 @@ import SubmitButton from '../components/forms/SubmitButton';
 import WebsitePreview from '../components/WebsitePreview';
 import PlacesAutocomplete from '../components/google/PlacesAutocomplete';
 import { businessAPI } from '../config/api';
-import { API_BASE_URL } from '../config/constants';
 import { formatPhoneNumber } from '../services/googlePlaces';
 
 /**
@@ -631,7 +630,7 @@ const CreateWebsite = () => {
 
       // Send to backend API
       const token = localStorage.getItem('token');
-      const response = await fetch(`${API_BASE_URL}/business/create`, {
+      const response = await fetch('http://localhost:5000/api/business/create', {
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
