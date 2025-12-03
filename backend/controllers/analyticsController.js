@@ -12,9 +12,26 @@ export const trackEvent = async (req, res) => {
       return res.status(400).json({ error: 'businessId and eventType are required' });
     }
 
-    // Validate event type
-    const validEventTypes = ['visitor', 'call_click', 'whatsapp_click', 'gallery_view', 'map_click'];
-    if (!validEventTypes.includes(eventType)) {
+    // Validate event type - allow share events and widget clicks
+    const validEventTypes = [
+      'visitor', 
+      'call_click', 
+      'whatsapp_click', 
+      'whatsapp_widget_click',
+      'gallery_view', 
+      'map_click',
+      'share_whatsapp',
+      'share_facebook',
+      'share_twitter',
+      'share_linkedin',
+      'share_telegram',
+      'share_reddit',
+      'share_pinterest',
+      'share_copy'
+    ];
+    
+    // Allow any event type that starts with 'share_' for flexibility
+    if (!validEventTypes.includes(eventType) && !eventType.startsWith('share_')) {
       return res.status(400).json({ error: 'Invalid event type' });
     }
 
@@ -29,17 +46,28 @@ export const trackEvent = async (req, res) => {
       'visitor': 'visitor_count',
       'call_click': 'call_clicks',
       'whatsapp_click': 'whatsapp_clicks',
+      'whatsapp_widget_click': 'whatsapp_clicks',
       'gallery_view': 'gallery_views',
-      'map_click': 'map_clicks'
+      'map_click': 'map_clicks',
+      'share_whatsapp': 'share_clicks',
+      'share_facebook': 'share_clicks',
+      'share_twitter': 'share_clicks',
+      'share_linkedin': 'share_clicks',
+      'share_telegram': 'share_clicks',
+      'share_reddit': 'share_clicks',
+      'share_pinterest': 'share_clicks',
+      'share_copy': 'share_clicks'
     };
 
-    const metric = metricMap[eventType];
+    const metric = metricMap[eventType] || 'other_events';
     
     // Log event for time-based analytics
     await Analytics.logEvent(businessId, eventType);
     
-    // Also increment the metric (for backward compatibility)
-    await Analytics.increment(businessId, metric);
+    // Also increment the metric (for backward compatibility) - only if metric exists
+    if (metric && metric !== 'other_events') {
+      await Analytics.increment(businessId, metric);
+    }
 
     res.json({ 
       success: true, 

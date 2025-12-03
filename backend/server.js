@@ -63,9 +63,9 @@ if (NODE_ENV === 'production') {
   app.use(morgan('dev')); // Colored output for development
 }
 
-// Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Body parsing middleware - increased limit for file uploads
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Rate limiting
 app.use('/api/auth', authLimiter);
