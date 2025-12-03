@@ -88,11 +88,11 @@ export const generateBusinessHTML = (business) => {
   const canonicalUrl = business.subdomainUrl || business.subdirectoryUrl || '';
   
   // Determine API base URL
-  const isDevelopment = process.env.NODE_ENV === 'development' || (process.env.BASE_DOMAIN && process.env.BASE_DOMAIN.includes('localhost'));
-  const port = process.env.PORT || 5000;
+  // Default to production unless explicitly in development mode
+  const isDevelopment = process.env.NODE_ENV === 'development';
   const baseDomain = process.env.BASE_DOMAIN || 'varanasihub.com';
   const apiBaseUrl = isDevelopment 
-    ? `http://localhost:${port}/api`
+    ? `http://localhost:${process.env.PORT || 5000}/api`
     : `https://${baseDomain}/api`;
   
   // Extract location details from address

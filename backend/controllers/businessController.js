@@ -220,17 +220,15 @@ export const createBusiness = async (req, res) => {
     }
 
     // Generate subdomain and subdirectory URLs
-    // Detect if we're in development (localhost)
-    const isDevelopment = process.env.NODE_ENV === 'development' || 
-                         (process.env.BASE_DOMAIN && process.env.BASE_DOMAIN.includes('localhost'));
-    
-    const port = process.env.PORT || 5000;
+    // Default to production unless explicitly in development mode
+    const isDevelopment = process.env.NODE_ENV === 'development';
     const baseDomain = process.env.BASE_DOMAIN || 'varanasihub.com';
     
     let subdomainUrl, subdirectoryUrl;
     
     if (isDevelopment) {
       // For localhost: use http://subdomain.localhost:PORT
+      const port = process.env.PORT || 5000;
       subdomainUrl = `http://${slug}.localhost:${port}`;
       subdirectoryUrl = `http://localhost:${port}/${slug}`;
     } else {
