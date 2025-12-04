@@ -92,6 +92,10 @@ export const createBusiness = async (req, res) => {
       });
     }
 
+    // Validate category - must be one of the allowed values
+    const validCategories = ['Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
+    const finalCategory = validCategories.includes(category) ? category : 'Services';
+
     // Set default email and phone if not provided
     const finalEmail = email || 'example@gmail.com';
     const finalMobileNumber = mobileNumber || '0123456789';
@@ -245,7 +249,7 @@ export const createBusiness = async (req, res) => {
     const business = await Business.create({
       businessName,
       ownerName: ownerName || '',
-      category,
+      category: finalCategory,
       mobile: finalMobileNumber,
       email: finalEmail.toLowerCase(),
       address,
@@ -303,8 +307,20 @@ export const createBusiness = async (req, res) => {
 
     // Handle PostgreSQL check constraint violation
     if (error.code === '23514') {
+      console.error('Database constraint error:', error.message);
+      console.error('Constraint:', error.constraint);
+      // Common constraint violations: category or status
+      let errorMsg = 'Invalid data provided. ';
+      if (error.constraint?.includes('category')) {
+        errorMsg += 'Category must be one of: Shop, Clinic, Library, Hotel, Restaurant, Services';
+      } else if (error.constraint?.includes('status')) {
+        errorMsg += 'Status must be one of: pending, approved, rejected, active';
+      } else {
+        errorMsg += 'Please check your input values.';
+      }
       return res.status(400).json({
-        error: 'Invalid data provided. Please check your input values.',
+        error: errorMsg,
+        ...(process.env.NODE_ENV === 'development' && { constraint: error.constraint, details: error.message }),
       });
     }
 

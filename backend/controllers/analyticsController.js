@@ -6,11 +6,12 @@ import Business from '../models/Business.js';
  */
 export const trackEvent = async (req, res) => {
   try {
-    const { businessId, eventType } = req.body;
+    // Accept any request - don't validate, just log and return success
+    const { businessId, eventType } = req.body || {};
 
-    // If no eventType, just accept and return (silent fail)
-    if (!eventType) {
-      return res.json({ success: true, message: 'Event tracked (no type)' });
+    // Always return success - analytics should never fail
+    if (!eventType && !businessId) {
+      return res.json({ success: true, message: 'Event tracked' });
     }
 
     // Event types that don't require businessId
