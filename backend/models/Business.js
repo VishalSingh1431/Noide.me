@@ -10,11 +10,52 @@ class Business {
   static async create(data) {
     // FINAL SAFETY CHECK - ensure category is ALWAYS valid
     const validCategories = ['Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
-    const safeCategory = validCategories.includes(data.category) ? data.category : 'Services';
+    
+    // Comprehensive mapping for any category that slips through - matches controller mapping
+    const categoryMap = {
+      'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop', 'retail': 'Shop',
+      'jewelry': 'Shop', 'fashion': 'Shop', 'electronics': 'Shop', 'furniture': 'Shop',
+      'automobile': 'Shop', 'wholesale': 'Shop', 'manufacturing': 'Shop', 'construction': 'Shop',
+      'bakery': 'Shop', 'pharmacy': 'Shop', 'bank': 'Shop',
+      'clinic': 'Clinic', 'clinics': 'Clinic', 'hospital': 'Clinic', 'medical': 'Clinic',
+      'healthcare': 'Clinic', 'spa': 'Clinic', 'salon': 'Clinic', 'beauty': 'Clinic',
+      'library': 'Library', 'libraries': 'Library', 'book': 'Library', 'school': 'Library',
+      'college': 'Library', 'education': 'Library',
+      'hotel': 'Hotel', 'hotels': 'Hotel', 'lodging': 'Hotel', 'accommodation': 'Hotel',
+      'tourism': 'Hotel', 'travel agency': 'Hotel', 'travel': 'Hotel',
+      'restaurant': 'Restaurant', 'restaurants': 'Restaurant', 'food': 'Restaurant',
+      'dining': 'Restaurant', 'food & beverage': 'Restaurant', 'catering': 'Restaurant',
+      'services': 'Services', 'service': 'Services', 'other': 'Services', 'others': 'Services',
+      'general': 'Services', 'misc': 'Services', 'miscellaneous': 'Services', 'default': 'Services',
+      'temple': 'Services', 'gym': 'Services', 'fitness': 'Services', 'real estate': 'Services',
+      'law firm': 'Services', 'accounting': 'Services', 'it services': 'Services',
+      'photography': 'Services', 'event management': 'Services', 'repair services': 'Services',
+      'entertainment': 'Services'
+    };
+    
+    let safeCategory = 'Services'; // Default
+    const lowerCategory = String(data.category || '').toLowerCase();
+    
+    // First check if it's already a valid category
+    if (data.category && validCategories.includes(String(data.category).trim())) {
+      safeCategory = String(data.category).trim();
+    } else if (data.category && categoryMap[lowerCategory]) {
+      safeCategory = categoryMap[lowerCategory];
+    } else {
+      safeCategory = 'Services'; // Force to Services if anything fails
+    }
+    
+    // Final validation - ensure it's definitely one of the valid categories
+    if (!validCategories.includes(safeCategory)) {
+      console.error('❌ CRITICAL: safeCategory is still invalid:', safeCategory, 'Forcing to Services');
+      safeCategory = 'Services';
+    }
     
     if (data.category !== safeCategory) {
       console.log('🛡️ Business.create: Category converted', data.category, '→', safeCategory);
     }
+    
+    console.log('🛡️ Business.create: Final category being inserted:', safeCategory, 'Type:', typeof safeCategory);
     
     const query = `
       INSERT INTO businesses (
@@ -25,10 +66,17 @@ class Business {
       RETURNING *
     `;
 
+    // ABSOLUTE FINAL CHECK - ensure category is a valid string
+    const finalCategoryForDB = (validCategories.includes(String(safeCategory).trim())) 
+      ? String(safeCategory).trim() 
+      : 'Services';
+    
+    console.log('🛡️ ABSOLUTE FINAL - Category for DB:', finalCategoryForDB, 'Type:', typeof finalCategoryForDB);
+    
     const values = [
       data.businessName,
       data.ownerName || null,
-      safeCategory, // Use safe category
+      finalCategoryForDB, // Use absolutely safe category
       data.mobile,
       data.email.toLowerCase(),
       data.address,
@@ -105,6 +153,45 @@ class Business {
    * Update business
    */
   static async update(id, data) {
+    // FINAL SAFETY CHECK for category in update too
+    let safeCategory = data.category;
+    if (data.category) {
+      const validCategories = ['Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
+      const categoryMap = {
+        'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop', 'retail': 'Shop',
+        'jewelry': 'Shop', 'fashion': 'Shop', 'electronics': 'Shop', 'furniture': 'Shop',
+        'automobile': 'Shop', 'wholesale': 'Shop', 'manufacturing': 'Shop', 'construction': 'Shop',
+        'bakery': 'Shop', 'pharmacy': 'Shop', 'bank': 'Shop',
+        'clinic': 'Clinic', 'clinics': 'Clinic', 'hospital': 'Clinic', 'medical': 'Clinic',
+        'healthcare': 'Clinic', 'spa': 'Clinic', 'salon': 'Clinic', 'beauty': 'Clinic',
+        'library': 'Library', 'libraries': 'Library', 'book': 'Library', 'school': 'Library',
+        'college': 'Library', 'education': 'Library',
+        'hotel': 'Hotel', 'hotels': 'Hotel', 'lodging': 'Hotel', 'accommodation': 'Hotel',
+        'tourism': 'Hotel', 'travel agency': 'Hotel', 'travel': 'Hotel',
+        'restaurant': 'Restaurant', 'restaurants': 'Restaurant', 'food': 'Restaurant',
+        'dining': 'Restaurant', 'food & beverage': 'Restaurant', 'catering': 'Restaurant',
+        'services': 'Services', 'service': 'Services', 'other': 'Services', 'others': 'Services',
+        'general': 'Services', 'misc': 'Services', 'miscellaneous': 'Services', 'default': 'Services',
+        'temple': 'Services', 'gym': 'Services', 'fitness': 'Services', 'real estate': 'Services',
+        'law firm': 'Services', 'accounting': 'Services', 'it services': 'Services',
+        'photography': 'Services', 'event management': 'Services', 'repair services': 'Services',
+        'entertainment': 'Services'
+      };
+      
+      const lowerCategory = String(data.category).toLowerCase();
+      if (validCategories.includes(data.category)) {
+        safeCategory = data.category;
+      } else if (categoryMap[lowerCategory]) {
+        safeCategory = categoryMap[lowerCategory];
+      } else {
+        safeCategory = 'Services';
+      }
+      
+      if (data.category !== safeCategory) {
+        console.log('🛡️ Business.update: Category converted', data.category, '→', safeCategory);
+      }
+    }
+    
     const query = `
       UPDATE businesses SET
         business_name = COALESCE($1, business_name),
@@ -136,7 +223,7 @@ class Business {
     const values = [
       data.businessName || null,
       data.ownerName || null,
-      data.category || null,
+      safeCategory || null,
       data.mobile || null,
       data.email ? data.email.toLowerCase() : null,
       data.address || null,

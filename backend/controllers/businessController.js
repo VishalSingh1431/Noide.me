@@ -85,10 +85,25 @@ export const createBusiness = async (req, res) => {
       preferredSlug,
     } = req.body;
 
-    // Validate required fields
-    if (!businessName || !category || !address || !description) {
+    // Validate required fields - check for empty strings too
+    if (!businessName || !businessName.trim()) {
       return res.status(400).json({
-        error: 'Missing required fields: businessName, category, address, description',
+        error: 'Business name is required',
+      });
+    }
+    if (!category || (typeof category === 'string' && !category.trim())) {
+      return res.status(400).json({
+        error: 'Category is required',
+      });
+    }
+    if (!address || !address.trim()) {
+      return res.status(400).json({
+        error: 'Address is required',
+      });
+    }
+    if (!description || !description.trim()) {
+      return res.status(400).json({
+        error: 'Description is required',
       });
     }
 
@@ -105,15 +120,37 @@ export const createBusiness = async (req, res) => {
     const normalizedCategory = categoryValue ? String(categoryValue).trim() : '';
     const lowerCategory = normalizedCategory.toLowerCase();
     
-    // Map ANY variation to valid category - comprehensive mapping
+    // COMPREHENSIVE MAPPING - Map ALL 45+ frontend categories to backend's 6 valid categories
     const categoryMap = {
-      'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop',
+      // Shop category (retail, stores, products)
+      'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop', 'retail': 'Shop',
+      'jewelry': 'Shop', 'fashion': 'Shop', 'electronics': 'Shop', 'furniture': 'Shop',
+      'automobile': 'Shop', 'wholesale': 'Shop', 'manufacturing': 'Shop', 'construction': 'Shop',
+      'bakery': 'Shop', 'pharmacy': 'Shop', 'bank': 'Shop',
+      
+      // Clinic category (health, medical, beauty)
       'clinic': 'Clinic', 'clinics': 'Clinic', 'hospital': 'Clinic', 'medical': 'Clinic',
-      'library': 'Library', 'libraries': 'Library', 'book': 'Library',
+      'healthcare': 'Clinic', 'spa': 'Clinic', 'salon': 'Clinic', 'beauty': 'Clinic',
+      
+      // Library category (education, learning)
+      'library': 'Library', 'libraries': 'Library', 'book': 'Library', 'school': 'Library',
+      'college': 'Library', 'education': 'Library',
+      
+      // Hotel category (hospitality, travel, accommodation)
       'hotel': 'Hotel', 'hotels': 'Hotel', 'lodging': 'Hotel', 'accommodation': 'Hotel',
-      'restaurant': 'Restaurant', 'restaurants': 'Restaurant', 'food': 'Restaurant', 'dining': 'Restaurant',
-      'services': 'Services', 'service': 'Services', 'other': 'Services', 'others': 'Services', 
-      'general': 'Services', 'misc': 'Services', 'miscellaneous': 'Services', 'default': 'Services'
+      'tourism': 'Hotel', 'travel agency': 'Hotel', 'travel': 'Hotel',
+      
+      // Restaurant category (food, dining)
+      'restaurant': 'Restaurant', 'restaurants': 'Restaurant', 'food': 'Restaurant', 
+      'dining': 'Restaurant', 'food & beverage': 'Restaurant', 'catering': 'Restaurant',
+      
+      // Services category (everything else - default)
+      'services': 'Services', 'service': 'Services', 'other': 'Services', 'others': 'Services',
+      'general': 'Services', 'misc': 'Services', 'miscellaneous': 'Services', 'default': 'Services',
+      'temple': 'Services', 'gym': 'Services', 'fitness': 'Services', 'real estate': 'Services',
+      'law firm': 'Services', 'accounting': 'Services', 'it services': 'Services',
+      'photography': 'Services', 'event management': 'Services', 'repair services': 'Services',
+      'entertainment': 'Services'
     };
     
     // Force to valid category - default to Services if anything fails
@@ -279,14 +316,24 @@ export const createBusiness = async (req, res) => {
 
     // FINAL SAFETY CHECK - ensure category is ALWAYS valid before database
     const validCategories = ['Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
-    const safeCategory = validCategories.includes(finalCategory) ? finalCategory : 'Services';
+    let safeCategory = 'Services'; // Default fallback
+    
+    // Triple check: if finalCategory is valid, use it; otherwise force to Services
+    if (finalCategory && validCategories.includes(finalCategory)) {
+      safeCategory = finalCategory;
+    } else {
+      safeCategory = 'Services';
+      console.log('⚠️ Category was invalid, forcing to Services. Original:', finalCategory);
+    }
+    
     console.log('🛡️ Final safety check - Category:', finalCategory, '→ Safe:', safeCategory);
+    console.log('🛡️ Safe category type:', typeof safeCategory, 'Value:', JSON.stringify(safeCategory));
     
     // Create business record
     const business = await Business.create({
       businessName,
       ownerName: ownerName || '',
-      category: safeCategory,
+      category: safeCategory, // Use safe category
       mobile: finalMobileNumber,
       email: finalEmail.toLowerCase(),
       address,
@@ -347,20 +394,37 @@ export const createBusiness = async (req, res) => {
 
     // Handle PostgreSQL check constraint violation
     if (error.code === '23514') {
-      console.error('Database constraint error:', error.message);
-      console.error('Constraint:', error.constraint);
+      console.error('❌ Database constraint error:', error.message);
+      console.error('❌ Constraint name:', error.constraint);
+      console.error('❌ Error detail:', error.detail);
+      console.error('❌ Category that was sent:', safeCategory);
+      console.error('❌ Status that was sent:', 'pending');
+      
       // Common constraint violations: category or status
       let errorMsg = 'Invalid data provided. ';
       if (error.constraint?.includes('category')) {
-        errorMsg += 'Category must be one of: Shop, Clinic, Library, Hotel, Restaurant, Services';
+        errorMsg += `Category "${safeCategory || 'unknown'}" is invalid. Must be one of: Shop, Clinic, Library, Hotel, Restaurant, Services`;
+        console.error('❌ CATEGORY CONSTRAINT VIOLATION - This should never happen!');
+        console.error('❌ Received category:', category);
+        console.error('❌ Normalized category:', normalizedCategory);
+        console.error('❌ Final category:', finalCategory);
+        console.error('❌ Safe category:', safeCategory);
       } else if (error.constraint?.includes('status')) {
         errorMsg += 'Status must be one of: pending, approved, rejected, active';
       } else {
         errorMsg += 'Please check your input values.';
+        console.error('❌ UNKNOWN CONSTRAINT VIOLATION:', error.constraint);
       }
       return res.status(400).json({
         error: errorMsg,
-        ...(process.env.NODE_ENV === 'development' && { constraint: error.constraint, details: error.message }),
+        ...(process.env.NODE_ENV === 'development' && { 
+          constraint: error.constraint, 
+          details: error.message,
+          detail: error.detail,
+          receivedCategory: category,
+          finalCategory: finalCategory,
+          safeCategory: safeCategory
+        }),
       });
     }
 
@@ -536,11 +600,50 @@ export const updateBusiness = async (req, res) => {
     const userRole = user?.role || 'normal';
     const needsApproval = userRole === 'content_admin';
     
+    // Normalize category if provided (same logic as create)
+    let finalCategory = existingBusiness.category; // Default to existing
+    if (category) {
+      const validCategories = ['Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
+      const categoryMap = {
+        'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop', 'retail': 'Shop',
+        'jewelry': 'Shop', 'fashion': 'Shop', 'electronics': 'Shop', 'furniture': 'Shop',
+        'automobile': 'Shop', 'wholesale': 'Shop', 'manufacturing': 'Shop', 'construction': 'Shop',
+        'bakery': 'Shop', 'pharmacy': 'Shop', 'bank': 'Shop',
+        'clinic': 'Clinic', 'clinics': 'Clinic', 'hospital': 'Clinic', 'medical': 'Clinic',
+        'healthcare': 'Clinic', 'spa': 'Clinic', 'salon': 'Clinic', 'beauty': 'Clinic',
+        'library': 'Library', 'libraries': 'Library', 'book': 'Library', 'school': 'Library',
+        'college': 'Library', 'education': 'Library',
+        'hotel': 'Hotel', 'hotels': 'Hotel', 'lodging': 'Hotel', 'accommodation': 'Hotel',
+        'tourism': 'Hotel', 'travel agency': 'Hotel', 'travel': 'Hotel',
+        'restaurant': 'Restaurant', 'restaurants': 'Restaurant', 'food': 'Restaurant',
+        'dining': 'Restaurant', 'food & beverage': 'Restaurant', 'catering': 'Restaurant',
+        'services': 'Services', 'service': 'Services', 'other': 'Services', 'others': 'Services',
+        'general': 'Services', 'misc': 'Services', 'miscellaneous': 'Services', 'default': 'Services',
+        'temple': 'Services', 'gym': 'Services', 'fitness': 'Services', 'real estate': 'Services',
+        'law firm': 'Services', 'accounting': 'Services', 'it services': 'Services',
+        'photography': 'Services', 'event management': 'Services', 'repair services': 'Services',
+        'entertainment': 'Services'
+      };
+      
+      const normalizedCategory = String(category).trim();
+      const lowerCategory = normalizedCategory.toLowerCase();
+      
+      if (validCategories.includes(normalizedCategory)) {
+        finalCategory = normalizedCategory;
+      } else if (categoryMap[lowerCategory]) {
+        finalCategory = categoryMap[lowerCategory];
+      } else {
+        finalCategory = 'Services'; // Default fallback
+      }
+      
+      console.log('🔍 Update Category input:', category, '→ Final:', finalCategory);
+    }
+    
     // Update business
     const updatedBusiness = await Business.update(id, {
       businessName: businessName || existingBusiness.businessName,
       ownerName: ownerName || existingBusiness.ownerName,
-      category: category || existingBusiness.category,
+      category: finalCategory,
       mobile: mobileNumber || existingBusiness.mobile || '0123456789',
       email: email ? email.toLowerCase() : existingBusiness.email || 'example@gmail.com',
       address: address || existingBusiness.address,
