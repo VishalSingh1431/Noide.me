@@ -8,8 +8,17 @@ export const trackEvent = async (req, res) => {
   try {
     const { businessId, eventType } = req.body;
 
-    if (!businessId || !eventType) {
-      return res.status(400).json({ error: 'businessId and eventType are required' });
+    // Event types that don't require businessId
+    const generalEventTypes = ['page_view', 'button_click', 'form_submit', 'search', 'share'];
+    
+    // If it's a general event type, businessId is optional
+    if (!eventType) {
+      return res.status(400).json({ error: 'eventType is required' });
+    }
+
+    // For business-specific events, businessId is required
+    if (!generalEventTypes.includes(eventType) && !eventType.startsWith('share_') && !businessId) {
+      return res.status(400).json({ error: 'businessId is required for this event type' });
     }
 
     // Validate event type - allow share events and widget clicks
@@ -27,18 +36,27 @@ export const trackEvent = async (req, res) => {
       'share_telegram',
       'share_reddit',
       'share_pinterest',
-      'share_copy'
+      'share_copy',
+      'page_view',
+      'button_click',
+      'form_submit',
+      'search',
+      'share',
+      'business_view'
     ];
     
     // Allow any event type that starts with 'share_' for flexibility
     if (!validEventTypes.includes(eventType) && !eventType.startsWith('share_')) {
-      return res.status(400).json({ error: 'Invalid event type' });
+      // Silently accept unknown event types for forward compatibility
+      return res.json({ success: true, message: 'Event tracked (unknown type)' });
     }
 
-    // Verify business exists
-    const business = await Business.findById(businessId);
-    if (!business) {
-      return res.status(404).json({ error: 'Business not found' });
+    // Verify business exists (only if businessId is provided)
+    if (businessId) {
+      const business = await Business.findById(businessId);
+      if (!business) {
+        return res.status(404).json({ error: 'Business not found' });
+      }
     }
 
     // Map event type to metric name
@@ -61,12 +79,14 @@ export const trackEvent = async (req, res) => {
 
     const metric = metricMap[eventType] || 'other_events';
     
-    // Log event for time-based analytics
-    await Analytics.logEvent(businessId, eventType);
-    
-    // Also increment the metric (for backward compatibility) - only if metric exists
-    if (metric && metric !== 'other_events') {
-      await Analytics.increment(businessId, metric);
+    // Log event for time-based analytics (only if businessId exists)
+    if (businessId) {
+      await Analytics.logEvent(businessId, eventType);
+      
+      // Also increment the metric (for backward compatibility) - only if metric exists
+      if (metric && metric !== 'other_events') {
+        await Analytics.increment(businessId, metric);
+      }
     }
 
     res.json({ 

@@ -86,11 +86,15 @@ export const createBusiness = async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!businessName || !category || !mobileNumber || !email || !address || !description) {
+    if (!businessName || !category || !address || !description) {
       return res.status(400).json({
-        error: 'Missing required fields: businessName, category, mobileNumber, email, address, description',
+        error: 'Missing required fields: businessName, category, address, description',
       });
     }
+
+    // Set default email and phone if not provided
+    const finalEmail = email || 'example@gmail.com';
+    const finalMobileNumber = mobileNumber || '0123456789';
 
     // Get user ID from token if available
     const userId = req.user?.userId || null;
@@ -242,8 +246,8 @@ export const createBusiness = async (req, res) => {
       businessName,
       ownerName: ownerName || '',
       category,
-      mobile: mobileNumber,
-      email: email.toLowerCase(),
+      mobile: finalMobileNumber,
+      email: finalEmail.toLowerCase(),
       address,
       mapLink: googleMapLink || '',
       whatsapp: whatsappNumber || '',
@@ -481,8 +485,8 @@ export const updateBusiness = async (req, res) => {
       businessName: businessName || existingBusiness.businessName,
       ownerName: ownerName || existingBusiness.ownerName,
       category: category || existingBusiness.category,
-      mobile: mobileNumber || existingBusiness.mobile,
-      email: email ? email.toLowerCase() : existingBusiness.email,
+      mobile: mobileNumber || existingBusiness.mobile || '0123456789',
+      email: email ? email.toLowerCase() : existingBusiness.email || 'example@gmail.com',
       address: address || existingBusiness.address,
       mapLink: googleMapLink || existingBusiness.mapLink,
       whatsapp: whatsappNumber || existingBusiness.whatsapp,

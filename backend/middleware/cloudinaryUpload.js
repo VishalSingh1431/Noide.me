@@ -17,10 +17,7 @@ const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
-  limits: {
-    fileSize: 10 * 1024 * 1024, // 10MB max file size per file
-    fieldSize: 50 * 1024 * 1024, // 50MB max field size
-  },
+  // No file size limits - only count limit
   fileFilter: (req, file, cb) => {
     // Accept only image files
     if (file.mimetype.startsWith('image/')) {
@@ -96,8 +93,15 @@ export const processCloudinaryUploads = async (req, res, next) => {
       req.files.logo[0].cloudinary = logoResult;
     }
 
-    // Process gallery images
+    // Process gallery images - max 10 images
     if (req.files?.images && req.files.images.length > 0) {
+      // Limit to 10 images
+      if (req.files.images.length > 10) {
+        return res.status(400).json({ 
+          error: 'Maximum 10 images allowed. Please select only 10 images.' 
+        });
+      }
+      
       const imagePromises = req.files.images.map((image) =>
         uploadToCloudinary(
           image.buffer,

@@ -50,7 +50,7 @@ export const authLimiter = rateLimit({
  */
 export const uploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 hour
-  max: 20, // Limit each IP to 20 uploads per hour
+  max: 50, // Limit each IP to 50 uploads per hour
   message: 'Too many file uploads, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
