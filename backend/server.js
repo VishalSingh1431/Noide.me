@@ -69,7 +69,13 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rate limiting
 app.use('/api/auth', authLimiter);
-app.use('/api', apiLimiter);
+// Exclude analytics/track from rate limiting (it's called frequently)
+app.use('/api', (req, res, next) => {
+  if (req.path === '/analytics/track' || req.path.startsWith('/analytics/track')) {
+    return next(); // Skip rate limiting for analytics
+  }
+  apiLimiter(req, res, next);
+});
 
 // Extract subdomain from hostname (for subdomain routing)
 app.use((req, res, next) => {

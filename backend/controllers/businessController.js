@@ -92,9 +92,40 @@ export const createBusiness = async (req, res) => {
       });
     }
 
-    // Validate category - must be one of the allowed values
+    // Validate and normalize category - FORCE to valid value
     const validCategories = ['Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
-    const finalCategory = validCategories.includes(category) ? category : 'Services';
+    
+    // Extract category from any format (string, object, etc.)
+    let categoryValue = category;
+    if (typeof category === 'object' && category !== null) {
+      categoryValue = category.value || category.name || category.category || 'Services';
+    }
+    
+    // Normalize: convert to string, trim, handle null/undefined
+    const normalizedCategory = categoryValue ? String(categoryValue).trim() : '';
+    
+    // Map ANY variation to valid category - handle "Other" and all variations
+    const categoryMap = {
+      'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop',
+      'clinic': 'Clinic', 'clinics': 'Clinic', 'hospital': 'Clinic', 'medical': 'Clinic',
+      'library': 'Library', 'libraries': 'Library', 'book': 'Library',
+      'hotel': 'Hotel', 'hotels': 'Hotel', 'lodging': 'Hotel', 'accommodation': 'Hotel',
+      'restaurant': 'Restaurant', 'restaurants': 'Restaurant', 'food': 'Restaurant', 'dining': 'Restaurant',
+      'services': 'Services', 'service': 'Services', 'other': 'Services', 'others': 'Services', 'general': 'Services', 'misc': 'Services', 'miscellaneous': 'Services'
+    };
+    
+    // Force to valid category - default to Services if anything fails
+    let finalCategory = 'Services'; // ALWAYS default to Services
+    const lowerCategory = normalizedCategory.toLowerCase();
+    
+    if (normalizedCategory && validCategories.includes(normalizedCategory)) {
+      finalCategory = normalizedCategory;
+    } else if (normalizedCategory && categoryMap[lowerCategory]) {
+      finalCategory = categoryMap[lowerCategory];
+    }
+    // If still not valid, finalCategory is already 'Services'
+    
+    console.log('🔍 Category input:', category, 'Normalized:', normalizedCategory, '→ Final:', finalCategory);
 
     // Set default email and phone if not provided
     const finalEmail = email || 'example@gmail.com';
@@ -245,11 +276,16 @@ export const createBusiness = async (req, res) => {
       subdirectoryUrl = `https://${baseDomain}/${slug}`;
     }
 
+    // FINAL SAFETY CHECK - ensure category is ALWAYS valid before database
+    const validCategories = ['Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
+    const safeCategory = validCategories.includes(finalCategory) ? finalCategory : 'Services';
+    console.log('🛡️ Final safety check - Category:', finalCategory, '→ Safe:', safeCategory);
+    
     // Create business record
     const business = await Business.create({
       businessName,
       ownerName: ownerName || '',
-      category: finalCategory,
+      category: safeCategory,
       mobile: finalMobileNumber,
       email: finalEmail.toLowerCase(),
       address,
@@ -295,6 +331,8 @@ export const createBusiness = async (req, res) => {
     console.error('Error creating business:', error);
     console.error('Error stack:', error.stack);
     console.error('Request body keys:', Object.keys(req.body || {}));
+    console.error('Category received:', req.body?.category);
+    console.error('Final category used:', finalCategory);
     console.error('Request files keys:', Object.keys(req.files || {}));
     
     // Handle PostgreSQL unique constraint violation
