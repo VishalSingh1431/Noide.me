@@ -1,6 +1,31 @@
 // Update database constraint - Run from backend directory
 const { Pool } = require('pg');
-require('dotenv').config({ path: '.env' });
+const path = require('path');
+const fs = require('fs');
+
+// Try multiple .env locations
+const envPaths = [
+  path.join(__dirname, '.env'),
+  path.join(__dirname, '..', 'backend', '.env'),
+  path.join(process.cwd(), '.env'),
+  path.join(process.cwd(), 'backend', '.env')
+];
+
+let envLoaded = false;
+for (const envPath of envPaths) {
+  if (fs.existsSync(envPath)) {
+    require('dotenv').config({ path: envPath });
+    console.log('✅ Loaded .env from:', envPath);
+    envLoaded = true;
+    break;
+  }
+}
+
+if (!envLoaded) {
+  console.error('❌ .env file not found in any of these locations:');
+  envPaths.forEach(p => console.error('  -', p));
+  process.exit(1);
+}
 
 async function updateConstraint() {
   const pool = new Pool({
