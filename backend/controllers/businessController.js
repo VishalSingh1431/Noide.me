@@ -499,7 +499,7 @@ export const createBusiness = async (req, res) => {
     }
 
     // FINAL SAFETY CHECK - ensure category is ALWAYS valid before database
-    const validCategories = ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Other'];
+    // validCategories already defined above at line 256, reuse it
     let safeCategory = 'Services'; // Default fallback
     
     // Triple check: if finalCategory is valid, use it; otherwise force to Services
