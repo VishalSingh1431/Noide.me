@@ -172,10 +172,10 @@ const Businesses = () => {
           className="bg-white text-gray-900 py-8 md:py-10 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-3 tracking-tight leading-tight" itemProp="name">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-3 tracking-tight leading-tight px-4" itemProp="name">
               Businesses in Varanasi
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light px-4">
               Discover amazing businesses. Find shops, clinics, hotels, and more.
             </p>
           </div>
@@ -187,7 +187,7 @@ const Businesses = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white rounded-2xl shadow-2xl p-6 md:p-8 mb-8 border border-gray-100"
+            className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 mb-8 border border-gray-100"
           >
             {/* Search Bar */}
             <div className="mb-6">
@@ -203,7 +203,7 @@ const Businesses = () => {
                       trackSearch(e.target.value);
                     }
                   }}
-                  className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-lg transition-all bg-white text-gray-900 placeholder-gray-400"
+                  className="w-full pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm sm:text-base md:text-lg transition-all bg-white text-gray-900 placeholder-gray-400"
                 />
                 {searchTerm && (
                   <button
@@ -217,9 +217,9 @@ const Businesses = () => {
             </div>
 
             {/* Filters Row */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4 mb-6">
               {/* Category Filters */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 overflow-x-auto pb-2 -mx-2 px-2 md:overflow-x-visible md:pb-0 md:mx-0">
                 {categories.map((category) => (
                   <button
                     key={category}
@@ -227,7 +227,7 @@ const Businesses = () => {
                       setSelectedCategory(category);
                       trackButtonClick(`filter_category_${category}`, 'businesses_page');
                     }}
-                    className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200 ${
+                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 whitespace-nowrap ${
                       selectedCategory === category
                         ? 'bg-blue-600 text-white shadow-lg scale-105'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -390,10 +390,10 @@ const Businesses = () => {
                   </div>
 
                   {/* Business Info */}
-                  <div className={`p-6 flex flex-col ${viewMode === 'list' ? 'flex-1' : ''}`}>
+                  <div className={`p-4 sm:p-6 flex flex-col ${viewMode === 'list' ? 'flex-1' : ''}`}>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-2xl font-bold text-gray-800 line-clamp-1">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 line-clamp-1 min-w-0 flex-1">
                           {business.businessName}
                         </h3>
                         {business.verified && (

@@ -156,7 +156,7 @@ const HeroSection = ({ heroImages = [] }) => {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-3 md:mb-4 leading-[1.1] tracking-tight w-full"
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-3 md:mb-4 leading-[1.1] tracking-tight w-full px-4"
           >
             <motion.span
               initial={{ opacity: 0, x: -50 }}
@@ -180,7 +180,7 @@ const HeroSection = ({ heroImages = [] }) => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="text-base md:text-lg lg:text-xl text-white/90 max-w-4xl mx-auto mb-6 leading-relaxed font-light"
+            className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 max-w-4xl mx-auto mb-6 leading-relaxed font-light px-4"
           >
             Give your Varanasi shop, clinic, hotel, or service a stunning online presence. 
             <span className="text-yellow-300 font-semibold"> Zero coding. </span>
@@ -212,12 +212,12 @@ const HeroSection = ({ heroImages = [] }) => {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search businesses, shops, clinics, hotels..."
-                  className="w-full pl-12 pr-32 py-4 border-2 border-white/30 bg-white/10 backdrop-blur-xl rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/50 outline-none text-white placeholder-white/70 font-medium text-base transition-all duration-300"
+                  className="w-full pl-10 sm:pl-12 pr-24 sm:pr-32 py-3 sm:py-4 border-2 border-white/30 bg-white/10 backdrop-blur-xl rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-white/50 outline-none text-white placeholder-white/70 font-medium text-sm sm:text-base transition-all duration-300"
                 />
                 <button
                   type="submit"
                   onClick={() => trackButtonClick('hero_search', 'homepage')}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 sm:px-6 py-1.5 sm:py-2 bg-white text-blue-600 rounded-xl font-bold hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl text-xs sm:text-sm md:text-base"
                 >
                   Search
                 </button>

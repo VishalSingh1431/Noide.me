@@ -715,10 +715,10 @@ const CreateWebsite = () => {
             <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl mb-6 shadow-lg">
               <Sparkles className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-5xl font-bold text-gray-900 mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               Create Your Website
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
               Build your online presence in minutes. Fill in your business details below and get your professional website ready.
             </p>
           </div>
@@ -780,7 +780,7 @@ const CreateWebsite = () => {
           )}
 
           {/* Form Card */}
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-10 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-8 lg:p-10 border border-gray-100">
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Quick Search - Auto Fill Section */}
               <div className="bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-2xl p-6 md:p-8 border-2 border-blue-200 mb-8">
@@ -789,8 +789,8 @@ const CreateWebsite = () => {
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Quick Start: Search Your Business</h2>
-                    <p className="text-sm text-gray-600">Find your business and auto-fill all details instantly</p>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Quick Start: Search Your Business</h2>
+                  <p className="text-xs sm:text-sm text-gray-600">Find your business and auto-fill all details instantly</p>
                   </div>
                 </div>
                 <div className="mt-6">
@@ -956,7 +956,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
                     <Palette className="w-5 h-5 text-purple-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Choose Your Theme <span className="text-sm font-normal text-gray-500">(Can be changed later)</span></h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Choose Your Theme <span className="text-xs sm:text-sm font-normal text-gray-500">(Can be changed later)</span></h2>
                 </div>
                 <p className="text-sm text-gray-600 mb-6">
                   Select a theme that best represents your business. You can change this anytime after creating your website.
@@ -1054,7 +1054,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
                     <Building2 className="w-5 h-5 text-blue-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Business Information</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -1250,7 +1250,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
                     <Mail className="w-5 h-5 text-indigo-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Contact Information</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Contact Information</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FormInput
@@ -1279,16 +1279,16 @@ const CreateWebsite = () => {
 
               {/* Location Information Section */}
               <div className="border-b border-gray-200 pb-8">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-5 h-5 text-purple-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Location Information</h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Location Information</h2>
                   </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
-                    <MapPin className="w-4 h-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-700">Auto-Fill Available</span>
+                  <div className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                    <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium text-blue-700">Auto-Fill Available</span>
                   </div>
                 </div>
                 <div className="space-y-6">
@@ -1324,7 +1324,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-pink-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Business Description <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Business Description <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
                 <TextArea
                   label="Description"
@@ -1352,7 +1352,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
                     <Youtube className="w-5 h-5 text-red-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Video Content <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Video Content <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
                 <FormInput
                   label="YouTube Video URL"
@@ -1375,7 +1375,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
                     <Sparkles className="w-5 h-5 text-amber-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Media</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Media</h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <FileUploader
@@ -1408,7 +1408,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
                     <LinkIcon className="w-5 h-5 text-green-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Social Links <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Social Links <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <FormInput
@@ -1450,7 +1450,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center">
                     <Navigation className="w-5 h-5 text-cyan-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Navbar & Footer Customization <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Navbar & Footer Customization <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
                 <div className="space-y-6">
                   <FormInput
@@ -1489,7 +1489,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
                     <ShoppingBag className="w-5 h-5 text-purple-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Services / Menu / Pricing <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Services / Menu / Pricing <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
                 <p className="text-sm text-gray-600 mb-6">
                   Perfect for Salons, Restaurants, Tuition classes, Pandit ji, Photographers, etc.
@@ -1636,7 +1636,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
                     <Clock className="w-5 h-5 text-teal-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Business Hours <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Business Hours <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
                 <p className="text-sm text-gray-600 mb-6">
                   Set your business hours. The website will automatically show "Open Now" or "Closed" status.
@@ -1645,36 +1645,36 @@ const CreateWebsite = () => {
                 <div className="space-y-4">
                   {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
                     <div key={day} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-3 flex-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
                           <input
                             type="checkbox"
                             checked={formData.businessHours[day].open}
                             onChange={(e) => updateBusinessHours(day, 'open', e.target.checked)}
-                            className="w-5 h-5 text-teal-600 rounded focus:ring-teal-500"
+                            className="w-5 h-5 text-teal-600 rounded focus:ring-teal-500 flex-shrink-0"
                           />
-                          <label className="text-lg font-semibold text-gray-800 capitalize min-w-[100px]">
+                          <label className="text-base sm:text-lg font-semibold text-gray-800 capitalize min-w-[80px] sm:min-w-[100px]">
                             {day}
                           </label>
                         </div>
                         {formData.businessHours[day].open ? (
-                          <div className="flex items-center gap-3 flex-1">
+                          <div className="flex items-center gap-2 sm:gap-3 flex-1 flex-wrap sm:flex-nowrap">
                             <input
                               type="time"
                               value={formData.businessHours[day].start}
                               onChange={(e) => updateBusinessHours(day, 'start', e.target.value)}
-                              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm sm:text-base min-w-[120px]"
                             />
-                            <span className="text-gray-600 font-medium">to</span>
+                            <span className="text-gray-600 font-medium text-sm sm:text-base">to</span>
                             <input
                               type="time"
                               value={formData.businessHours[day].end}
                               onChange={(e) => updateBusinessHours(day, 'end', e.target.value)}
-                              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
+                              className="flex-1 sm:flex-none px-3 sm:px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm sm:text-base min-w-[120px]"
                             />
                           </div>
                         ) : (
-                          <span className="text-gray-400 italic">Closed</span>
+                          <span className="text-gray-400 italic text-sm sm:text-base">Closed</span>
                         )}
                       </div>
                     </div>
@@ -1688,7 +1688,7 @@ const CreateWebsite = () => {
                   <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
                     <Calendar className="w-5 h-5 text-pink-600" />
                   </div>
-                  <h2 className="text-2xl font-bold text-gray-900">Appointment / Booking <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Appointment / Booking <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
                 <p className="text-sm text-gray-600 mb-6">
                   Enable customers to book appointments. The form will automatically send a message via WhatsApp or call.

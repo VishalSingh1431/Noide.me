@@ -37,8 +37,8 @@ const FormInput = ({
           onBlur={() => setFocused(false)}
           placeholder={placeholder}
           required={required}
-          className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 ${
-            Icon ? 'pl-11' : 'pl-4'
+          className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 rounded-xl focus:outline-none focus:ring-2 transition-all duration-200 text-sm sm:text-base ${
+            Icon ? 'pl-10 sm:pl-11' : 'pl-3 sm:pl-4'
           } ${
             error
               ? 'border-red-300 focus:border-red-500 focus:ring-red-200'

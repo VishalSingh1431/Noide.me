@@ -209,18 +209,18 @@ const WebsitePreview = ({ formData, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full my-8 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full my-4 sm:my-8 max-h-[90vh] overflow-y-auto">
         {/* Preview Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900">Website Preview</h2>
-            <p className="text-sm text-gray-600 mt-1">This is how your website will look</p>
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 z-10">
+          <div className="min-w-0">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Website Preview</h2>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">This is how your website will look</p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg"
+            className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-lg self-start sm:self-auto"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
         </div>
 
@@ -228,24 +228,24 @@ const WebsitePreview = ({ formData, onClose }) => {
         <div className="p-0">
           {/* Navbar */}
           <nav className={`bg-white border-b-2 ${theme.accent.replace('text-', 'border-')} sticky top-0 z-50 shadow-sm`}>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <div className="flex items-center justify-between flex-wrap gap-4">
-                <div className="flex items-center gap-3 min-w-0 flex-1">
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-3 sm:py-4">
+              <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-4">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
                   {logoUrl ? (
-                    <img src={logoUrl} alt={formData.businessName} className="w-12 h-12 object-contain rounded-lg flex-shrink-0" />
+                    <img src={logoUrl} alt={formData.businessName} className="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-lg flex-shrink-0" />
                   ) : (
-                    <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <span className="text-gray-600 font-bold text-xl">{formData.businessName.charAt(0).toUpperCase()}</span>
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-gray-600 font-bold text-lg sm:text-xl">{formData.businessName.charAt(0).toUpperCase()}</span>
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <h1 className="text-xl font-bold text-gray-900 truncate">{formData.businessName}</h1>
+                    <h1 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 truncate">{formData.businessName}</h1>
                     {formData.navbarTagline && (
                       <p className="text-xs text-gray-600 truncate">{formData.navbarTagline}</p>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center gap-4 flex-wrap">
+                <div className="flex items-center gap-2 sm:gap-4 flex-wrap text-sm sm:text-base">
                   <a href="#home" className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap">Home</a>
                   {(formData.services && formData.services.length > 0) && (
                     <a href="#services" className="text-gray-700 hover:text-blue-600 font-medium whitespace-nowrap">Services</a>
@@ -277,24 +277,24 @@ const WebsitePreview = ({ formData, onClose }) => {
                       {formData.category}
                     </div>
                   )}
-                  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 break-words">{formData.businessName}</h1>
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 break-words px-4 sm:px-0">{formData.businessName}</h1>
                   {formData.ownerName && (
-                    <p className="text-lg md:text-xl text-blue-100 mb-3">Owner: {formData.ownerName}</p>
+                    <p className="text-sm sm:text-base md:text-lg text-blue-100 mb-3 px-4 sm:px-0">Owner: {formData.ownerName}</p>
                   )}
                   {formData.navbarTagline && (
-                    <p className="text-base md:text-lg text-blue-100 mb-6 md:mb-8 italic">{formData.navbarTagline}</p>
+                    <p className="text-xs sm:text-sm md:text-base lg:text-lg text-blue-100 mb-4 sm:mb-6 md:mb-8 italic px-4 sm:px-0">{formData.navbarTagline}</p>
                   )}
                   {(formData.mobileNumber || formData.whatsappNumber) && (
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start px-4 sm:px-0">
                       {formData.mobileNumber && (
-                        <a href={`tel:${formData.mobileNumber}`} className={`px-6 py-3 ${theme.button} text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105`}>
-                          <Phone className="w-5 h-5" />
+                        <a href={`tel:${formData.mobileNumber}`} className={`px-4 sm:px-6 py-2.5 sm:py-3 ${theme.button} text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105 text-sm sm:text-base`}>
+                          <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
                           Call Now
                         </a>
                       )}
                       {formData.whatsappNumber && (
-                        <a href={`https://wa.me/${formData.whatsappNumber.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105">
-                          <MessageCircle className="w-5 h-5" />
+                        <a href={`https://wa.me/${formData.whatsappNumber.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="px-4 sm:px-6 py-2.5 sm:py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105 text-sm sm:text-base">
+                          <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5" />
                           WhatsApp
                         </a>
                       )}

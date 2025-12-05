@@ -43,10 +43,10 @@ const HowItWorks = () => {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-6"
         >
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-gray-900 mb-4 tracking-tight leading-tight px-4">
             How <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">VaranasiHub</span> Works
           </h2>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto font-light leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-light leading-relaxed px-4">
             Get your business online in just 4 simple steps
           </p>
         </motion.div>
@@ -74,8 +74,8 @@ const HowItWorks = () => {
                       {step.number}
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3 text-center">{step.title}</h3>
-                  <p className="text-gray-600 text-center leading-relaxed">{step.description}</p>
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 text-center">{step.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-600 text-center leading-relaxed">{step.description}</p>
                 </div>
               </motion.div>
             );

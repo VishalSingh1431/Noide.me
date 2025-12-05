@@ -152,10 +152,10 @@ const Pricing = () => {
             transition={{ duration: 0.8 }}
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
           >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 tracking-tight leading-tight px-4">
               Simple, Transparent <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Pricing</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light px-4">
               Choose the perfect plan for your business. All plans include a 14-day free trial.
             </p>
           </motion.div>
@@ -168,7 +168,7 @@ const Pricing = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-6 sm:py-8"
           >
             {plans.map((plan, index) => {
               const Icon = plan.icon;
@@ -180,7 +180,7 @@ const Pricing = () => {
                   whileHover={{ y: -12, scale: 1.02 }}
                   className={`relative bg-white rounded-3xl shadow-xl border-2 overflow-hidden transition-all duration-500 ${
                     plan.popular 
-                      ? 'border-purple-500 scale-105 md:scale-110 shadow-2xl' 
+                      ? 'border-purple-500 md:scale-105 lg:scale-110 shadow-2xl' 
                       : 'border-gray-100 hover:border-purple-300 hover:shadow-2xl'
                   }`}
                 >
