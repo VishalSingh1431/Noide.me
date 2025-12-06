@@ -7,7 +7,7 @@ import compression from 'compression';
 import morgan from 'morgan';
 import { initializeDatabase } from './config/database.js';
 import { validateEnv } from './middleware/validateEnv.js';
-import { securityMiddleware, apiLimiter, authLimiter, uploadLimiter } from './middleware/security.js';
+import { securityMiddleware } from './middleware/security.js';
 import authRoutes from './routes/auth.js';
 import businessRoutes from './routes/businessRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
@@ -77,15 +77,7 @@ if (NODE_ENV === 'production') {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
-app.use('/api/auth', authLimiter);
-// Exclude analytics/track from rate limiting (it's called frequently)
-app.use('/api', (req, res, next) => {
-  if (req.path === '/analytics/track' || req.path.startsWith('/analytics/track')) {
-    return next(); // Skip rate limiting for analytics
-  }
-  apiLimiter(req, res, next);
-});
+// Rate limiting removed - no limits
 
 // Extract subdomain from hostname (for subdomain routing)
 app.use((req, res, next) => {
@@ -247,7 +239,7 @@ app.listen(PORT, () => {
     : `http://localhost:${PORT}/api`;
   console.log(`🌐 API Base URL: ${apiUrl}`);
   if (NODE_ENV === 'production') {
-    console.log(`🔒 Security: Enabled (Helmet, Rate Limiting)`);
+    console.log(`🔒 Security: Enabled (Helmet)`);
     console.log(`📊 Logging: Enabled (Morgan)`);
   }
 }).on('error', (err) => {

@@ -1,5 +1,4 @@
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 
 /**
  * Security middleware configuration
@@ -20,43 +19,6 @@ export const securityMiddleware = helmet({
   },
   crossOriginEmbedderPolicy: false,
   crossOriginResourcePolicy: { policy: "cross-origin" },
-});
-
-/**
- * Rate limiting for API routes - DISABLED (no limits)
- */
-export const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 1000000, // Very high limit (effectively unlimited)
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: false, // Disable ALL validations
-});
-
-/**
- * Rate limiting for auth routes - DISABLED (no limits)
- */
-export const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 1000000, // Very high limit (effectively unlimited)
-  message: 'Too many authentication attempts, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  skipSuccessfulRequests: true,
-  validate: false, // Disable ALL validations
-});
-
-/**
- * Rate limiting for file uploads - DISABLED (no limits)
- */
-export const uploadLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: 1000000, // Very high limit (effectively unlimited)
-  message: 'Too many file uploads, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  validate: false, // Disable ALL validations
 });
 
 

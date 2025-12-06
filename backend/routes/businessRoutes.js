@@ -16,12 +16,11 @@ import { uploadBusinessMedia, processCloudinaryUploads } from '../middleware/clo
 import { verifyToken } from '../middleware/auth.js';
 import { generateQRCode, downloadQRCodePNG } from '../controllers/qrController.js';
 import { upgradeToPremium, removePremium } from '../controllers/premiumController.js';
-import { uploadLimiter } from '../middleware/security.js';
 
 const router = express.Router();
 
 // Create business website (with file uploads)
-router.post('/create', uploadLimiter, (req, res, next) => {
+router.post('/create', (req, res, next) => {
   uploadBusinessMedia(req, res, (err) => {
     if (err) {
       // Handle multer errors
@@ -58,7 +57,7 @@ router.get('/my-businesses', verifyToken, getUserBusinesses);
 router.get('/edit/:id', verifyToken, getBusinessById);
 
 // Update business (requires authentication)
-router.put('/edit/:id', verifyToken, uploadLimiter, (req, res, next) => {
+router.put('/edit/:id', verifyToken, (req, res, next) => {
   uploadBusinessMedia(req, res, (err) => {
     if (err) {
       if (err instanceof multer.MulterError) {
