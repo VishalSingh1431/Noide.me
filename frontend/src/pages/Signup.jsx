@@ -47,7 +47,12 @@ const Signup = () => {
         console.warn(response.warning);
       }
     } catch (err) {
-      setError(err.message);
+      // Show user-friendly error message
+      let errorMessage = err.message || 'Failed to send OTP';
+      if (err.help) {
+        errorMessage = `${errorMessage}\n\n💡 ${err.help}`;
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -77,7 +82,12 @@ const Signup = () => {
       // Redirect to home
       navigate('/');
     } catch (err) {
-      setOtpError(err.message);
+      // Show user-friendly error message
+      let errorMessage = err.message || 'Failed to verify OTP';
+      if (err.help) {
+        errorMessage = `${errorMessage}\n\n💡 ${err.help}`;
+      }
+      setOtpError(errorMessage);
     } finally {
       setLoading(false);
     }
