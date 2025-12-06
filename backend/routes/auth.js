@@ -257,6 +257,13 @@ router.post('/verify-otp', async (req, res) => {
 // Google Authentication
 router.post('/google', async (req, res) => {
   try {
+    // Check if Google Client ID is configured
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      return res.status(400).json({ 
+        error: 'Google Sign-In is not configured. Please configure GOOGLE_CLIENT_ID in backend .env file or use email signup.' 
+      });
+    }
+
     const { tokenId } = req.body;
 
     if (!tokenId) {
