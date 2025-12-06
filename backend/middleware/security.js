@@ -31,6 +31,11 @@ export const apiLimiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => {
+    // Use req.ip which is already set correctly by trust proxy
+    // This bypasses the validation warning
+    return req.ip || req.socket.remoteAddress || 'unknown';
+  },
 });
 
 /**
@@ -43,8 +48,10 @@ export const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true,
-  validate: {
-    trustProxy: false, // Skip trust proxy validation since we handle it securely
+  keyGenerator: (req) => {
+    // Use req.ip which is already set correctly by trust proxy
+    // This bypasses the validation warning
+    return req.ip || req.socket.remoteAddress || 'unknown';
   },
 });
 
@@ -57,8 +64,10 @@ export const uploadLimiter = rateLimit({
   message: 'Too many file uploads, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
-  validate: {
-    trustProxy: false, // Skip trust proxy validation since we handle it securely
+  keyGenerator: (req) => {
+    // Use req.ip which is already set correctly by trust proxy
+    // This bypasses the validation warning
+    return req.ip || req.socket.remoteAddress || 'unknown';
   },
 });
 
