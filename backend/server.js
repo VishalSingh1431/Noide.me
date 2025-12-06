@@ -30,8 +30,9 @@ const PORT = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Trust proxy - Required when behind Nginx reverse proxy
+// Trust only the first proxy (Nginx) - more secure than trusting all proxies
 // This allows Express to trust the X-Forwarded-For header from Nginx
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 // Initialize PostgreSQL database (non-blocking)
 initializeDatabase()

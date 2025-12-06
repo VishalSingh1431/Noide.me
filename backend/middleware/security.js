@@ -43,6 +43,9 @@ export const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   skipSuccessfulRequests: true,
+  validate: {
+    trustProxy: false, // Skip trust proxy validation since we handle it securely
+  },
 });
 
 /**
@@ -54,6 +57,9 @@ export const uploadLimiter = rateLimit({
   message: 'Too many file uploads, please try again later.',
   standardHeaders: true,
   legacyHeaders: false,
+  validate: {
+    trustProxy: false, // Skip trust proxy validation since we handle it securely
+  },
 });
 
 
