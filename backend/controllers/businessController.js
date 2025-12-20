@@ -96,7 +96,7 @@ export const testCreateCollege = async (req, res) => {
       },
       slug: `test-college-${Date.now()}`,
       subdomainUrl: `https://test-college-${Date.now()}.varanasihub.com`,
-      subdirectoryUrl: `https://varanasihub.com/test-college-${Date.now()}`,
+      subdirectoryUrl: null,
       status: 'pending',
       userId: null,
     };
@@ -480,22 +480,22 @@ export const createBusiness = async (req, res) => {
       appointmentSettingsData = {};
     }
 
-    // Generate subdomain and subdirectory URLs
+    // Generate subdomain URL only
     // Default to production unless explicitly in development mode
     const isDevelopment = process.env.NODE_ENV === 'development';
     const baseDomain = process.env.BASE_DOMAIN || 'varanasihub.com';
 
-    let subdomainUrl, subdirectoryUrl;
+    let subdomainUrl;
+    // Subdirectory URL is deprecated and will be null
+    const subdirectoryUrl = null;
 
     if (isDevelopment) {
       // For localhost: use http://subdomain.localhost:PORT
       const port = process.env.PORT || 5000;
       subdomainUrl = `http://${slug}.localhost:${port}`;
-      subdirectoryUrl = `http://localhost:${port}/${slug}`;
     } else {
       // For production: use https://subdomain.domain.com
       subdomainUrl = `https://${slug}.${baseDomain}`;
-      subdirectoryUrl = `https://${baseDomain}/${slug}`;
     }
 
     // FINAL SAFETY CHECK - ensure category is ALWAYS valid before database

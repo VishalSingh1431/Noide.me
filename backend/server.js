@@ -164,46 +164,42 @@ app.get('/:slug', async (req, res, next) => {
 
   // Skip if it's an API route
   if (req.path.startsWith('/api')) {
-    console.log(`[Subdirectory Route] Skipping API route: ${req.path}`);
     return next();
   }
 
   // Skip if there's a subdomain (subdomain routing takes precedence)
   if (req.subdomain && req.subdomain !== 'www' && req.subdomain !== 'api') {
-    console.log(`[Subdirectory Route] Skipping - subdomain present: ${req.subdomain}`);
     return next();
   }
 
   // Skip if the path looks like a file (has an extension)
   if (slug.includes('.')) {
-    console.log(`[Subdirectory Route] Skipping - looks like a file: ${slug}`);
     return next();
   }
 
   try {
-    console.log(`[Subdirectory Route] Looking up business with slug: ${slug}`);
+    console.log(`[Subdirectory Route] Looking up business for redirect: ${slug}`);
     const Business = (await import('./models/Business.js')).default;
+    // We only redirect if the business actually exists and is approved
     const business = await Business.findBySlug(slug, ['approved']);
 
     if (!business) {
-      // Business not found, let it fall through to 404 handler
       console.log(`[Subdirectory Route] Business not found for slug: ${slug}`);
       return next();
     }
 
-    console.log(`[Subdirectory Route] Business found: ${business.businessName}, generating HTML...`);
-    // Business found, generate and return HTML
-    const { generateBusinessHTML } = await import('./views/businessTemplate.js');
-    const apiBaseUrl = NODE_ENV === 'production'
-      ? `https://${process.env.BASE_DOMAIN || 'varanasihub.com'}/api`
-      : `http://localhost:${PORT}/api`;
-    const html = generateBusinessHTML(business, apiBaseUrl);
-    res.setHeader('Content-Type', 'text/html');
-    return res.send(html);
+    console.log(`[Subdirectory Route] Business found: ${business.businessName}, redirecting to subdomain...`);
+
+    // Construct subdomain URL dynamically to ensure it matches current environment
+    const baseDomain = process.env.BASE_DOMAIN || 'varanasihub.com';
+    const subdomainUrl = NODE_ENV === 'production'
+      ? `https://${business.slug}.${baseDomain}`
+      : `http://${business.slug}.localhost:${PORT}`;
+
+    return res.redirect(301, subdomainUrl);
+
   } catch (error) {
     console.error('[Subdirectory Route] Error:', error);
-    console.error('[Subdirectory Route] Error stack:', error.stack);
-    // On error, fall through to 404 handler
     return next();
   }
 });

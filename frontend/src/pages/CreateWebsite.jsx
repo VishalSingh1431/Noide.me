@@ -937,7 +937,6 @@ const CreateWebsite = () => {
           ? 'Your website has been submitted and is pending admin approval. You will be promoted to Content Admin once approved. You can check the status in your profile.'
           : 'Your website is live!',
         subdomain: data.business.subdomainUrl,
-        subdirectory: data.business.subdirectoryUrl,
         status: data.business.status
       });
       setErrorMessage(null);
@@ -1103,7 +1102,6 @@ const CreateWebsite = () => {
                     {successMessage.status === 'approved' && (
                       <div className="space-y-2 text-sm text-green-800">
                         <p><strong>Subdomain:</strong> <a href={successMessage.subdomain} target="_blank" rel="noopener noreferrer" className="underline hover:text-green-600">{successMessage.subdomain}</a></p>
-                        <p><strong>Subdirectory:</strong> <a href={successMessage.subdirectory} target="_blank" rel="noopener noreferrer" className="underline hover:text-green-600">{successMessage.subdirectory}</a></p>
                       </div>
                     )}
                     <button
@@ -1898,8 +1896,8 @@ const CreateWebsite = () => {
                               type="button"
                               onClick={() => toggleServiceFeatured(index)}
                               className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${service.featured
-                                  ? 'bg-yellow-500 text-white'
-                                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                                ? 'bg-yellow-500 text-white'
+                                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                                 }`}
                             >
                               {service.featured ? '⭐ Featured' : 'Mark Featured'}
@@ -2096,8 +2094,8 @@ const CreateWebsite = () => {
                           type="button"
                           onClick={() => updateAppointmentSettings('contactMethod', 'whatsapp')}
                           className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all ${formData.appointmentSettings.contactMethod === 'whatsapp'
-                              ? 'bg-green-600 text-white shadow-lg'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-green-600 text-white shadow-lg'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                         >
                           WhatsApp
@@ -2106,8 +2104,8 @@ const CreateWebsite = () => {
                           type="button"
                           onClick={() => updateAppointmentSettings('contactMethod', 'call')}
                           className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all ${formData.appointmentSettings.contactMethod === 'call'
-                              ? 'bg-blue-600 text-white shadow-lg'
-                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                             }`}
                         >
                           Call
