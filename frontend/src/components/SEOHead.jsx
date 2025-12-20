@@ -2,11 +2,8 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { getOrigin } from '../utils/urlHelper';
 
-<<<<<<< HEAD
 export const SEOHead = ({
-=======
-export const SEOHead = ({ 
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
   title = 'VaranasiHub - Create Your Business Website in Minutes',
   description = 'Help your Varanasi business go online. Create a professional website in minutes with zero coding skills.',
   image = '/og-image.jpg',
@@ -24,7 +21,6 @@ export const SEOHead = ({
   faqItems,
   noindex = false,
   nofollow = false,
-<<<<<<< HEAD
   // New props for enhanced schemas
   serviceType,
   serviceArea,
@@ -43,8 +39,7 @@ export const SEOHead = ({
   geoLongitude,
   openingHours,
   socialLinks,
-=======
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
 }) => {
   const location = useLocation();
   const origin = getOrigin();
@@ -59,21 +54,15 @@ export const SEOHead = ({
     const updateMetaTag = (name, content, isProperty = false) => {
       const attribute = isProperty ? 'property' : 'name';
       let element = document.querySelector(`meta[${attribute}="${name}"]`);
-<<<<<<< HEAD
 
-=======
-      
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
       if (!element) {
         element = document.createElement('meta');
         element.setAttribute(attribute, name);
         document.head.appendChild(element);
       }
-<<<<<<< HEAD
 
-=======
-      
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
       element.setAttribute('content', content);
     };
 
@@ -81,18 +70,13 @@ export const SEOHead = ({
     updateMetaTag('description', description);
     updateMetaTag('viewport', 'width=device-width, initial-scale=1');
     updateMetaTag('author', author);
-<<<<<<< HEAD
     updateMetaTag('robots', noindex || nofollow
       ? `${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}`
-=======
-    updateMetaTag('robots', noindex || nofollow 
-      ? `${noindex ? 'noindex' : 'index'}, ${nofollow ? 'nofollow' : 'follow'}` 
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
       : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
     );
     updateMetaTag('googlebot', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
     updateMetaTag('bingbot', 'index, follow');
-<<<<<<< HEAD
 
     if (keywords) {
       updateMetaTag('keywords', keywords);
@@ -102,17 +86,7 @@ export const SEOHead = ({
       updateMetaTag('article:published_time', publishedTime, true);
     }
 
-=======
-    
-    if (keywords) {
-      updateMetaTag('keywords', keywords);
-    }
-    
-    if (publishedTime) {
-      updateMetaTag('article:published_time', publishedTime, true);
-    }
-    
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
     if (modifiedTime) {
       updateMetaTag('article:modified_time', modifiedTime, true);
     }
@@ -186,15 +160,9 @@ export const SEOHead = ({
         areaServed: 'IN',
         availableLanguage: ['en', 'hi']
       },
-<<<<<<< HEAD
       // Only add social links if real profiles exist
       ...(socialLinks && socialLinks.length > 0 && { sameAs: socialLinks }),
-=======
-      sameAs: [
-        'https://facebook.com/varanasihub',
-        'https://instagram.com/varanasihub',
-      ],
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Varanasi',
@@ -279,7 +247,6 @@ export const SEOHead = ({
       }
 
       businessSchema.priceRange = '$$';
-<<<<<<< HEAD
 
       // Only add aggregateRating if we have real data (avoid Google penalties for fake ratings)
       if (actualRating && actualReviewCount && actualReviewCount > 0) {
@@ -308,37 +275,7 @@ export const SEOHead = ({
           closes: hours.closes
         }));
       }
-=======
-      businessSchema.aggregateRating = {
-        '@type': 'AggregateRating',
-        ratingValue: '4.5',
-        reviewCount: '100'
-      };
 
-      // Add GeoCoordinates if address exists
-      if (businessAddress) {
-        businessSchema.geo = {
-          '@type': 'GeoCoordinates',
-          latitude: '25.3176',
-          longitude: '82.9739'
-        };
-      }
-
-      // Add openingHours (can be enhanced with actual data)
-      businessSchema.openingHoursSpecification = {
-        '@type': 'OpeningHoursSpecification',
-        dayOfWeek: [
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday'
-        ],
-        opens: '09:00',
-        closes: '18:00'
-      };
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
 
       // Add ServiceArea
       businessSchema.areaServed = {
@@ -376,7 +313,6 @@ export const SEOHead = ({
       structuredDataArray.push(articleSchema);
     }
 
-<<<<<<< HEAD
     // Service Schema (for service pages)
     if (serviceType) {
       const serviceSchema = {
@@ -481,8 +417,7 @@ export const SEOHead = ({
       structuredDataArray.push(productSchema);
     }
 
-=======
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
     // Add hreflang tags for multi-language support
     let hreflangEn = document.querySelector('link[hreflang="en"]');
     if (!hreflangEn) {
@@ -548,11 +483,8 @@ export const SEOHead = ({
       script.text = JSON.stringify(schema);
       document.head.appendChild(script);
     });
-<<<<<<< HEAD
   }, [title, description, image, currentUrl, type, businessName, businessAddress, businessPhone, businessCategory, keywords, author, publishedTime, modifiedTime, breadcrumbs, faqItems, noindex, nofollow, siteUrl, serviceType, serviceArea, howToSteps, videoUrl, videoThumbnail, videoDuration, videoPublishedDate, productPrice, productCurrency, productAvailability, actualRating, actualReviewCount, geoLatitude, geoLongitude, openingHours, socialLinks]);
-=======
-  }, [title, description, image, currentUrl, type, businessName, businessAddress, businessPhone, businessCategory, keywords, author, publishedTime, modifiedTime, breadcrumbs, faqItems, noindex, nofollow, siteUrl]);
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
 
   return null;
 };

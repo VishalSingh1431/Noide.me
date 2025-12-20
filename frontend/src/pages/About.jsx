@@ -116,70 +116,50 @@ const About = () => {
       <Navbar />
       <div className="min-h-screen bg-white">
         {/* Hero Section */}
-<<<<<<< HEAD
         <section className="relative overflow-hidden bg-white py-4 md:py-6 lg:py-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-=======
-        <section className="relative overflow-hidden bg-white py-8 md:py-10 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-<<<<<<< HEAD
             className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 text-center"
           >
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-2 md:mb-3 tracking-tight leading-tight">
               About <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">VaranasiHub</span>
             </h1>
             <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 max-w-3xl mx-auto font-light">
-=======
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
-          >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
-              About <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">VaranasiHub</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
               Empowering local businesses in Varanasi with professional websites and digital presence.
             </p>
           </motion.div>
         </section>
 
-<<<<<<< HEAD
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 md:py-6 lg:py-8">
-=======
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
           {/* Story Section */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
             className="bg-white rounded-lg md:rounded-2xl lg:rounded-3xl border border-gray-100 p-4 sm:p-6 md:p-8 lg:p-12 mb-4 sm:mb-6 md:mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
           >
             <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black text-gray-900 tracking-tight mb-3 sm:mb-4 md:mb-6">Our Story</h2>
             <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none text-gray-600 space-y-3 sm:space-y-4 md:space-y-6 text-sm sm:text-base md:text-lg leading-relaxed">
-=======
-            className="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
-          >
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight mb-6">Our Story</h2>
-            <div className="prose prose-lg max-w-none text-gray-600 space-y-6 text-lg leading-relaxed">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
               <p>
-                VaranasiHub was born from a simple idea: every local business in Varanasi deserves 
-                a professional online presence. In today's digital age, having a website is not just 
+                VaranasiHub was born from a simple idea: every local business in Varanasi deserves
+                a professional online presence. In today's digital age, having a website is not just
                 a luxury—it's a necessity.
               </p>
               <p>
-                We started with a mission to help small and medium businesses in Varanasi establish 
-                their digital footprint without the complexity and high costs typically associated 
-                with web development. Our team understands the unique needs of local businesses and 
+                We started with a mission to help small and medium businesses in Varanasi establish
+                their digital footprint without the complexity and high costs typically associated
+                with web development. Our team understands the unique needs of local businesses and
                 creates websites that truly represent their brand and connect with their customers.
               </p>
               <p>
-                Today, we're proud to have helped hundreds of businesses in Varanasi grow their 
+                Today, we're proud to have helped hundreds of businesses in Varanasi grow their
                 online presence, reach more customers, and thrive in the digital marketplace.
               </p>
             </div>
@@ -191,18 +171,14 @@ const About = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-<<<<<<< HEAD
             className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-4 sm:mb-6 md:mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-3 sm:py-4 md:py-6 lg:py-8"
-=======
-            className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-8"
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
           >
             {stats.map((stat, index) => (
               <motion.div
                 key={index}
                 variants={itemVariants}
                 whileHover={{ scale: 1.05, y: -8 }}
-<<<<<<< HEAD
                 className="bg-white rounded-lg md:rounded-xl lg:rounded-2xl shadow-xl border border-gray-100 p-3 sm:p-4 md:p-5 lg:p-6 text-center hover:shadow-2xl transition-all duration-300"
               >
                 <div className={`inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-gradient-to-br ${stat.gradient} rounded-lg md:rounded-xl lg:rounded-2xl mb-2 sm:mb-3 shadow-lg`}>
@@ -212,17 +188,7 @@ const About = () => {
                   {stat.number}
                 </div>
                 <div className="text-gray-600 font-semibold text-xs sm:text-xs md:text-sm">{stat.label}</div>
-=======
-                className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 text-center hover:shadow-2xl transition-all duration-300"
-              >
-                <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${stat.gradient} rounded-2xl mb-3 shadow-lg`}>
-                  <Award className="w-8 h-8 text-white" />
-                </div>
-                <div className="text-4xl md:text-5xl font-black text-gray-900 mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 font-semibold text-sm">{stat.label}</div>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
               </motion.div>
             ))}
           </motion.div>
@@ -233,11 +199,8 @@ const About = () => {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-<<<<<<< HEAD
             className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8 mb-4 sm:mb-6 md:mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-3 sm:py-4 md:py-6 lg:py-8"
-=======
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-8"
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
           >
             {values.map((value, index) => {
               const Icon = value.icon;
@@ -246,7 +209,6 @@ const About = () => {
                   key={index}
                   variants={itemVariants}
                   whileHover={{ y: -12, scale: 1.02 }}
-<<<<<<< HEAD
                   className="bg-white rounded-lg md:rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 md:p-8 text-center hover:shadow-2xl transition-all duration-500 overflow-hidden relative group"
                 >
                   <div className={`absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 bg-gradient-to-br ${value.gradient} opacity-10 rounded-full blur-3xl -z-10 group-hover:opacity-20 transition-opacity duration-500`}></div>
@@ -255,16 +217,7 @@ const About = () => {
                   </div>
                   <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">{value.title}</h3>
                   <p className="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">{value.description}</p>
-=======
-                  className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center hover:shadow-2xl transition-all duration-500 overflow-hidden relative group"
-                >
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${value.gradient} opacity-10 rounded-full blur-3xl -z-10 group-hover:opacity-20 transition-opacity duration-500`}></div>
-                  <div className={`inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br ${value.gradient} rounded-2xl mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                    <Icon className="w-10 h-10 text-white" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-3">{value.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{value.description}</p>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                 </motion.div>
               );
             })}
@@ -276,17 +229,11 @@ const About = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
             className="bg-white rounded-lg md:rounded-2xl lg:rounded-3xl border border-gray-100 p-4 sm:p-6 md:p-8 lg:p-12 mb-4 sm:mb-6 md:mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
           >
             <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black text-gray-900 tracking-tight mb-3 sm:mb-4 md:mb-6">Why Choose Us</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
-=======
-            className="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
-          >
-            <h2 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tight mb-6">Why Choose Us</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
               {team.map((item, index) => (
                 <motion.div
                   key={index}
@@ -295,7 +242,6 @@ const About = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.15 }}
                   whileHover={{ scale: 1.05, y: -5 }}
-<<<<<<< HEAD
                   className="bg-white rounded-lg md:rounded-xl lg:rounded-2xl p-3 sm:p-4 md:p-5 lg:p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
                 >
                   <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br ${item.gradient} rounded-lg md:rounded-xl flex items-center justify-center mb-2 sm:mb-3 shadow-lg`}>
@@ -304,16 +250,7 @@ const About = () => {
                   <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-1 sm:mb-2">{item.name}</h3>
                   <p className="text-xs sm:text-sm md:text-base text-blue-600 font-semibold mb-1 sm:mb-2">{item.role}</p>
                   <p className="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">{item.description}</p>
-=======
-                  className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
-                >
-                  <div className={`w-14 h-14 bg-gradient-to-br ${item.gradient} rounded-xl flex items-center justify-center mb-3 shadow-lg`}>
-                    <Rocket className="w-7 h-7 text-white" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{item.name}</h3>
-                  <p className="text-blue-600 font-semibold mb-2">{item.role}</p>
-                  <p className="text-gray-600 leading-relaxed">{item.description}</p>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                 </motion.div>
               ))}
             </div>
@@ -325,7 +262,6 @@ const About = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
             className="bg-white rounded-lg md:rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 md:p-8 lg:p-12 text-center relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
           >
             <div className="relative z-10">
@@ -333,26 +269,15 @@ const About = () => {
                 Join the VaranasiHub Community
               </h2>
               <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 mb-4 sm:mb-6 md:mb-8 max-w-2xl mx-auto font-light">
-=======
-            className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 md:p-12 text-center relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
-          >
-            <div className="relative z-10">
-              <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4 tracking-tight">
-                Join the VaranasiHub Community
-              </h2>
-              <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto font-light">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                 Be part of the growing network of successful businesses in Varanasi.
               </p>
               <Link to="/create-website">
                 <motion.button
                   whileHover={{ scale: 1.05, y: -2 }}
                   whileTap={{ scale: 0.98 }}
-<<<<<<< HEAD
                   className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 md:px-10 py-2 sm:py-3 md:py-4 rounded-lg md:rounded-xl lg:rounded-2xl font-bold text-sm sm:text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
-=======
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                 >
                   Get Started Today
                 </motion.button>

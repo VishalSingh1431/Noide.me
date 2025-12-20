@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Sparkles, Building2, Music, Utensils, Map, ChevronDown } from 'lucide-react';
@@ -6,12 +5,7 @@ import { Globe, Sparkles, Building2, Music, Utensils, Map, ChevronDown } from 'l
 const FamousVaranasiSection = () => {
   const [showAll, setShowAll] = useState(false);
   const initialItems = 3;
-=======
-import { motion } from 'framer-motion';
-import { Globe, Sparkles, Building2, Music, Utensils, Map } from 'lucide-react';
 
-const FamousVaranasiSection = () => {
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
   const famousItems = [
     {
       icon: Globe,
@@ -58,44 +52,28 @@ const FamousVaranasiSection = () => {
   ];
 
   return (
-<<<<<<< HEAD
     <section id="famous-varanasi" className="py-4 md:py-6 lg:py-8 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 relative z-10">
-=======
-    <section id="famous-varanasi" className="py-8 md:py-10 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
           className="text-center mb-3 md:mb-4"
         >
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 md:mb-2 tracking-tight leading-tight">
             Famous <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Varanasi</span>
           </h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-700 max-w-3xl mx-auto font-light leading-relaxed">
-=======
-          className="text-center mb-6"
-        >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
-            Famous <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Varanasi</span>
-          </h2>
-          <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto font-light leading-relaxed">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
             Discover what makes Varanasi one of the world's most spiritual and culturally rich cities
           </p>
         </motion.div>
 
-<<<<<<< HEAD
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           {(showAll ? famousItems : famousItems.slice(0, initialItems)).map((item, index) => {
-=======
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {famousItems.map((item, index) => {
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
             const Icon = item.icon;
             return (
               <motion.div
@@ -107,13 +85,9 @@ const FamousVaranasiSection = () => {
                 whileHover={{ y: -12 }}
                 className="group relative"
               >
-<<<<<<< HEAD
                 <div className="relative bg-white rounded-lg md:rounded-2xl lg:rounded-3xl overflow-hidden border-2 border-gray-200 h-full hover:border-blue-300 hover:shadow-xl transition-all duration-500">
                   <div className="h-48 sm:h-56 md:h-64 relative overflow-hidden">
-=======
-                <div className="relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 h-full hover:border-blue-300 hover:shadow-xl transition-all duration-500">
-                  <div className="h-64 relative overflow-hidden">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                     <img
                       src={item.image}
                       alt={`${item.title} - ${item.description.substring(0, 50)}...`}
@@ -124,7 +98,6 @@ const FamousVaranasiSection = () => {
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-<<<<<<< HEAD
                     <div className="absolute top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg md:rounded-xl lg:rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                       <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8 text-white" />
                     </div>
@@ -132,23 +105,13 @@ const FamousVaranasiSection = () => {
                   <div className="p-3 sm:p-4 md:p-5 lg:p-6">
                     <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 md:mb-3">{item.title}</h3>
                     <p className="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">{item.description}</p>
-=======
-                    <div className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-                      <Icon className="w-8 h-8 text-white" />
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">{item.title}</h3>
-                    <p className="text-gray-600 leading-relaxed">{item.description}</p>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                   </div>
                 </div>
               </motion.div>
             );
           })}
         </div>
-<<<<<<< HEAD
-
         {famousItems.length > initialItems && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -165,8 +128,7 @@ const FamousVaranasiSection = () => {
             </button>
           </motion.div>
         )}
-=======
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
       </div>
     </section>
   );

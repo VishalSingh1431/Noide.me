@@ -15,25 +15,15 @@ const TrustStrip = ({ stats, loading = false }) => {
 
   return (
     <section className="relative -mt-8 z-20 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-<<<<<<< HEAD
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
-=======
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
         <motion.div
           initial={{ opacity: 0, y: 60 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
           className="bg-white rounded-xl md:rounded-2xl p-3 sm:p-4 md:p-6 lg:p-8 border-2 border-gray-200 shadow-xl"
         >
           <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-6 lg:gap-8">
-=======
-          className="bg-white rounded-3xl p-8 md:p-12 border-2 border-gray-200 shadow-xl"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
             {trustStats.map((stat, index) => {
               const Icon = stat.icon;
               return (
@@ -46,21 +36,12 @@ const TrustStrip = ({ stats, loading = false }) => {
                   whileHover={{ scale: 1.05, y: -5 }}
                   className="text-center group"
                 >
-<<<<<<< HEAD
                   <div className="inline-flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg md:rounded-xl mb-1 sm:mb-2 md:mb-3 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
                     <Icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 lg:w-8 lg:h-8 text-white" />
                   </div>
                   {loading ? (
                     <div className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 sm:mb-2 md:mb-3 tracking-tight">
                       <div className="h-6 sm:h-8 md:h-12 lg:h-16 w-12 sm:w-16 md:w-20 lg:w-24 bg-gray-200 rounded-lg animate-pulse mx-auto"></div>
-=======
-                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl mb-4 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
-                    <Icon className="w-10 h-10 text-white" />
-                  </div>
-                  {loading ? (
-                    <div className="text-5xl md:text-6xl font-black text-gray-900 mb-3 tracking-tight">
-                      <div className="h-16 w-24 bg-gray-200 rounded-lg animate-pulse mx-auto"></div>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                     </div>
                   ) : (
                     <motion.div
@@ -68,20 +49,12 @@ const TrustStrip = ({ stats, loading = false }) => {
                       whileInView={{ opacity: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.2 + 0.4 }}
-<<<<<<< HEAD
                       className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 sm:mb-2 md:mb-3 tracking-tight"
-=======
-                      className="text-5xl md:text-6xl font-black text-gray-900 mb-3 tracking-tight"
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                     >
                       {stat.number}
                     </motion.div>
                   )}
-<<<<<<< HEAD
                   <div className="text-gray-600 font-medium text-xs sm:text-sm md:text-base lg:text-lg leading-tight">{stat.label}</div>
-=======
-                  <div className="text-gray-600 font-medium text-lg">{stat.label}</div>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                 </motion.div>
               );
             })}

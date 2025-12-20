@@ -4,13 +4,8 @@ import { Rocket } from 'lucide-react';
 
 const ReadyToGoLiveCTA = () => {
   return (
-<<<<<<< HEAD
     <section className="relative py-4 md:py-6 lg:py-8 overflow-hidden bg-white shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 text-center relative z-10">
-=======
-    <section className="relative py-8 md:py-10 overflow-hidden bg-white shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -20,30 +15,18 @@ const ReadyToGoLiveCTA = () => {
           <motion.h2
             animate={{ scale: [1, 1.03, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-<<<<<<< HEAD
             className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-3 sm:mb-4 md:mb-6 lg:mb-8 tracking-tight leading-tight"
           >
             Ready to Go Live? 🚀
           </motion.h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-700 mb-4 sm:mb-6 md:mb-8 max-w-2xl mx-auto font-light leading-relaxed">
-=======
-            className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-8 tracking-tight leading-tight"
-          >
-            Ready to Go Live? 🚀
-          </motion.h2>
-          <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-2xl mx-auto font-light leading-relaxed">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
             Create your Varanasi website now — starting at ₹1,000/year with 14-day free trial!
           </p>
           <Link to="/create-website">
             <motion.button
               whileHover={{ scale: 1.08, y: -4 }}
               whileTap={{ scale: 0.98 }}
-<<<<<<< HEAD
               className="group relative px-6 sm:px-8 md:px-10 lg:px-14 py-3 sm:py-4 md:py-5 lg:py-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg md:rounded-xl lg:rounded-2xl font-bold text-sm sm:text-base md:text-lg lg:text-xl shadow-2xl hover:shadow-[0_25px_60px_rgba(99,102,241,0.4)] overflow-hidden transition-all duration-300"
-=======
-              className="group relative px-14 py-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl font-bold text-xl shadow-2xl hover:shadow-[0_25px_60px_rgba(99,102,241,0.4)] overflow-hidden transition-all duration-300"
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
             >
               <span className="relative z-10 flex items-center gap-3">
                 Create My Website Now

@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, ChevronDown } from 'lucide-react';
@@ -7,12 +6,7 @@ const ApnaBanarasDetailed = () => {
   const [showAllGhats, setShowAllGhats] = useState(false);
   const [showAllTemples, setShowAllTemples] = useState(false);
   const initialItems = 3;
-=======
-import { motion } from 'framer-motion';
-import { MapPin } from 'lucide-react';
 
-const ApnaBanarasDetailed = () => {
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
   const ghats = [
     {
       name: 'Dashashwamedh Ghat',
@@ -119,33 +113,21 @@ const ApnaBanarasDetailed = () => {
   ];
 
   return (
-<<<<<<< HEAD
     <section id="apna-banaras" className="py-4 md:py-6 lg:py-8 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 relative z-10">
-=======
-    <section id="apna-banaras" className="py-8 md:py-10 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
           className="text-center mb-3 md:mb-4"
         >
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 md:mb-2 tracking-tight leading-tight">
             Apna <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Banaras</span>
           </h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-700 max-w-3xl mx-auto font-light leading-relaxed">
-=======
-          className="text-center mb-6"
-        >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
-            Apna <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Banaras</span>
-          </h2>
-          <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto font-light leading-relaxed">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
             Discover the essence of Varanasi through its iconic ghats, sacred temples, and rich cultural heritage
           </p>
         </motion.div>
@@ -156,19 +138,12 @@ const ApnaBanarasDetailed = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
           className="mb-3 md:mb-4"
         >
           <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight mb-3 md:mb-4">Famous Ghats of Varanasi</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
             {(showAllGhats ? ghats : ghats.slice(0, initialItems)).map((ghat, index) => (
-=======
-          className="mb-6"
-        >
-          <h3 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-6">Famous Ghats of Varanasi</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {ghats.map((ghat, index) => (
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 60 }}
@@ -176,15 +151,10 @@ const ApnaBanarasDetailed = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -12, scale: 1.02 }}
-<<<<<<< HEAD
                 className="group relative bg-white rounded-lg md:rounded-2xl lg:rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-500"
               >
                 <div className="h-48 sm:h-56 md:h-64 relative overflow-hidden">
-=======
-                className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-500"
-              >
-                <div className="h-64 relative overflow-hidden">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                   <img
                     src={ghat.image}
                     alt={`${ghat.name} - ${ghat.description ? ghat.description.substring(0, 60) : 'Famous ghat in Varanasi'}...`}
@@ -196,26 +166,18 @@ const ApnaBanarasDetailed = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 </div>
-<<<<<<< HEAD
                 <div className="p-3 sm:p-4 md:p-5 lg:p-6">
                   <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 md:mb-3">{ghat.name}</h4>
                   <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 md:mb-4 leading-relaxed">{ghat.description}</p>
                   <div className="flex items-center gap-2 text-blue-600 font-semibold text-xs sm:text-sm">
                     <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
-=======
-                <div className="p-6">
-                  <h4 className="text-2xl font-bold text-gray-900 mb-3">{ghat.name}</h4>
-                  <p className="text-gray-600 mb-4 leading-relaxed">{ghat.description}</p>
-                  <div className="flex items-center gap-2 text-blue-600 font-semibold">
-                    <MapPin className="w-5 h-5" />
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                     <span>{ghat.location}</span>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
-<<<<<<< HEAD
           {ghats.length > initialItems && (
             <div className="text-center mt-4">
               <button
@@ -227,8 +189,7 @@ const ApnaBanarasDetailed = () => {
               </button>
             </div>
           )}
-=======
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
         </motion.div>
 
         {/* Temples Section */}
@@ -237,19 +198,12 @@ const ApnaBanarasDetailed = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
           className="mb-3 md:mb-4"
         >
           <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight mb-3 md:mb-4">Sacred Temples of Varanasi</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
             {(showAllTemples ? temples : temples.slice(0, initialItems)).map((temple, index) => (
-=======
-          className="mb-6"
-        >
-          <h3 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-6">Sacred Temples of Varanasi</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {temples.map((temple, index) => (
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 60 }}
@@ -257,15 +211,10 @@ const ApnaBanarasDetailed = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -12, scale: 1.02 }}
-<<<<<<< HEAD
                 className="group relative bg-white rounded-lg md:rounded-2xl lg:rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-500"
               >
                 <div className="h-48 sm:h-56 md:h-64 relative overflow-hidden">
-=======
-                className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-500"
-              >
-                <div className="h-64 relative overflow-hidden">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                   <img
                     src={temple.image}
                     alt={`${temple.name} - ${temple.description ? temple.description.substring(0, 60) : 'Sacred temple in Varanasi'}...`}
@@ -277,26 +226,18 @@ const ApnaBanarasDetailed = () => {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 </div>
-<<<<<<< HEAD
                 <div className="p-3 sm:p-4 md:p-5 lg:p-6">
                   <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 md:mb-3">{temple.name}</h4>
                   <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 md:mb-4 leading-relaxed">{temple.description}</p>
                   <div className="flex items-center gap-2 text-purple-600 font-semibold text-xs sm:text-sm">
                     <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
-=======
-                <div className="p-6">
-                  <h4 className="text-2xl font-bold text-gray-900 mb-3">{temple.name}</h4>
-                  <p className="text-gray-600 mb-4 leading-relaxed">{temple.description}</p>
-                  <div className="flex items-center gap-2 text-purple-600 font-semibold">
-                    <MapPin className="w-5 h-5" />
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                     <span>{temple.location}</span>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
-<<<<<<< HEAD
           {temples.length > initialItems && (
             <div className="text-center mt-4">
               <button
@@ -308,8 +249,7 @@ const ApnaBanarasDetailed = () => {
               </button>
             </div>
           )}
-=======
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
         </motion.div>
 
         {/* Cultural Heritage Section */}
@@ -319,13 +259,9 @@ const ApnaBanarasDetailed = () => {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         >
-<<<<<<< HEAD
           <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight mb-3 md:mb-4">Cultural Heritage</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-=======
-          <h3 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight mb-6">Cultural Heritage</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
             {culturalHeritage.map((item, index) => (
               <motion.div
                 key={index}
@@ -334,15 +270,10 @@ const ApnaBanarasDetailed = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 whileHover={{ y: -12, scale: 1.02 }}
-<<<<<<< HEAD
                 className="group relative bg-white rounded-lg md:rounded-2xl lg:rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-500"
               >
                 <div className="h-48 sm:h-56 md:h-64 lg:h-80 relative overflow-hidden">
-=======
-                className="group relative bg-white rounded-3xl overflow-hidden border-2 border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-500"
-              >
-                <div className="h-80 relative overflow-hidden">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                   <img
                     src={item.image}
                     alt={item.title}
@@ -354,15 +285,10 @@ const ApnaBanarasDetailed = () => {
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${item.gradient} opacity-80`}></div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-<<<<<<< HEAD
                   <div className="absolute bottom-3 sm:bottom-4 md:bottom-6 left-3 sm:left-4 md:left-6 right-3 sm:right-4 md:right-6">
                     <h4 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-1 sm:mb-2 md:mb-3">{item.title}</h4>
                     <p className="text-white/90 leading-relaxed text-xs sm:text-sm md:text-base lg:text-lg">{item.description}</p>
-=======
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <h4 className="text-3xl font-bold text-white mb-3">{item.title}</h4>
-                    <p className="text-white/90 leading-relaxed text-lg">{item.description}</p>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
                   </div>
                 </div>
               </motion.div>

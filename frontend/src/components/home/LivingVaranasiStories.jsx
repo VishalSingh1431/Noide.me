@@ -5,42 +5,24 @@ const LivingVaranasiStories = ({ highlights = [] }) => {
   if (!highlights || highlights.length === 0) return null;
 
   return (
-<<<<<<< HEAD
     <section className="py-4 md:py-6 lg:py-8 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 relative z-10">
-=======
-    <section className="py-12 md:py-16 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
           className="text-center mb-3 md:mb-4"
         >
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 md:mb-2 tracking-tight leading-tight">
             Living Varanasi <span className="bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">Stories</span>
           </h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
-=======
-          className="text-center mb-6"
-        >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
-            Living Varanasi <span className="bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">Stories</span>
-          </h2>
-          <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
             From sunrise yoga at Assi Ghat to midnight aartis at Dashashwamedh, Banaras never sleeps. Explore the experiences locals swear by.
           </p>
         </motion.div>
 
-<<<<<<< HEAD
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-=======
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
           {highlights.map((highlight, index) => (
             <motion.div
               key={highlight.slug}
@@ -49,7 +31,6 @@ const LivingVaranasiStories = ({ highlights = [] }) => {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ y: -10, scale: 1.02 }}
-<<<<<<< HEAD
               className="relative overflow-hidden rounded-lg md:rounded-2xl lg:rounded-3xl border-2 border-gray-200 bg-white hover:border-blue-300 hover:shadow-xl transition-all duration-500"
             >
               <Link to={`/varanasi/${highlight.slug}`} className="grid grid-cols-1 lg:grid-cols-2 h-full">
@@ -61,19 +42,6 @@ const LivingVaranasiStories = ({ highlights = [] }) => {
                   </div>
                 </div>
                 <div className="relative h-48 sm:h-56 md:h-64 lg:h-full">
-=======
-              className="relative overflow-hidden rounded-3xl border-2 border-gray-200 bg-white hover:border-blue-300 hover:shadow-xl transition-all duration-500"
-            >
-              <Link to={`/varanasi/${highlight.slug}`} className="grid grid-cols-1 lg:grid-cols-2 h-full">
-                <div className="p-8 flex flex-col gap-4">
-                  <h3 className="text-2xl font-bold text-gray-900">{highlight.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{highlight.tagline}</p>
-                  <div className="flex items-center gap-2 text-amber-600 font-semibold">
-                    {highlight.stats?.[0]?.value} {highlight.stats?.[0]?.label}
-                  </div>
-                </div>
-                <div className="relative h-64 lg:h-full">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                   <div className="absolute inset-0">
                     <img
                       src={highlight.heroImage}

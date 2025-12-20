@@ -1,10 +1,4 @@
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD
-import { MessageCircle, Facebook, Instagram, Mail, Phone, MapPin, Zap, Globe, Shield, Rocket, ArrowRight } from 'lucide-react';
-
-const Footer = () => {
-  const currentYear = new Date().getFullYear();
-=======
 import { MessageCircle, Facebook, Instagram, Mail, Phone, MapPin, Zap, Globe, Shield, Rocket, ArrowRight, Send } from 'lucide-react';
 import { useState } from 'react';
 import { newsletterAPI } from '../config/api';
@@ -21,7 +15,7 @@ const Footer = () => {
   const handleNewsletterSubmit = async (e) => {
     e.preventDefault();
     setEmailError('');
-    
+
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -42,7 +36,7 @@ const Footer = () => {
       setIsSubmitting(false);
     }
   };
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
+
 
   const quickLinks = [
     { name: 'Home', path: '/' },
@@ -74,8 +68,6 @@ const Footer = () => {
   return (
     <footer className="bg-white text-gray-900 border-t-2 border-gray-200 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.1)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-<<<<<<< HEAD
-=======
         {/* Newsletter Section */}
         <div className="mb-12 pb-8 border-b border-gray-200">
           <div className="max-w-2xl mx-auto text-center">
@@ -92,9 +84,8 @@ const Footer = () => {
                   }}
                   placeholder="Enter your email"
                   required
-                  className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${
-                    emailError ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-200'
-                  }`}
+                  className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all ${emailError ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-200'
+                    }`}
                 />
                 {emailError && (
                   <p className="mt-1 text-sm text-red-600">{emailError}</p>
@@ -115,7 +106,6 @@ const Footer = () => {
           </div>
         </div>
 
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
@@ -128,7 +118,7 @@ const Footer = () => {
                 Empowering Varanasi businesses with stunning websites. Create your online presence in minutes.
               </p>
             </div>
-            
+
             {/* Features */}
             <div className="space-y-2 mb-6">
               {features.map((feature, index) => {

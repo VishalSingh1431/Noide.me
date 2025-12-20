@@ -6,10 +6,7 @@ import HeroSection from '../components/home/HeroSection';
 import TrustStrip from '../components/home/TrustStrip';
 import ApnaBanarasSection from '../components/home/ApnaBanarasSection';
 import HowItWorks from '../components/home/HowItWorks';
-<<<<<<< HEAD
-=======
 import KeyFeatures from '../components/home/KeyFeatures';
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
 import WhatYouGetSection from '../components/home/WhatYouGetSection';
 import WhyChooseSection from '../components/home/WhyChooseSection';
 import FamousVaranasiSection from '../components/home/FamousVaranasiSection';
@@ -91,7 +88,7 @@ const Home = () => {
         ]}
       />
       <Navbar />
-      
+
       {/* 1. Hero Section */}
       <HeroSection heroImages={heroImages} />
 
@@ -100,36 +97,31 @@ const Home = () => {
 
       {/* 2.5. Apna Banaras Section */}
       <ApnaBanarasSection />
-      
+
       {/* 3. How It Works */}
       <HowItWorks />
-<<<<<<< HEAD
 
-      {/* 4. What You Get Section */}
-=======
-      
       {/* 4. Key Features */}
       <KeyFeatures />
 
       {/* 4.5. What You Get Section */}
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
       <WhatYouGetSection />
-      
+
       {/* 6. Why Choose VaranasiHub */}
       <WhyChooseSection />
-      
+
       {/* 7. Famous Varanasi */}
       <FamousVaranasiSection />
-      
+
       {/* 8. Apna Banaras Detailed */}
       <ApnaBanarasDetailed />
-      
+
       {/* 9. Living Varanasi Stories */}
       <LivingVaranasiStories highlights={featuredHighlights} />
-      
+
       {/* 10. Ready to Go Live CTA */}
       <ReadyToGoLiveCTA />
-      
+
       <Footer />
     </>
   );

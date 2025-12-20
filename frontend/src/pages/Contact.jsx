@@ -22,11 +22,11 @@ const Contact = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else {
@@ -35,17 +35,17 @@ const Contact = () => {
         newErrors.email = 'Please enter a valid email address';
       }
     }
-    
+
     if (!formData.subject.trim()) {
       newErrors.subject = 'Subject is required';
     }
-    
+
     if (!formData.message.trim()) {
       newErrors.message = 'Message is required';
     } else if (formData.message.trim().length < 10) {
       newErrors.message = 'Message must be at least 10 characters';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -67,7 +67,7 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -175,51 +175,30 @@ const Contact = () => {
       <Navbar />
       <div className="min-h-screen bg-white">
         {/* Hero Section */}
-<<<<<<< HEAD
         <section className="relative overflow-hidden bg-white py-4 md:py-6 lg:py-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-=======
-        <section className="relative overflow-hidden bg-white py-8 md:py-10 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-<<<<<<< HEAD
             className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 text-center"
           >
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-2 md:mb-3 tracking-tight leading-tight" itemProp="name">
               Get In <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Touch</span>
             </h1>
             <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 max-w-3xl mx-auto font-light">
-=======
-            className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
-          >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-4 tracking-tight leading-tight" itemProp="name">
-              Get In <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Touch</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
               We'd love to hear from you. Send us a message and we'll respond as soon as possible.
             </p>
           </motion.div>
         </section>
 
-<<<<<<< HEAD
         <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 md:py-6 lg:py-8">
-=======
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
           {/* Contact Info Cards */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
-<<<<<<< HEAD
             className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-4 sm:mb-6 md:mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-3 sm:py-4 md:py-6 lg:py-8"
-=======
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)] py-8"
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
           >
             {contactInfo.map((info, index) => {
               const Icon = info.icon;
@@ -228,7 +207,6 @@ const Contact = () => {
                   key={index}
                   variants={itemVariants}
                   whileHover={{ scale: 1.05, y: -8 }}
-<<<<<<< HEAD
                   className="bg-white rounded-lg md:rounded-xl lg:rounded-2xl border-2 border-gray-200 p-3 sm:p-4 md:p-5 lg:p-6 text-center hover:border-blue-300 hover:shadow-xl transition-all duration-300 relative group overflow-hidden"
                 >
                   <div className={`absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 bg-gradient-to-br ${info.gradient} opacity-10 rounded-full blur-3xl -z-10 group-hover:opacity-20 transition-opacity duration-500`}></div>
@@ -240,28 +218,11 @@ const Contact = () => {
                     <a
                       href={info.link}
                       className="text-xs sm:text-sm md:text-base text-gray-600 hover:text-blue-600 transition-colors font-medium"
-=======
-                  className="bg-white rounded-2xl border-2 border-gray-200 p-6 text-center hover:border-blue-300 hover:shadow-xl transition-all duration-300 relative group overflow-hidden"
-                >
-                  <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${info.gradient} opacity-10 rounded-full blur-3xl -z-10 group-hover:opacity-20 transition-opacity duration-500`}></div>
-                  <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${info.gradient} rounded-2xl mb-3 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500`}>
-                    <Icon className="w-8 h-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">{info.title}</h3>
-                  {info.link ? (
-                    <a
-                      href={info.link}
-                      className="text-gray-600 hover:text-blue-600 transition-colors font-medium"
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                     >
                       {info.content}
                     </a>
                   ) : (
-<<<<<<< HEAD
                     <p className="text-xs sm:text-sm md:text-base text-gray-600 font-medium">{info.content}</p>
-=======
-                    <p className="text-gray-600 font-medium">{info.content}</p>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                   )}
                 </motion.div>
               );
@@ -269,26 +230,16 @@ const Contact = () => {
           </motion.div>
 
           {/* Contact Form and Map Section */}
-<<<<<<< HEAD
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
-=======
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
             {/* Contact Form */}
             <motion.div
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
               className="bg-white rounded-lg md:rounded-2xl lg:rounded-3xl border border-gray-100 p-4 sm:p-6 md:p-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
             >
               <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight mb-3 sm:mb-4 md:mb-6">Send us a Message</h2>
-=======
-              className="bg-white rounded-3xl border border-gray-100 p-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]"
-            >
-              <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-6">Send us a Message</h2>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
 
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="relative">
@@ -299,16 +250,14 @@ const Contact = () => {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className={`w-full px-4 pt-6 pb-2 border-2 rounded-xl focus:ring-2 transition-all duration-200 outline-none peer ${
-                      errors.name 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
-                    }`}
+                    className={`w-full px-4 pt-6 pb-2 border-2 rounded-xl focus:ring-2 transition-all duration-200 outline-none peer ${errors.name
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                      }`}
                     placeholder=" "
                   />
-                  <label htmlFor="name" className={`absolute left-4 top-2 text-xs font-semibold transition-colors ${
-                    errors.name ? 'text-red-600' : 'text-gray-500 peer-focus:text-blue-600'
-                  }`}>
+                  <label htmlFor="name" className={`absolute left-4 top-2 text-xs font-semibold transition-colors ${errors.name ? 'text-red-600' : 'text-gray-500 peer-focus:text-blue-600'
+                    }`}>
                     Your Name
                   </label>
                   {errors.name && (
@@ -324,16 +273,14 @@ const Contact = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className={`w-full px-4 pt-6 pb-2 border-2 rounded-xl focus:ring-2 transition-all duration-200 outline-none peer ${
-                      errors.email 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
-                    }`}
+                    className={`w-full px-4 pt-6 pb-2 border-2 rounded-xl focus:ring-2 transition-all duration-200 outline-none peer ${errors.email
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                      }`}
                     placeholder=" "
                   />
-                  <label htmlFor="email" className={`absolute left-4 top-2 text-xs font-semibold transition-colors ${
-                    errors.email ? 'text-red-600' : 'text-gray-500 peer-focus:text-blue-600'
-                  }`}>
+                  <label htmlFor="email" className={`absolute left-4 top-2 text-xs font-semibold transition-colors ${errors.email ? 'text-red-600' : 'text-gray-500 peer-focus:text-blue-600'
+                    }`}>
                     Email Address
                   </label>
                   {errors.email && (
@@ -349,16 +296,14 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className={`w-full px-4 pt-6 pb-2 border-2 rounded-xl focus:ring-2 transition-all duration-200 outline-none peer ${
-                      errors.subject 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
-                    }`}
+                    className={`w-full px-4 pt-6 pb-2 border-2 rounded-xl focus:ring-2 transition-all duration-200 outline-none peer ${errors.subject
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                      }`}
                     placeholder=" "
                   />
-                  <label htmlFor="subject" className={`absolute left-4 top-2 text-xs font-semibold transition-colors ${
-                    errors.subject ? 'text-red-600' : 'text-gray-500 peer-focus:text-blue-600'
-                  }`}>
+                  <label htmlFor="subject" className={`absolute left-4 top-2 text-xs font-semibold transition-colors ${errors.subject ? 'text-red-600' : 'text-gray-500 peer-focus:text-blue-600'
+                    }`}>
                     Subject
                   </label>
                   {errors.subject && (
@@ -374,16 +319,14 @@ const Contact = () => {
                     onChange={handleChange}
                     required
                     rows={6}
-                    className={`w-full px-4 pt-6 pb-2 border-2 rounded-xl focus:ring-2 transition-all duration-200 outline-none resize-none peer ${
-                      errors.message 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-red-500' 
-                        : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
-                    }`}
+                    className={`w-full px-4 pt-6 pb-2 border-2 rounded-xl focus:ring-2 transition-all duration-200 outline-none resize-none peer ${errors.message
+                      ? 'border-red-300 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-200 focus:ring-blue-500 focus:border-blue-500'
+                      }`}
                     placeholder=" "
                   />
-                  <label htmlFor="message" className={`absolute left-4 top-2 text-xs font-semibold transition-colors ${
-                    errors.message ? 'text-red-600' : 'text-gray-500 peer-focus:text-blue-600'
-                  }`}>
+                  <label htmlFor="message" className={`absolute left-4 top-2 text-xs font-semibold transition-colors ${errors.message ? 'text-red-600' : 'text-gray-500 peer-focus:text-blue-600'
+                    }`}>
                     Message
                   </label>
                   {errors.message && (
@@ -438,17 +381,10 @@ const Contact = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-<<<<<<< HEAD
               className="space-y-3 sm:space-y-4 md:space-y-6"
             >
               <div className="bg-white rounded-lg md:rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 md:p-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
                 <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 mb-3 sm:mb-4 md:mb-6 tracking-tight">Find Us</h2>
-=======
-              className="space-y-6"
-            >
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-                <h2 className="text-3xl font-black text-gray-900 mb-6 tracking-tight">Find Us</h2>
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                 <div className="bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl h-64 flex items-center justify-center mb-6">
                   <MapPin className="w-16 h-16 text-gray-400" />
                 </div>
@@ -468,26 +404,15 @@ const Contact = () => {
                 </div>
               </div>
 
-<<<<<<< HEAD
               <div className="bg-white rounded-lg md:rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 md:p-8 relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
                 <div className="relative z-10">
                   <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4">Need Immediate Assistance?</h3>
                   <p className="mb-3 sm:mb-4 md:mb-6 text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">
-=======
-              <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-                <div className="relative z-10">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Need Immediate Assistance?</h3>
-                  <p className="mb-6 text-gray-600 leading-relaxed">
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                     Our support team is available during business hours to help you with any questions or concerns.
                   </p>
                   <a
                     href="mailto:support@varanasihub.com"
-<<<<<<< HEAD
                     className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg md:rounded-xl font-bold text-sm sm:text-base hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-=======
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
->>>>>>> 36b21241eb5ef038c7a0d71180ae6768fa1d273e
                   >
                     <Mail className="w-5 h-5" />
                     Contact Support
@@ -497,7 +422,7 @@ const Contact = () => {
             </motion.div>
           </div>
         </div>
-      </div>
+      </div >
       <Footer />
     </>
   );
