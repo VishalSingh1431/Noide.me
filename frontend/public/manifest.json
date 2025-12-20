@@ -1,0 +1,46 @@
+{
+  "short_name": "VaranasiHub",
+  "name": "VaranasiHub - Create Your Business Website",
+  "description": "Help your Varanasi business go online. Create a professional website in minutes with zero coding skills.",
+  "icons": [
+    {
+      "src": "vite.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Create Website",
+      "short_name": "Create",
+      "description": "Create a new business website",
+      "url": "/create-website",
+      "icons": [{ "src": "vite.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Browse Businesses",
+      "short_name": "Browse",
+      "description": "Explore local businesses",
+      "url": "/businesses",
+      "icons": [{ "src": "vite.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
+

@@ -1,0 +1,38 @@
+# robots.txt for VaranasiHub.com
+# Allow all search engines to crawl the site
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /profile
+Disallow: /create-website
+Disallow: /edit-website/
+Disallow: /analytics/
+Disallow: /qrcode/
+Disallow: /login
+Disallow: /signup
+
+# Allow important pages
+Allow: /businesses
+Allow: /about
+Allow: /contact
+Allow: /pricing
+Allow: /terms
+Allow: /privacy
+Allow: /blog
+Allow: /services/
+Allow: /areas/
+Allow: /restaurants-varanasi
+Allow: /hotels-varanasi
+Allow: /clinics-varanasi
+Allow: /shops-varanasi
+
+# Sitemap location
+Sitemap: https://varanasihub.com/sitemap.xml
+Sitemap: https://www.varanasihub.com/sitemap.xml
+
+# Crawl delay (optional, helps with server load)
+Crawl-delay: 1
+
+
