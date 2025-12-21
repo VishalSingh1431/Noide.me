@@ -547,15 +547,28 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     }
 
     /* Prevent horizontal overflow */
-    body, html {
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+    body {
       overflow-x: hidden;
       width: 100%;
       margin: 0;
       padding: 0;
+      -webkit-font-smoothing: antialiased;
+      /* Hide scrollbar for Chrome, Safari and Opera */
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      /* Hide scrollbar for IE, Edge and Firefox */
+      -ms-overflow-style: none;  /* IE and Edge */
+      scrollbar-width: none;  /* Firefox */
     }
     main, section {
       width: 100%;
       position: relative;
+      clear: both;
     }
     .max-w-7xl {
       max-width: 1280px;
@@ -1280,13 +1293,10 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     }
     @media (max-width: 768px) {
       .share-button-widget {
-        bottom: 120px !important;
+        bottom: 80px !important;
       }
       .floating-actions {
-        bottom: 110px !important;
-      }
-      #mobileBottomNav {
-        bottom: 10px !important;
+        bottom: 20px !important;
       }
     }
   </style>
@@ -1536,23 +1546,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     </div>
   </div>
 
-  <!-- WhatsApp Chat Widget -->
-  ${(business.whatsapp || business.mobile) ? `
-  <div id="whatsappWidget" class="whatsapp-widget" style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 99999 !important; display: block !important; visibility: visible !important;">
-    <a 
-      href="https://wa.me/${escapeHtml((business.whatsapp || business.mobile || '').replace(/[^0-9]/g, ''))}" 
-      target="_blank"
-      rel="noopener noreferrer"
-      class="whatsapp-widget-button"
-      aria-label="Chat on WhatsApp"
-      title="Chat on WhatsApp"
-    >
-      <svg class="whatsapp-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" fill="currentColor"/>
-      </svg>
-    </a>
-  </div>
-  ` : ''}
+
   
   <!-- Edit Button (shown only to owner) -->
   <div id="editButtonContainer" style="display: none;" class="edit-button-float">
@@ -1587,9 +1581,9 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
             if (editButton) {
               editButton.style.display = 'block';
               // Adjust WhatsApp widget position if edit button is visible
-              const whatsappWidget = document.getElementById('whatsappWidget');
-              if (whatsappWidget) {
-                whatsappWidget.classList.add('has-edit-button');
+              const floatingActions = document.querySelector('.floating-actions');
+              if (floatingActions) {
+                floatingActions.classList.add('has-edit-button');
               }
               // Adjust share button widget position if edit button is visible
               const shareButtonWidget = document.getElementById('shareButtonWidget');
@@ -1675,9 +1669,9 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   </nav>
 
   <!-- Main Content -->
-  <main class="w-full">
+  <main class="w-full pb-20 md:pb-0">
     <!-- Enhanced Hero Section - Name/Address Left, Image Right (Circular) -->
-    <section id="home" class="relative bg-gradient-to-r ${theme.primary} text-white py-12 md:py-16 lg:py-20 overflow-hidden">
+    <section id="home" class="relative bg-gradient-to-r ${theme.primary} text-white py-12 overflow-hidden">
       <!-- Animated Background Elements -->
       <div class="absolute inset-0 opacity-10">
         <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
@@ -1725,8 +1719,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           <!-- Right Side - Hero Image -->
           <div class="order-1 md:order-2 relative">
             <!-- Decorative shapes -->
-            <div class="absolute -top-10 -right-10 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
-            <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
+            <div class="absolute top-0 right-0 w-40 h-40 bg-blue-100 rounded-full blur-3xl opacity-50"></div>
+            <div class="absolute bottom-0 left-0 w-40 h-40 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
             
             ${business.logoUrl ? `
             <div class="relative group">
@@ -1743,7 +1737,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
               </div>
             </div>
             ` : `
-            <div class="relative h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-12">
+            <div class="relative min-h-[400px] md:h-[500px] rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-12">
               <div class="text-center space-y-6">
                 <div class="w-32 h-32 bg-gradient-to-br ${theme.primary} rounded-full flex items-center justify-center mx-auto shadow-2xl animate-pulse">
                   <span class="text-white text-6xl font-black">${escapeHtml(business.businessName.charAt(0).toUpperCase())}</span>
@@ -1814,7 +1808,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     ` : ''}
 
     <!-- Enhanced About Section -->
-    <section id="about" class="py-12 md:py-20 bg-gray-50 overflow-hidden">
+    <section id="about" class="py-12 bg-gray-50 overflow-hidden">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12 md:mb-16">
           <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">
@@ -1905,7 +1899,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
 
       <!-- Trust Badges Section -->
-      <section class="py-12 md:py-16 bg-white border-b border-gray-100">
+      <section class="py-10 bg-white border-b border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             ${(() => {
@@ -1930,7 +1924,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
       <!-- Enhanced Video Section -->
       ${embedUrl ? `
-      <section class="py-12 md:py-16 bg-gray-50">
+      <section class="py-10 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-8 md:mb-12 text-center">
             Watch <span class="bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent">Our Story</span>
@@ -1968,7 +1962,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
                 </div>
                 <h3 class="text-xl font-bold text-gray-900">Amenities</h3>
               </div>
-              <div class="grid grid-cols-2 gap-3">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 ${business.amenities.map(item => `
                   <div class="flex items-center gap-2 text-sm text-gray-600">
                     <span class="w-1.5 h-1.5 ${theme.primarySolid.replace('bg-', 'bg-')} rounded-full"></span>
@@ -2024,7 +2018,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
       <!-- Gallery -->
       ${business.imagesUrl && business.imagesUrl.length > 0 ? `
-      <section id="gallery" class="py-16 sm:py-20 bg-gray-50 px-4 sm:px-6 lg:px-8 mb-12">
+      <section id="gallery" class="py-12 bg-gray-50 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
           <div class="text-center mb-12">
             <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mb-4 text-center">Our Gallery</h2>
@@ -2102,7 +2096,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       </section>
       ` : ''}
 
-      < !--Special Offers Section-- >
+
   ${business.specialOffers && business.specialOffers.length > 0 ? `
       <section id="offers" class="py-12 md:py-20 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 relative overflow-hidden">
         <div class="absolute inset-0 opacity-5">
@@ -2172,14 +2166,14 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       ` : ''
     }
 
-      < !--Reviews Section - Carousel Layout-- >
-      <section id="reviews" class="py-12 md:py-20 bg-gray-50 overflow-hidden">
+
+      <section id="reviews" class="py-12 bg-gray-50 overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12 md:mb-16">
-            <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">
+            <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-4 relative z-10">
               What Our <span class="bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent">Clients Say</span>
             </h2>
-            <div class="w-24 h-2 bg-gradient-to-r ${theme.primary} mx-auto rounded-full"></div>
+            <div class="w-24 h-2 bg-gradient-to-r ${theme.primary} mx-auto rounded-full relative z-10"></div>
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
@@ -2245,9 +2239,9 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
         </div>
       </section>
 
-      <!--Appointment Section-- >
+
   ${business.appointmentSettings && business.appointmentSettings.enabled ? `
-      <section id="appointments" class="py-12 md:py-24 bg-white">
+      <section id="appointments" class="py-12 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-center">
             <div class="space-y-8">
@@ -2328,10 +2322,10 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       ` : ''
     }
 
-      < !--E - Commerce / Products Section-- >
+
 
   ${business.ecommerceEnabled ? `
-      <section id="products" class="py-16 sm:py-20 bg-white px-4 sm:px-6 lg:px-8 mb-12">
+      <section id="products" class="py-12 bg-white px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
           <div class="text-center mb-12">
             <div class="inline-block px-4 py-2 rounded-full ${theme.accent.replace('text-', 'bg-')}/10 ${theme.accent} text-sm font-bold mb-4">
@@ -2378,9 +2372,9 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       </button>
       ` : ''
     }
-< !--FAQ Section-- >
+
   ${business.faqs && business.faqs.length > 0 ? `
-      <section id="faq" class="py-16 sm:py-20 bg-gray-50 px-4 sm:px-6 lg:px-8 mb-12">
+      <section id="faq" class="py-12 bg-gray-50 px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto">
           <div class="text-center mb-12">
             <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mb-4 text-center">Common Questions</h2>
@@ -2406,8 +2400,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       ` : ''
     }
 
-      < !--Contact Section-- >
-  <section id="contact" class="py-16 sm:py-20 bg-white px-4 sm:px-6 lg:px-8 mb-12">
+
+  <section id="contact" class="py-12 bg-white px-4 sm:px-6 lg:px-8">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-12 sm:mb-16">
         <div class="inline-block px-4 py-2 rounded-full ${theme.accent.replace('text-', 'bg-')}/10 ${theme.accent} text-sm font-bold mb-4">
@@ -2484,9 +2478,12 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           const placeIdMatch = business.mapLink.match(/place\/([^\/]+)/);
           const queryMatch = business.mapLink.match(/q=([^&]+)/);
           if (placeIdMatch) {
-            embedUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6d_s6q4Zb1L3uY&q=place_id:${placeIdMatch[1]}`;
+            embedUrl = `https://www.google.com/maps?q=place_id:${placeIdMatch[1]}&output=embed`;
           } else if (queryMatch) {
-            embedUrl = `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6d_s6q4Zb1L3uY&get_places=1&q=${encodeURIComponent(queryMatch[1])}`;
+            embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(queryMatch[1])}&output=embed`;
+          } else {
+            // Fallback to simple address search if no specific matches but it's a maps link
+            embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(business.address)}&output=embed`;
           }
         }
         if (business.mapLink && business.mapLink.includes('google.com/maps/embed')) embedUrl = business.mapLink;
@@ -2533,48 +2530,13 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       </section>
     </main>
 
-
-
-
-
-      < !--Mobile Bottom Navigation Bar-- >
-      <nav id="mobileBottomNav" class="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl rounded-3xl flex items-center justify-around py-4 px-6 z-50 transition-all duration-300">
-        <a href="#home" class="flex flex-col items-center gap-1 group transition-all" onclick="handleMobileNavClick(event, '#home')">
-          <div class="p-2 rounded-2xl group-hover:${theme.accent.replace('text-', 'bg-')}/10 transition-colors">
-            <svg class="w-6 h-6 ${theme.accent}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-          </div>
-        </a>
-        ${business.services && business.services.length > 0 ? `
-        <a href="#services" class="flex flex-col items-center gap-1 group transition-all" onclick="handleMobileNavClick(event, '#services')">
-          <div class="p-2 rounded-2xl group-hover:${theme.accent.replace('text-', 'bg-')}/10 transition-colors">
-            <svg class="w-6 h-6 text-gray-400 group-hover:${theme.accent}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-          </div>
-        </a>
-        ` : ''}
-        ${business.ecommerceEnabled ? `
-        <a href="#products" class="flex flex-col items-center gap-1 group transition-all" onclick="handleMobileNavClick(event, '#products')">
-          <div class="p-2 rounded-2xl group-hover:${theme.accent.replace('text-', 'bg-')}/10 transition-colors">
-            <svg class="w-6 h-6 text-gray-400 group-hover:${theme.accent}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-          </div>
-        </a>
-        ` : ''}
-        <a href="#contact" class="flex flex-col items-center gap-1 group transition-all" onclick="handleMobileNavClick(event, '#contact')">
-          <div class="p-2 rounded-2xl group-hover:${theme.accent.replace('text-', 'bg-')}/10 transition-colors">
-            <svg class="w-6 h-6 text-gray-400 group-hover:${theme.accent}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-          </div>
-        </a>
-      </nav>
-
-      <!--Pull to Refresh Indicator-- >
       <div id="pullToRefresh" class="fixed top-0 left-0 w-full h-16 flex items-center justify-center -translate-y-full z-[100] transition-transform duration-300">
         <div class="bg-white p-3 rounded-full shadow-xl border border-gray-100 flex items-center gap-3">
           <svg class="w-6 h-6 animate-spin ${theme.accent}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
           <span class="text-sm font-black text-gray-900">Refreshing...</span>
         </div>
       </div>
-
-      <!--Enhanced Footer-- >
-      <footer class="bg-gray-900 pt-16 pb-8 text-white relative overflow-hidden">
+      <footer class="bg-gray-900 pt-12 pb-8 text-white relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 to-purple-900/20 opacity-50"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
@@ -2649,7 +2611,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
 
 
-      <!--Floating Action Buttons-- >
+
       <div class="fixed bottom-6 right-6 z-40 flex flex-col gap-3 floating-actions">
         ${business.mobile ? `
           <a href="tel:${escapeHtml(business.mobile)}" class="w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl flex items-center justify-center lg:hidden hover:scale-110 transition-all duration-300">
@@ -2666,7 +2628,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
         </button>
       </div>
 
-      <!--Lightbox Overhaul-- >
+
       <div id="lightbox" class="fixed inset-0 bg-black/95 z-[100] hidden flex flex-col backdrop-blur-sm" onclick="closeLightboxOnBackdrop(event)">
         <div class="flex items-center justify-between p-4 md:p-8 text-white relative z-10">
           <div class="flex items-center gap-4">
