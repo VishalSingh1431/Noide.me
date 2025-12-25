@@ -10,7 +10,7 @@ class Business {
   static async create(data) {
     // FINAL SAFETY CHECK - ensure category is ALWAYS valid
     const validCategories = ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Other'];
-    
+
     // Comprehensive mapping for any category that slips through - matches controller mapping
     const categoryMap = {
       'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop',
@@ -32,39 +32,39 @@ class Business {
       'manufacturing': 'Manufacturing', 'construction': 'Construction', 'other': 'Other',
       'hospital': 'Clinic', 'lodging': 'Hotel', 'food': 'Restaurant', 'general': 'Services', 'misc': 'Other'
     };
-    
+
     let safeCategory = 'Services'; // Default
     const categoryStr = String(data.category || '').trim();
     const lowerCategory = categoryStr.toLowerCase();
-    
+
     // First check if it's already a valid category (exact match)
     if (data.category && validCategories.includes(categoryStr)) {
       safeCategory = categoryStr;
       console.log('✅ Category is already valid:', safeCategory);
-    } 
+    }
     // Then check the mapping (case-insensitive)
     else if (data.category && lowerCategory && categoryMap[lowerCategory]) {
       safeCategory = categoryMap[lowerCategory];
       console.log('✅ Category mapped in model:', categoryStr, '→', safeCategory);
-    } 
+    }
     // If still not valid, force to Services
     else {
       safeCategory = 'Services';
       console.log('⚠️ Category not found in model map, using default Services:', categoryStr);
     }
-    
+
     // Final validation - ensure it's definitely one of the valid categories
     if (!validCategories.includes(safeCategory)) {
       console.error('❌ CRITICAL: safeCategory is still invalid:', safeCategory, 'Forcing to Services');
       safeCategory = 'Services';
     }
-    
+
     if (data.category !== safeCategory) {
       console.log('🛡️ Business.create: Category converted', data.category, '→', safeCategory);
     }
-    
+
     console.log('🛡️ Business.create: Final category being inserted:', safeCategory, 'Type:', typeof safeCategory);
-    
+
     const query = `
       INSERT INTO businesses (
         business_name, owner_name, category, mobile, email, address,
@@ -75,12 +75,12 @@ class Business {
     `;
 
     // ABSOLUTE FINAL CHECK - ensure category is a valid string
-    const finalCategoryForDB = (validCategories.includes(String(safeCategory).trim())) 
-      ? String(safeCategory).trim() 
+    const finalCategoryForDB = (validCategories.includes(String(safeCategory).trim()))
+      ? String(safeCategory).trim()
       : 'Services';
-    
+
     console.log('🛡️ ABSOLUTE FINAL - Category for DB:', finalCategoryForDB, 'Type:', typeof finalCategoryForDB);
-    
+
     const values = [
       data.businessName,
       data.ownerName || null,
@@ -185,7 +185,7 @@ class Business {
         'manufacturing': 'Manufacturing', 'construction': 'Construction', 'other': 'Other',
         'hospital': 'Clinic', 'lodging': 'Hotel', 'food': 'Restaurant', 'general': 'Services', 'misc': 'Other',
       };
-      
+
       const lowerCategory = String(data.category).toLowerCase();
       if (validCategories.includes(data.category)) {
         safeCategory = data.category;
@@ -194,12 +194,12 @@ class Business {
       } else {
         safeCategory = 'Services';
       }
-      
+
       if (data.category !== safeCategory) {
         console.log('🛡️ Business.update: Category converted', data.category, '→', safeCategory);
       }
     }
-    
+
     const query = `
       UPDATE businesses SET
         business_name = COALESCE($1, business_name),
@@ -263,15 +263,15 @@ class Business {
   static async findAll(statusFilter = null) {
     let query = 'SELECT * FROM businesses';
     const values = [];
-    
+
     if (statusFilter) {
       query += ' WHERE status = $1';
       values.push(statusFilter);
     }
-    
+
     // Premium businesses first, then by creation date
     query += ' ORDER BY is_premium DESC, created_at DESC';
-    
+
     const result = await pool.query(query, values);
     return result.rows.map(row => Business.mapRowToBusiness(row));
   }
@@ -298,6 +298,7 @@ class Business {
       ownerName: row.owner_name,
       category: row.category,
       mobile: row.mobile,
+      mobileNumber: row.mobile,
       email: row.email,
       address: row.address,
       mapLink: row.map_link,

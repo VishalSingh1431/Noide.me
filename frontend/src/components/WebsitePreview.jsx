@@ -238,7 +238,7 @@ const WebsitePreview = ({ formData, onClose }) => {
 
   // Check if contact info exists
   const hasContactInfo = () => {
-    return !!(formData.mobileNumber || formData.email || formData.address);
+    return !!(formData.mobileNumber || formData.mobile || formData.email || formData.address);
   };
 
   // Lightbox functions
@@ -405,11 +405,11 @@ const WebsitePreview = ({ formData, onClose }) => {
                   )}
                   {/* Quick Contact Icons */}
                   <div className="flex items-center gap-3 pl-4 border-l border-gray-100">
-                    {formData.mobileNumber && (
+                    {(formData.mobileNumber || formData.mobile) && (
                       <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl border border-blue-100">
                         <Phone className="w-5 h-5 text-blue-600" />
                         <span className="text-blue-600 font-black text-sm">
-                          {formData.mobileNumber}
+                          {formData.mobileNumber || formData.mobile}
                         </span>
                       </div>
                     )}
@@ -450,8 +450,8 @@ const WebsitePreview = ({ formData, onClose }) => {
                     <a href="#contact" onClick={() => setShowMobileMenu(false)} className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Contact</a>
                   )}
                   <div className="flex gap-2 pt-2">
-                    {formData.mobileNumber && (
-                      <a href={`tel:${formData.mobileNumber}`} className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl text-center font-bold hover:bg-blue-700 transition-colors">
+                    {(formData.mobileNumber || formData.mobile) && (
+                      <a href={`tel:${formData.mobileNumber || formData.mobile}`} className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-xl text-center font-bold hover:bg-blue-700 transition-colors">
                         <Phone className="w-5 h-5 inline mr-2" />
                         Call
                       </a>
@@ -495,7 +495,7 @@ const WebsitePreview = ({ formData, onClose }) => {
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    {formData.mobileNumber && (
+                    {(formData.mobileNumber || formData.mobile) && (
                       <button className="inline-flex items-center justify-center gap-3 px-10 py-5 bg-white text-blue-600 rounded-2xl font-black text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all transform active:scale-95 group">
                         <Phone className="w-6 h-6 animate-pulse" />
                         Book Now
@@ -1546,10 +1546,10 @@ const WebsitePreview = ({ formData, onClose }) => {
                 <div id="contact">
                   <h4 className="text-lg font-black mb-6 uppercase tracking-widest text-white/50 text-left">Contact Us</h4>
                   <div className="space-y-4 text-sm font-bold text-left">
-                    {formData.mobileNumber && (
+                    {(formData.mobileNumber || formData.mobile) && (
                       <div className="flex items-center gap-3 text-blue-50">
                         <Phone className="w-5 h-5" />
-                        {formData.mobileNumber}
+                        {formData.mobileNumber || formData.mobile}
                       </div>
                     )}
                     {formData.email && (
@@ -1579,10 +1579,10 @@ const WebsitePreview = ({ formData, onClose }) => {
           </footer>
 
           {/* FAB */}
-          {(formData.whatsappNumber || formData.mobileNumber) && (
+          {(formData.whatsappNumber || formData.whatsapp || formData.mobileNumber || formData.mobile) && (
             <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3">
               <a
-                href={`https://wa.me/${(formData.whatsappNumber || formData.mobileNumber).replace(/\D/g, '')}`}
+                href={`https://wa.me/${(formData.whatsappNumber || formData.whatsapp || formData.mobileNumber || formData.mobile).replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-14 h-14 bg-green-600 text-white rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.3)] flex items-center justify-center hover:bg-green-700 transition-all duration-300 hover:scale-110 animate-bounce cursor-pointer"

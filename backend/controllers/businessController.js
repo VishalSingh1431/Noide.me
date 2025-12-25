@@ -212,6 +212,7 @@ export const createBusiness = async (req, res) => {
       ownerName,
       category,
       mobileNumber,
+      mobile, // Add mobile for compatibility
       email,
       address,
       googleMapLink,
@@ -352,7 +353,7 @@ export const createBusiness = async (req, res) => {
 
     // Set default email and phone if not provided
     const finalEmail = email || 'example@gmail.com';
-    const finalMobileNumber = mobileNumber || '0123456789';
+    const finalMobileNumber = mobileNumber || mobile || '0123456789';
 
     // Get user ID from token if available
     const userId = req.user?.userId || null;
@@ -708,10 +709,12 @@ export const updateBusiness = async (req, res) => {
       ownerName,
       category,
       mobileNumber,
+      mobile, // Add mobile for compatibility
       email,
       address,
       googleMapLink,
       whatsappNumber,
+      whatsapp, // Add whatsapp for compatibility
       description,
       youtubeVideo,
       instagram,
@@ -833,11 +836,11 @@ export const updateBusiness = async (req, res) => {
       businessName: businessName || existingBusiness.businessName,
       ownerName: ownerName || existingBusiness.ownerName,
       category: finalCategory,
-      mobile: mobileNumber || existingBusiness.mobile || '0123456789',
+      mobile: mobileNumber || mobile || existingBusiness.mobile || '0123456789',
       email: email ? email.toLowerCase() : existingBusiness.email || 'example@gmail.com',
       address: address || existingBusiness.address,
       mapLink: googleMapLink || existingBusiness.mapLink,
-      whatsapp: whatsappNumber || existingBusiness.whatsapp,
+      whatsapp: whatsappNumber || whatsapp || existingBusiness.whatsapp,
       description: description || existingBusiness.description,
       logoUrl,
       imagesUrl,
