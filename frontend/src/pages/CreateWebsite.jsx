@@ -424,10 +424,8 @@ const CreateWebsite = () => {
       .toString()
       .toLowerCase()
       .trim()
-      .replace(/\s+/g, '-')        // Replace spaces with hyphens
-      .replace(/[^\w-]+/g, '')      // Remove non-word chars except hyphens
-      .replace(/^-+/, '')          // Remove leading hyphens
-      .replace(/-+$/, '')          // Remove trailing hyphens
+      .replace(/\s+/g, '')         // Remove all spaces (no hyphens)
+      .replace(/[^\w]+/g, '')      // Remove all non-word chars
       .replace(/^[^a-z]+/, '')     // Remove non-letters from start
       .substring(0, 50);            // Limit to 50 chars
   };
