@@ -4,6 +4,7 @@ import { slugify } from '../utils/slugify.js';
 import { getCloudinaryUrl } from '../middleware/cloudinaryUpload.js';
 import { generateBusinessHTML } from '../views/businessTemplate.js';
 import pool from '../config/database.js';
+import ContactForm from '../models/ContactForm.js';
 
 /**
  * TEST ENDPOINT - Create actual test business with College category
@@ -992,5 +993,32 @@ export const getPublicStats = async (req, res) => {
   } catch (error) {
     console.error('Error fetching public stats:', error);
     res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+};
+/**
+ * Submit a callback request for a business
+ */
+export const submitCallbackRequest = async (req, res) => {
+  try {
+    const { businessId, phone, businessName } = req.body;
+
+    if (!businessId || !phone) {
+      return res.status(400).json({ error: 'Business ID and phone number are required' });
+    }
+
+    // Create a contact form submission as a callback request
+    await ContactForm.create({
+      businessId,
+      name: 'Callback Request',
+      email: 'no-email@provided.com',
+      phone,
+      subject: `Call back request for ${businessName || 'Business'}`,
+      message: `User requested a call back at: ${phone}. (Submitted via Business Website Footer)`
+    });
+
+    res.json({ success: true, message: 'Callback request received successfully' });
+  } catch (error) {
+    console.error('Error submitting callback request:', error);
+    res.status(500).json({ error: 'Failed to submit callback request' });
   }
 };

@@ -12,6 +12,18 @@ const WebsitePreview = ({ formData, onClose }) => {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [copiedText, setCopiedText] = useState('');
   const [shareFeedback, setShareFeedback] = useState(false);
+  const [callbackNumber, setCallbackNumber] = useState('');
+  const [callbackStatus, setCallbackStatus] = useState(null);
+  const [isSubmittingCallback, setIsSubmittingCallback] = useState(false);
+
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    const container = document.querySelector('.preview-content');
+    if (section && container) {
+      const top = section.offsetTop - 80; // Offset for sticky nav
+      container.scrollTo({ top, behavior: 'smooth' });
+    }
+  };
 
   const handleShare = async () => {
     const shareData = {
@@ -378,25 +390,28 @@ const WebsitePreview = ({ formData, onClose }) => {
 
                 {/* Desktop Navigation */}
                 <div className="hidden md:flex items-center gap-6 text-base">
-                  <a href="#home" className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Home</a>
+                  <a onClick={() => scrollToSection('home')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">Home</a>
                   {formData.description && (
-                    <a href="#about" className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">About</a>
+                    <a onClick={() => scrollToSection('about')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">About</a>
                   )}
                   {(formData.services && formData.services.length > 0) && (
-                    <a href="#services" className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Services</a>
+                    <a onClick={() => scrollToSection('services')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">Services</a>
                   )}
                   {images.length > 0 && (
-                    <a href="#gallery" className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Gallery</a>
+                    <a onClick={() => scrollToSection('gallery')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">Gallery</a>
                   )}
                   {hasContactInfo() && (
-                    <a href="#contact" className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Contact</a>
+                    <a onClick={() => scrollToSection('contact')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">Contact</a>
                   )}
                   {/* Quick Contact Icons */}
                   <div className="flex items-center gap-3 pl-4 border-l border-gray-100">
                     {formData.mobileNumber && (
-                      <a href={`tel:${formData.mobileNumber}`} className="p-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all hover:scale-110" title="Call Now">
-                        <Phone className="w-6 h-6" />
-                      </a>
+                      <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl border border-blue-100">
+                        <Phone className="w-5 h-5 text-blue-600" />
+                        <span className="text-blue-600 font-black text-sm">
+                          {formData.mobileNumber}
+                        </span>
+                      </div>
                     )}
                     <button
                       onClick={handleShare}
@@ -1463,9 +1478,40 @@ const WebsitePreview = ({ formData, onClose }) => {
                 </div>
 
                 {/* Contact Info */}
-                <div>
-                  <h4 className="text-white font-bold mb-6">Contact</h4>
-                  <ul className="space-y-4 text-sm text-blue-100">
+                <div id="contact">
+                  <h4 className="text-white font-bold mb-6">Request a Callback</h4>
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <input
+                        type="tel"
+                        value={callbackNumber}
+                        onChange={(e) => setCallbackNumber(e.target.value)}
+                        placeholder="Your Phone Number"
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 outline-none transition-all"
+                      />
+                      <button
+                        onClick={() => {
+                          if (!callbackNumber) return;
+                          setIsSubmittingCallback(true);
+                          setTimeout(() => {
+                            setCallbackStatus('success');
+                            setCallbackNumber('');
+                            setIsSubmittingCallback(false);
+                            setTimeout(() => setCallbackStatus(null), 3000);
+                          }, 1000);
+                        }}
+                        disabled={isSubmittingCallback}
+                        className="mt-3 w-full py-3 bg-white text-blue-600 rounded-xl font-black transition-all disabled:opacity-50"
+                      >
+                        {isSubmittingCallback ? 'Sending...' : 'Request Call'}
+                      </button>
+                    </div>
+                    {callbackStatus === 'success' && (
+                      <p className="text-green-400 text-xs font-bold text-center">✓ Demo request sent successfully!</p>
+                    )}
+                  </div>
+
+                  <div className="mt-8 space-y-4 text-sm text-blue-100">
                     {formData.mobileNumber && (
                       <li className="flex items-start gap-3">
                         <Phone className="w-5 h-5 text-white shrink-0" />
@@ -1484,7 +1530,7 @@ const WebsitePreview = ({ formData, onClose }) => {
                         <span>{formData.address}</span>
                       </li>
                     )}
-                  </ul>
+                  </div>
                 </div>
               </div>
 
@@ -1498,22 +1544,21 @@ const WebsitePreview = ({ formData, onClose }) => {
             </div>
           </footer>
 
-          {/* Floating Action Buttons - Mobile */}
-          <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-3 md:hidden">
-
+          {/* Floating Action Buttons */}
+          <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3">
             {/* WhatsApp FAB */}
-            {formData.whatsappNumber && (
+            {(formData.whatsappNumber || formData.mobileNumber) && (
               <a
-                href={`https://wa.me/${formData.whatsappNumber.replace(/\D/g, '')}`}
+                href={`https://wa.me/${(formData.whatsappNumber || formData.mobileNumber).replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-14 h-14 bg-green-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-green-700 transition-all duration-300 hover:scale-110 animate-bounce"
+                className="w-14 h-14 bg-green-600 text-white rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.3)] flex items-center justify-center hover:bg-green-700 transition-all duration-300 hover:scale-110 animate-bounce"
                 aria-label="WhatsApp"
+                title="Chat with us"
               >
-                <MessageCircle className="w-7 h-7" />
+                <MessageCircle className="w-8 h-8" />
               </a>
             )}
-
           </div>
 
         </div>

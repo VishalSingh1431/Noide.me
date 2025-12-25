@@ -42,6 +42,9 @@ const BusinessWebsite = () => {
     const [showBackToTop, setShowBackToTop] = useState(false);
     const [copiedText, setCopiedText] = useState('');
     const [shareFeedback, setShareFeedback] = useState(false);
+    const [callbackNumber, setCallbackNumber] = useState('');
+    const [callbackStatus, setCallbackStatus] = useState(null);
+    const [isSubmittingCallback, setIsSubmittingCallback] = useState(false);
 
     // Cleaned up images state (URLs only)
     const [images, setImages] = useState([]);
@@ -335,9 +338,12 @@ const BusinessWebsite = () => {
                             {/* Quick Contact Icons */}
                             <div className="flex items-center gap-3 pl-4 border-l border-gray-100">
                                 {formData.mobileNumber && (
-                                    <a href={`tel:${formData.mobileNumber}`} className="p-3 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 transition-all hover:scale-110" title="Call Now">
-                                        <Phone className="w-6 h-6" />
-                                    </a>
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-xl border border-blue-100">
+                                        <Phone className="w-5 h-5 text-blue-600" />
+                                        <a href={`tel:${formData.mobileNumber}`} className="text-blue-600 font-black text-sm hover:underline">
+                                            {formData.mobileNumber}
+                                        </a>
+                                    </div>
                                 )}
                                 <button
                                     onClick={handleShare}
@@ -997,28 +1003,84 @@ const BusinessWebsite = () => {
                             </ul>
                         </div>
 
-                        <div>
-                            <h4 className="text-white font-bold mb-6">Contact</h4>
-                            <ul className="space-y-4 text-sm text-blue-100">
+                        <div id="contact">
+                            <h4 className="text-white font-bold mb-6">Request a Callback</h4>
+                            <form
+                                onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    if (!callbackNumber) return;
+                                    setIsSubmittingCallback(true);
+                                    try {
+                                        const response = await fetch(`${API_BASE_URL}/business/callback-request`, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                businessId: formData.id,
+                                                phone: callbackNumber,
+                                                businessName: formData.businessName
+                                            })
+                                        });
+                                        if (response.ok) {
+                                            setCallbackStatus('success');
+                                            setCallbackNumber('');
+                                            setTimeout(() => setCallbackStatus(null), 5000);
+                                        } else {
+                                            throw new Error('Failed to send');
+                                        }
+                                    } catch (err) {
+                                        setCallbackStatus('error');
+                                        setTimeout(() => setCallbackStatus(null), 5000);
+                                    } finally {
+                                        setIsSubmittingCallback(false);
+                                    }
+                                }}
+                                className="space-y-4"
+                            >
+                                <div className="relative">
+                                    <input
+                                        type="tel"
+                                        value={callbackNumber}
+                                        onChange={(e) => setCallbackNumber(e.target.value)}
+                                        placeholder="Your Phone Number"
+                                        required
+                                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder:text-white/50 outline-none focus:ring-2 focus:ring-white/50 transition-all"
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmittingCallback}
+                                        className="mt-3 w-full py-3 bg-white text-blue-600 rounded-xl font-black hover:bg-blue-50 transition-all shadow-lg active:scale-95 disabled:opacity-50"
+                                    >
+                                        {isSubmittingCallback ? 'Sending...' : 'Request Call'}
+                                    </button>
+                                </div>
+                                {callbackStatus === 'success' && (
+                                    <p className="text-green-400 text-xs font-bold animate-fade-in text-center">✓ Request sent! We'll call you shortly.</p>
+                                )}
+                                {callbackStatus === 'error' && (
+                                    <p className="text-red-400 text-xs font-bold animate-fade-in text-center">✕ Failed to send. Please call us directly.</p>
+                                )}
+                            </form>
+
+                            <div className="mt-8 space-y-4 text-sm text-blue-100">
                                 {formData.mobileNumber && (
-                                    <li className="flex items-start gap-3">
+                                    <li className="flex items-start gap-3 list-none">
                                         <Phone className="w-5 h-5 text-white shrink-0" />
                                         <span className="hover:text-white transition-colors cursor-default">{formData.mobileNumber}</span>
                                     </li>
                                 )}
                                 {formData.email && (
-                                    <li className="flex items-start gap-3">
+                                    <li className="flex items-start gap-3 list-none">
                                         <Mail className="w-5 h-5 text-white shrink-0" />
                                         <a href={`mailto:${formData.email}`} className="hover:text-white transition-colors">{formData.email}</a>
                                     </li>
                                 )}
                                 {formData.address && (
-                                    <li className="flex items-start gap-3">
+                                    <li className="flex items-start gap-3 list-none">
                                         <MapPin className="w-5 h-5 text-white shrink-0" />
                                         <span>{formData.address}</span>
                                     </li>
                                 )}
-                            </ul>
+                            </div>
                         </div>
                     </div>
 
@@ -1033,15 +1095,16 @@ const BusinessWebsite = () => {
             </footer>
 
             {/* FAB */}
-            {formData.whatsappNumber && (
-                <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-3 md:hidden">
+            {(formData.whatsappNumber || formData.mobileNumber) && (
+                <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3">
                     <a
-                        href={`https://wa.me/${formData.whatsappNumber.replace(/\D/g, '')}`}
+                        href={`https://wa.me/${(formData.whatsappNumber || formData.mobileNumber).replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-14 h-14 bg-green-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-green-700 transition-all duration-300 hover:scale-110 animate-bounce"
+                        className="w-14 h-14 bg-green-600 text-white rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.3)] flex items-center justify-center hover:bg-green-700 transition-all duration-300 hover:scale-110 animate-bounce"
+                        title="Chat with us"
                     >
-                        <MessageCircle className="w-7 h-7" />
+                        <MessageCircle className="w-8 h-8" />
                     </a>
                 </div>
             )}

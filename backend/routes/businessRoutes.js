@@ -11,6 +11,7 @@ import {
   checkSubdomainAvailability,
   getPublicStats,
   testCreateCollege,
+  submitCallbackRequest,
 } from '../controllers/businessController.js';
 import { uploadBusinessMedia, processCloudinaryUploads } from '../middleware/cloudinaryUpload.js';
 import { verifyToken } from '../middleware/auth.js';
@@ -79,6 +80,9 @@ router.get('/:id/qrcode/download/png', verifyToken, downloadQRCodePNG);
 // Premium upgrade routes (must come before /:slug to avoid conflicts)
 router.post('/:id/upgrade-premium', verifyToken, upgradeToPremium);
 router.post('/:id/remove-premium', verifyToken, removePremium);
+
+// Submit callback request
+router.post('/callback-request', submitCallbackRequest);
 
 // Get business by slug (for subdirectory: /slug) - must be last
 router.get('/:slug', getBusinessBySlug);
