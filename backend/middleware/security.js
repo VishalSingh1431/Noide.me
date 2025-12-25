@@ -14,7 +14,7 @@ export const securityMiddleware = helmet({
       fontSrc: ["'self'", "data:"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
-      frameSrc: ["'self'", "https://www.youtube.com"],
+      frameSrc: ["'self'", "https://www.youtube.com", "https://www.google.com", "https://maps.google.com"],
     },
   },
   crossOriginEmbedderPolicy: false,
