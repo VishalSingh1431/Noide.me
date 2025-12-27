@@ -5,6 +5,7 @@ import { getCloudinaryUrl } from '../middleware/cloudinaryUpload.js';
 import { generateBusinessHTML } from '../views/businessTemplate.js';
 import pool from '../config/database.js';
 import ContactForm from '../models/ContactForm.js';
+import Analytics from '../models/Analytics.js';
 
 /**
  * TEST ENDPOINT - Create actual test business with College category
@@ -109,6 +110,9 @@ export const testCreateCollege = async (req, res) => {
     });
 
     const business = await Business.create(testBusinessData);
+
+    // Initialize analytics for the new business
+    await Analytics.create(business.id);
 
     console.log('✅ TEST SUCCESS - Business created:', {
       id: business.id,
@@ -549,6 +553,9 @@ export const createBusiness = async (req, res) => {
       userId,
     });
 
+    // Initialize analytics for the new business
+    await Analytics.create(business.id);
+
     // Return success response
     res.status(201).json({
       message: 'Business website created successfully! Your website is pending admin approval. You will be notified once it\'s approved.',
@@ -894,7 +901,13 @@ export const getBusinessBySlug = async (req, res) => {
     }
 
     // Return HTML template for business page
-    const html = generateBusinessHTML(business);
+    const NODE_ENV = process.env.NODE_ENV || 'development';
+    const PORT = process.env.PORT || 5000;
+    const apiBaseUrl = NODE_ENV === 'production'
+      ? `https://${process.env.BASE_DOMAIN || 'varanasihub.com'}/api`
+      : `http://localhost:${PORT}/api`;
+
+    const html = generateBusinessHTML(business, apiBaseUrl);
     res.setHeader('Content-Type', 'text/html');
     res.send(html);
   } catch (error) {

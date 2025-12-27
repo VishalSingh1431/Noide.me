@@ -9,10 +9,14 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   if (apiBaseUrl) {
     apiUrl = apiBaseUrl;
   } else {
+    // Determine API base URL from current window location if available (client-side)
+    // or fall back to environment variables (server-side rendering)
     const isDevelopment = process.env.NODE_ENV === 'development';
     const baseDomain = process.env.BASE_DOMAIN || 'varanasihub.com';
+    const port = process.env.PORT || 5000;
+
     apiUrl = isDevelopment
-      ? `http://localhost:${process.env.PORT || 5000}/api`
+      ? `http://localhost:${port}/api`
       : `https://${baseDomain}/api`;
   }
   // Helper function to get first name from full name
