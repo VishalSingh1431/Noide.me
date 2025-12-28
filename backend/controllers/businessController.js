@@ -390,38 +390,48 @@ export const createBusiness = async (req, res) => {
     }
 
     // Generate slug from business name or use preferred slug
-    let slug;
+    let slug = '';
+
+    // 1. Try preferred slug first
     if (preferredSlug && typeof preferredSlug === 'string') {
-      // Use preferred slug if provided and valid
       const preferredSlugClean = preferredSlug.toLowerCase().trim();
+      // Allow letters, numbers, hyphens, 3-50 chars
       const slugRegex = /^[a-z0-9-]{3,50}$/;
       if (slugRegex.test(preferredSlugClean)) {
         const preferredExists = await Business.slugExists(preferredSlugClean);
         if (!preferredExists) {
           slug = preferredSlugClean;
-        } else {
-          // Preferred slug is taken, fall back to auto-generation
-          slug = slugify(businessName);
         }
-      } else {
-        // Invalid preferred slug, fall back to auto-generation
-        slug = slugify(businessName);
       }
-    } else {
-      // Auto-generate slug from business name
+    }
+
+    // 2. Fallback to businessName if no preferred slug or it was invalid/taken
+    if (!slug && businessName) {
       slug = slugify(businessName);
     }
 
-    // If slug is still not set or exists, append a number
-    if (!slug) {
-      slug = slugify(businessName);
+    // 3. Fallback to generic name if slug is still empty or too short (e.g. business name was "123")
+    if (!slug || slug.length < 3) {
+      // Try adding 'biz-' prefix if name was numeric/special chars
+      const cleanName = businessName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      slug = `biz-${cleanName || Date.now()}`;
+
+      // Ensure it's at least 3 chars
+      if (slug.length < 3) {
+        slug = `biz-${Date.now()}`;
+      }
     }
 
+    // 4. Ensure uniqueness by appending counter if needed
     let slugExists = await Business.slugExists(slug);
     let counter = 1;
     while (slugExists) {
-      slug = `${slugify(businessName)}${counter}`;
-      slugExists = await Business.slugExists(slug);
+      // Check if slug already has a number at the end to avoid biz-1-1-1
+      const numberedSlug = `${slug}${counter}`;
+      slugExists = await Business.slugExists(numberedSlug);
+      if (!slugExists) {
+        slug = numberedSlug;
+      }
       counter++;
     }
 
@@ -753,8 +763,8 @@ export const updateBusiness = async (req, res) => {
     if (req.body.existingImages !== undefined) {
       // Parse existing images array from request (after user removed some)
       try {
-        imagesUrl = typeof req.body.existingImages === 'string' 
-          ? JSON.parse(req.body.existingImages) 
+        imagesUrl = typeof req.body.existingImages === 'string'
+          ? JSON.parse(req.body.existingImages)
           : (Array.isArray(req.body.existingImages) ? req.body.existingImages : []);
       } catch (error) {
         console.error('Error parsing existingImages:', error);
