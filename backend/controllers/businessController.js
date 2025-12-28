@@ -210,6 +210,10 @@ export const checkSubdomainAvailability = async (req, res) => {
  * Create a new business website
  */
 export const createBusiness = async (req, res) => {
+  // Declare variables outside try block for better error logging
+  let safeCategory = 'Services';
+  let finalCategory = 'Services';
+
   try {
     const {
       businessName,
@@ -326,7 +330,7 @@ export const createBusiness = async (req, res) => {
     };
 
     // Force to valid category - default to Services if anything fails
-    let finalCategory = 'Services'; // ALWAYS default to Services
+    // finalCategory already initialized above
 
     console.log('🔍 STEP 1 - Category input:', category);
     console.log('🔍 STEP 2 - Normalized:', normalizedCategory);
@@ -517,7 +521,6 @@ export const createBusiness = async (req, res) => {
 
     // FINAL SAFETY CHECK - ensure category is ALWAYS valid before database
     // validCategories already defined above at line 256, reuse it
-    let safeCategory = 'Services'; // Default fallback
 
     // Triple check: if finalCategory is valid, use it; otherwise force to Services
     if (finalCategory && validCategories.includes(finalCategory)) {
@@ -529,6 +532,20 @@ export const createBusiness = async (req, res) => {
 
     console.log('🛡️ Final safety check - Category:', finalCategory, '→ Safe:', safeCategory);
     console.log('🛡️ Safe category type:', typeof safeCategory, 'Value:', JSON.stringify(safeCategory));
+
+    // DEBUG: Log critical fields before creation
+    console.log('🛠️ Creating Business with:', {
+      businessName,
+      slug,
+      subdomainUrl,
+      subdirectoryUrl,
+      safeCategory,
+      email: finalEmail
+    });
+
+    if (!subdirectoryUrl) {
+      throw new Error('CRITICAL: subdirectoryUrl is null or undefined!');
+    }
 
     // Create business record
     const business = await Business.create({
@@ -580,13 +597,22 @@ export const createBusiness = async (req, res) => {
       requiresApproval: true,
     });
   } catch (error) {
-    console.error('❌ Error creating business:', error.message);
-    console.error('Error code:', error.code);
+    console.error('❌ Error creating business:', error);
+    console.error('Error stack:', error.stack); // LOG FULL STACK
     console.error('Category received from request:', req.body?.category);
     console.error('Final category that was used:', typeof finalCategory !== 'undefined' ? finalCategory : 'NOT SET');
     console.error('Safe category that was used:', typeof safeCategory !== 'undefined' ? safeCategory : 'NOT SET');
     console.error('Request body keys:', Object.keys(req.body || {}));
     console.error('Request files keys:', Object.keys(req.files || {}));
+
+    // Handle NOT NULL constraint violation explicitly
+    if (error.code === '23502') {
+      console.error('❌ NOT NULL constraint violation:', error.column);
+      return res.status(500).json({
+        error: `Internal Server Error: Missing required field ${error.column}. Please check your inputs.`,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
+    }
 
     // Handle PostgreSQL unique constraint violation
     if (error.code === '23505') {

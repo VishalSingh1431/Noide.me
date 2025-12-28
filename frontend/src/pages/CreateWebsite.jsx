@@ -954,7 +954,7 @@ const CreateWebsite = () => {
       // Check if response is JSON before parsing
       const contentType = response.headers.get('content-type');
       let data;
-      
+
       if (contentType && contentType.includes('application/json')) {
         try {
           data = await response.json();
@@ -1784,7 +1784,7 @@ const CreateWebsite = () => {
                   <p className="text-sm text-gray-600 mb-4 sm:mb-6">
                     Add multiple YouTube videos to showcase your business. Each video will be embedded on your website.
                   </p>
-                  
+
                   <div className="space-y-3 sm:space-y-4">
                     {formData.youtubeVideos.map((video, index) => (
                       <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
@@ -1820,7 +1820,7 @@ const CreateWebsite = () => {
                         )}
                       </div>
                     ))}
-                    
+
                     <button
                       type="button"
                       onClick={addYouTubeVideo}
@@ -1830,7 +1830,7 @@ const CreateWebsite = () => {
                       Add Another Video
                     </button>
                   </div>
-                  
+
                   {formData.youtubeVideos.length === 0 && (
                     <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
                       <p className="text-xs sm:text-sm text-blue-800">
