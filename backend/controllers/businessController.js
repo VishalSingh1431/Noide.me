@@ -500,6 +500,16 @@ export const createBusiness = async (req, res) => {
       appointmentSettingsData = {};
     }
 
+    // Parse YouTube videos
+    let youtubeVideoData = [];
+    try {
+      youtubeVideoData = typeof youtubeVideo === 'string' ?
+        JSON.parse(youtubeVideo) :
+        (youtubeVideo || []);
+    } catch (error) {
+      youtubeVideoData = [];
+    }
+
     // Generate subdomain URL only
     // Default to production unless explicitly in development mode
     const isDevelopment = process.env.NODE_ENV === 'development';
