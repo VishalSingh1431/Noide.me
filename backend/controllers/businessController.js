@@ -740,13 +740,28 @@ export const updateBusiness = async (req, res) => {
       preferredSlug,
     } = req.body;
 
-    // Get uploaded files from Cloudinary (already processed by middleware)
+    // Handle logo - check if it should be removed
     let logoUrl = existingBusiness.logoUrl;
-    if (req.files?.logo?.[0]) {
+    if (req.body.removeLogo === 'true') {
+      logoUrl = null;
+    } else if (req.files?.logo?.[0]) {
       logoUrl = getCloudinaryUrl(req.files.logo[0]);
     }
 
+    // Handle images - use existingImages from request body if provided (after removals)
     let imagesUrl = existingBusiness.imagesUrl || [];
+    if (req.body.existingImages !== undefined) {
+      // Parse existing images array from request (after user removed some)
+      try {
+        imagesUrl = typeof req.body.existingImages === 'string' 
+          ? JSON.parse(req.body.existingImages) 
+          : (Array.isArray(req.body.existingImages) ? req.body.existingImages : []);
+      } catch (error) {
+        console.error('Error parsing existingImages:', error);
+        imagesUrl = existingBusiness.imagesUrl || [];
+      }
+    }
+    // Add new images
     if (req.files?.images && req.files.images.length > 0) {
       const newImages = req.files.images.map((file) => getCloudinaryUrl(file));
       imagesUrl = [...imagesUrl, ...newImages];

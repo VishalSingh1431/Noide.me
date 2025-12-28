@@ -324,7 +324,7 @@ export const businessAPI = {
   updateBusiness: async (id, formData) => {
     const submitData = new FormData();
     Object.keys(formData).forEach(key => {
-      if (key === 'services' || key === 'specialOffers' || key === 'businessHours' || key === 'appointmentSettings') {
+      if (key === 'services' || key === 'specialOffers' || key === 'businessHours' || key === 'appointmentSettings' || key === 'youtubeVideo' || key === 'existingImages') {
         submitData.append(key, JSON.stringify(formData[key] || (key === 'businessHours' || key === 'appointmentSettings' ? {} : [])));
       } else if (key !== 'logo' && key !== 'images' && !key.startsWith('serviceImage_')) {
         submitData.append(key, formData[key] || '');

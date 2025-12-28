@@ -166,7 +166,7 @@ const WebsitePreview = ({ formData, onClose }) => {
 
   // Handle both array and string for backward compatibility
   const youtubeVideos = Array.isArray(formData.youtubeVideo) 
-    ? formData.youtubeVideo 
+    ? formData.youtubeVideo.filter(v => v && typeof v === 'string' && v.trim().length > 0)
     : (formData.youtubeVideo ? [formData.youtubeVideo] : []);
 
   // Check if business is open now

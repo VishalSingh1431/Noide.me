@@ -99,7 +99,7 @@ const EditWebsite = () => {
           logo: null,
           existingLogo: business.logoUrl || null,
           youtubeVideos: Array.isArray(business.youtubeVideo) 
-            ? business.youtubeVideo 
+            ? business.youtubeVideo.filter(v => v && v.trim()) // Filter empty videos
             : business.youtubeVideo 
               ? [business.youtubeVideo] 
               : [],
@@ -211,6 +211,23 @@ const EditWebsite = () => {
         [name]: '',
       }));
     }
+  };
+
+  // Remove existing logo
+  const removeLogo = () => {
+    setFormData(prev => ({
+      ...prev,
+      existingLogo: null,
+      logo: null, // Also clear any new logo selection
+    }));
+  };
+
+  // Remove existing image
+  const removeExistingImage = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      existingImages: prev.existingImages.filter((_, i) => i !== index)
+    }));
   };
 
   // Services handlers
@@ -414,7 +431,7 @@ const EditWebsite = () => {
         googleMapLink: formData.googleMapLink,
         whatsappNumber: formData.whatsappNumber,
         description: formData.description,
-        youtubeVideo: formData.youtubeVideos,
+        youtubeVideo: formData.youtubeVideos.filter(v => v && typeof v === 'string' && v.trim().length > 0), // Filter empty videos
         instagram: formData.instagram,
         facebook: formData.facebook,
         website: formData.website,
@@ -428,6 +445,8 @@ const EditWebsite = () => {
         preferredSlug: formData.preferredSlug,
         logo: formData.logo,
         images: formData.images,
+        existingImages: formData.existingImages, // Send remaining existing images
+        removeLogo: formData.existingLogo === null ? 'true' : 'false', // Flag to remove logo
       };
 
       // Add service images
@@ -1056,41 +1075,69 @@ const EditWebsite = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Business Logo</label>
                       {formData.existingLogo && (
-                        <div className="mb-3">
-                          <p className="text-sm text-gray-600 mb-2">Current Logo:</p>
-                          <img src={formData.existingLogo} alt="Current logo" className="w-24 h-24 object-contain rounded-lg border-2 border-gray-200" />
+                        <div className="mb-3 p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm text-gray-600 font-medium">Current Logo:</p>
+                            <button
+                              type="button"
+                              onClick={removeLogo}
+                              className="px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-1.5"
+                            >
+                              <X className="w-3 h-3" />
+                              Remove
+                            </button>
+                          </div>
+                          <div className="relative inline-block">
+                            <img src={formData.existingLogo} alt="Current logo" className="w-24 h-24 object-contain rounded-lg border-2 border-gray-200" />
+                          </div>
                         </div>
                       )}
                       <FileUploader
                         name="logo"
-                        label={formData.existingLogo ? "Upload New Logo (optional)" : "Upload Logo"}
+                        label={formData.existingLogo ? "Upload New Logo to Replace" : "Upload Logo"}
                         accept="image/*"
                         onChange={(file) => handleFileChange('logo', file || null)}
                         multiple={false}
                         maxFiles={1}
                         error={errors.logo}
                       />
+                      {formData.logo && (
+                        <p className="mt-2 text-sm text-green-600 font-medium">✓ New logo selected (will replace existing)</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Business Images</label>
                       {formData.existingImages && formData.existingImages.length > 0 && (
-                        <div className="mb-3">
-                          <p className="text-sm text-gray-600 mb-2">Current Images ({formData.existingImages.length}):</p>
-                          <div className="grid grid-cols-4 gap-2">
+                        <div className="mb-4 p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                          <p className="text-sm text-gray-600 mb-3 font-medium">Current Images ({formData.existingImages.length}):</p>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                             {formData.existingImages.map((img, idx) => (
-                              <img key={idx} src={img} alt={`Current ${idx + 1}`} className="w-20 h-20 object-cover rounded-lg border-2 border-gray-200" />
+                              <div key={idx} className="relative group">
+                                <img src={img} alt={`Current ${idx + 1}`} className="w-full h-20 object-cover rounded-lg border-2 border-gray-200" />
+                                <button
+                                  type="button"
+                                  onClick={() => removeExistingImage(idx)}
+                                  className="absolute top-1 right-1 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                  aria-label={`Remove image ${idx + 1}`}
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
                             ))}
                           </div>
                         </div>
                       )}
                       <FileUploader
                         name="images"
-                        label="Upload New Images (optional - will be added to existing)"
+                        label="Upload New Images (will be added to existing)"
                         accept="image/*"
                         onChange={(files) => handleFileChange('images', files || [])}
                         maxFiles={10}
                         error={errors.images}
                       />
+                      {formData.images && formData.images.length > 0 && (
+                        <p className="mt-2 text-sm text-green-600 font-medium">✓ {formData.images.length} new image(s) selected</p>
+                      )}
                     </div>
                   </div>
                 </div>
