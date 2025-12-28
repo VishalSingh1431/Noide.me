@@ -74,7 +74,7 @@ const EditWebsite = () => {
           navigate('/login');
           return;
         }
-        
+
         if (!token) {
           navigate('/login');
           return;
@@ -98,17 +98,21 @@ const EditWebsite = () => {
           existingImages: business.imagesUrl || [],
           logo: null,
           existingLogo: business.logoUrl || null,
-          youtubeVideos: Array.isArray(business.youtubeVideo) 
+          youtubeVideos: Array.isArray(business.youtubeVideo)
             ? business.youtubeVideo.filter(v => v && v.trim()) // Filter empty videos
-            : business.youtubeVideo 
-              ? [business.youtubeVideo] 
+            : business.youtubeVideo
+              ? [business.youtubeVideo]
               : [],
           instagram: business.socialLinks?.instagram || '',
           facebook: business.socialLinks?.facebook || '',
           website: business.socialLinks?.website || '',
           navbarTagline: business.navbarTagline || '',
           footerDescription: business.footerDescription || '',
-          services: business.services || [],
+          services: (business.services || []).map(s => ({
+            ...s,
+            imageUrl: s.image || s.imageUrl,
+            image: null
+          })),
           specialOffers: business.specialOffers || [],
           businessHours: business.businessHours || {
             monday: { open: true, start: '09:00', end: '18:00' },
@@ -458,6 +462,29 @@ const EditWebsite = () => {
 
       const response = await businessAPI.updateBusiness(id, updateData);
 
+      // Update local state with returned business data
+      if (response.business) {
+        const updatedBiz = response.business;
+        setFormData(prev => ({
+          ...prev,
+          // Update images and clear new uploads
+          existingImages: updatedBiz.imagesUrl || [],
+          images: [],
+          // Update logo
+          existingLogo: updatedBiz.logoUrl || null,
+          logo: null,
+          // Update services (mapping image -> imageUrl)
+          services: (updatedBiz.services || []).map(s => ({
+            ...s,
+            imageUrl: s.image || s.imageUrl,
+            image: null
+          })),
+          // Update basic fields that might have changed
+          businessName: updatedBiz.businessName,
+          preferredSlug: updatedBiz.slug,
+        }));
+      }
+
       const message = response.requiresApproval
         ? 'Your changes have been submitted for admin approval. They will be live once approved.'
         : 'Your changes have been saved and are live now.';
@@ -622,927 +649,927 @@ const EditWebsite = () => {
                 </div>
               </div>
 
-                {/* Website URL / Subdomain Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <Globe className="w-5 h-5 text-indigo-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Website Address (Subdomain)</h2>
+              {/* Website URL / Subdomain Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                    <Globe className="w-5 h-5 text-indigo-600" />
                   </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Website Address (Subdomain)</h2>
+                </div>
 
-                  <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6">
-                    <div className="flex items-center">
-                      <AlertCircle className="w-5 h-5 text-amber-500 mr-3" />
-                      <p className="text-sm text-amber-700">
-                        <strong>Warning:</strong> Changing your website address will break existing links to your site. Your current customers will need the new URL.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="max-w-2xl">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Choose Your Unique Subdomain
-                    </label>
-                    <div className="relative">
-                      <div className="flex shadow-sm rounded-xl overflow-hidden border-2 border-gray-200 focus-within:border-blue-500 transition-all">
-                        <input
-                          type="text"
-                          value={formData.preferredSlug}
-                          onChange={handleSubdomainChange}
-                          className="flex-1 px-4 py-3 outline-none text-gray-900 font-medium"
-                          placeholder="mybusiness"
-                        />
-                        <div className="bg-gray-100 px-4 py-3 text-gray-500 font-medium border-l border-gray-200">
-                          .varanasihub.com
-                        </div>
-                      </div>
-                      {subdomainStatus?.checking && (
-                        <div className="absolute right-40 top-3.5 flex items-center gap-2 text-sm text-blue-600">
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <span>Checking...</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {subdomainStatus?.available === true && (
-                      <div className="mt-3 flex items-center gap-2 text-green-600 animate-in fade-in slide-in-from-top-1">
-                        <CheckCircle className="w-5 h-5" />
-                        <span className="font-medium text-sm">Great! This subdomain is available.</span>
-                      </div>
-                    )}
-
-                    {subdomainStatus?.available === false && (
-                      <div className="mt-4 animate-in fade-in slide-in-from-top-2">
-                        <div className="flex items-center gap-2 text-red-600 mb-2">
-                          <XCircle className="w-5 h-5" />
-                          <span className="font-medium text-sm">Sorry, this subdomain is already taken.</span>
-                        </div>
-                        {subdomainStatus.suggestions?.length > 0 && (
-                          <div className="bg-red-50 p-4 rounded-xl border border-red-100">
-                            <p className="text-xs font-semibold text-red-800 uppercase tracking-wider mb-2">Try one of these available names:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {subdomainStatus.suggestions.map((s) => (
-                                <button
-                                  key={s}
-                                  type="button"
-                                  onClick={() => {
-                                    setFormData(prev => ({ ...prev, preferredSlug: s }));
-                                    checkSubdomain(s);
-                                  }}
-                                  className="px-3 py-1.5 bg-white border border-red-200 rounded-lg text-sm text-red-700 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all"
-                                >
-                                  {s}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    <p className="mt-3 text-xs text-gray-500">
-                      Your website will be live at: <span className="text-blue-600 font-medium">https://{formData.preferredSlug || 'your-name'}.varanasihub.com</span>
+                <div className="bg-amber-50 border-l-4 border-amber-400 p-4 mb-6">
+                  <div className="flex items-center">
+                    <AlertCircle className="w-5 h-5 text-amber-500 mr-3" />
+                    <p className="text-sm text-amber-700">
+                      <strong>Warning:</strong> Changing your website address will break existing links to your site. Your current customers will need the new URL.
                     </p>
                   </div>
                 </div>
 
-                {/* Theme Selection Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
-                      <Palette className="w-5 h-5 text-purple-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Choose Your Theme <span className="text-sm font-normal text-gray-500">(Can be changed anytime)</span></h2>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Select a theme that best represents your business. You can change this anytime.
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {/* Modern Theme */}
-                    <div
-                      onClick={() => setFormData(prev => ({ ...prev, theme: 'modern' }))}
-                      className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all ${formData.theme === 'modern'
-                        ? 'border-purple-500 bg-purple-50 ring-2 ring-purple-200'
-                        : 'border-gray-200 bg-white hover:border-purple-300 hover:bg-purple-50/50'
-                        }`}
-                    >
-                      {formData.theme === 'modern' && (
-                        <div className="absolute top-4 right-4 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
-                          <CheckCircle2 className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                      <div className="mb-4">
-                        <div className="h-32 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-xl mb-3"></div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Modern</h3>
-                        <p className="text-sm text-gray-600">
-                          Bold gradients, vibrant colors, and contemporary design. Perfect for tech startups and modern businesses.
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-blue-500 rounded"></div>
-                        <div className="w-8 h-8 bg-indigo-500 rounded"></div>
-                        <div className="w-8 h-8 bg-purple-500 rounded"></div>
-                      </div>
-                    </div>
-
-                    {/* Classic Theme */}
-                    <div
-                      onClick={() => setFormData(prev => ({ ...prev, theme: 'classic' }))}
-                      className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all ${formData.theme === 'classic'
-                        ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-200'
-                        : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-amber-50/50'
-                        }`}
-                    >
-                      {formData.theme === 'classic' && (
-                        <div className="absolute top-4 right-4 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
-                          <CheckCircle2 className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                      <div className="mb-4">
-                        <div className="h-32 bg-gradient-to-br from-amber-600 via-orange-600 to-red-600 rounded-xl mb-3"></div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Classic</h3>
-                        <p className="text-sm text-gray-600">
-                          Warm tones, elegant design, and traditional aesthetics. Ideal for restaurants, salons, and service businesses.
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-amber-500 rounded"></div>
-                        <div className="w-8 h-8 bg-orange-500 rounded"></div>
-                        <div className="w-8 h-8 bg-red-500 rounded"></div>
-                      </div>
-                    </div>
-
-                    {/* Minimal Theme */}
-                    <div
-                      onClick={() => setFormData(prev => ({ ...prev, theme: 'minimal' }))}
-                      className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all ${formData.theme === 'minimal'
-                        ? 'border-gray-500 bg-gray-50 ring-2 ring-gray-200'
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'
-                        }`}
-                    >
-                      {formData.theme === 'minimal' && (
-                        <div className="absolute top-4 right-4 w-6 h-6 bg-gray-500 rounded-full flex items-center justify-center">
-                          <CheckCircle2 className="w-4 h-4 text-white" />
-                        </div>
-                      )}
-                      <div className="mb-4">
-                        <div className="h-32 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-xl mb-3 border-2 border-gray-300"></div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">Minimal</h3>
-                        <p className="text-sm text-gray-600">
-                          Clean lines, subtle colors, and focus on content. Great for professional services and consultants.
-                        </p>
-                      </div>
-                      <div className="flex gap-2">
-                        <div className="w-8 h-8 bg-gray-400 rounded"></div>
-                        <div className="w-8 h-8 bg-gray-500 rounded"></div>
-                        <div className="w-8 h-8 bg-gray-600 rounded"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Business Information Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                      <Building2 className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormInput
-                      label="Business Name"
-                      name="businessName"
-                      value={formData.businessName}
-                      onChange={handleChange}
-                      placeholder="Enter business name"
-                      required
-                      error={errors.businessName}
-                      icon={Building2}
-                    />
-                    <FormInput
-                      label="Owner Name"
-                      name="ownerName"
-                      value={formData.ownerName}
-                      onChange={handleChange}
-                      placeholder="Enter owner name (optional)"
-                      error={errors.ownerName}
-                      icon={User}
-                    />
-                    <CategorySelect
-                      label="Business Category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                      required
-                      error={errors.category}
-                    />
-                    <FormInput
-                      label="Mobile Number"
-                      name="mobileNumber"
-                      type="tel"
-                      value={formData.mobileNumber}
-                      onChange={handleChange}
-                      placeholder="10-digit mobile number"
-                      required
-                      error={errors.mobileNumber}
-                      icon={Phone}
-                    />
-                  </div>
-                </div>
-
-                {/* Contact Information Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                      <Mail className="w-5 h-5 text-indigo-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Contact Information</h2>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormInput
-                      label="Email"
-                      name="email"
-                      type="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="business@example.com"
-                      required
-                      error={errors.email}
-                      icon={Mail}
-                    />
-                    <FormInput
-                      label="WhatsApp Number"
-                      name="whatsappNumber"
-                      type="tel"
-                      value={formData.whatsappNumber}
-                      onChange={handleChange}
-                      placeholder="10-digit WhatsApp number (optional)"
-                      error={errors.whatsappNumber}
-                      icon={MessageCircle}
-                    />
-                  </div>
-                </div>
-
-                {/* Location Information Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                        <MapPin className="w-5 h-5 text-purple-600" />
-                      </div>
-                      <h2 className="text-2xl font-bold text-gray-900">Location Information</h2>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
-                      <MapPin className="w-4 h-4 text-blue-600" />
-                      <span className="text-sm font-medium text-blue-700">Auto-Fill Available</span>
-                    </div>
-                  </div>
-                  <div className="space-y-6">
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700">
-                          Full Address <span className="text-red-500">*</span>
-                        </label>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                          🔍 Search & Auto-Fill
-                        </span>
-                      </div>
-                      <PlacesAutocomplete
-                        value={formData.address}
-                        onChange={handleChange}
-                        onPlaceSelect={(businessData) => {
-                          if (businessData) {
-                            // Auto-fill form fields with place data
-                            setFormData(prev => ({
-                              ...prev,
-                              address: businessData.address || prev.address,
-                              googleMapLink: businessData.googleMapLink || prev.googleMapLink,
-                              // Only auto-fill if field is empty
-                              businessName: prev.businessName || businessData.businessName || '',
-                              mobileNumber: prev.mobileNumber || formatPhoneNumber(businessData.phoneNumber) || '',
-                              website: prev.website || businessData.website || '',
-                            }));
-
-                            // Show success message
-                            setSuccessMessage({
-                              title: '✅ Business Details Extracted!',
-                              message: `We've auto-filled your business details from Google. Please review and update as needed.`,
-                              temporary: true,
-                            });
-
-                            // Clear temporary message after 5 seconds
-                            setTimeout(() => {
-                              setSuccessMessage(prev =>
-                                prev?.temporary ? null : prev
-                              );
-                            }, 5000);
-                          }
-                        }}
-                        placeholder="Type your business name or address (e.g., 'Restaurant in Varanasi')"
-                        error={errors.address}
+                <div className="max-w-2xl">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Choose Your Unique Subdomain
+                  </label>
+                  <div className="relative">
+                    <div className="flex shadow-sm rounded-xl overflow-hidden border-2 border-gray-200 focus-within:border-blue-500 transition-all">
+                      <input
+                        type="text"
+                        value={formData.preferredSlug}
+                        onChange={handleSubdomainChange}
+                        className="flex-1 px-4 py-3 outline-none text-gray-900 font-medium"
+                        placeholder="mybusiness"
                       />
-                      <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-800">
-                          <strong>💡 How to Extract Business Details:</strong>
-                        </p>
-                        <ol className="text-xs text-blue-700 mt-1 ml-4 list-decimal space-y-1">
-                          <li>Start typing your business name or address in the field above</li>
-                          <li>Select your business from the dropdown suggestions</li>
-                          <li>We'll automatically fill: Business Name, Address, Phone, Website, and Map Link</li>
-                        </ol>
+                      <div className="bg-gray-100 px-4 py-3 text-gray-500 font-medium border-l border-gray-200">
+                        .varanasihub.com
                       </div>
                     </div>
-                    <FormInput
-                      label="Google Map Link"
-                      name="googleMapLink"
-                      type="url"
-                      value={formData.googleMapLink}
-                      onChange={handleChange}
-                      placeholder="https://maps.google.com/... (auto-filled if address found)"
-                      error={errors.googleMapLink}
-                      icon={LinkIcon}
-                    />
-                  </div>
-                </div>
-
-                {/* Business Description */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 text-pink-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Business Description</h2>
-                  </div>
-                  <TextArea
-                    label="Description"
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    placeholder="Describe your business in detail (minimum 50 characters)..."
-                    required
-                    rows={6}
-                    error={errors.description}
-                  />
-                  <div className="mt-2 flex items-center justify-between">
-                    <p className="text-sm text-gray-500">
-                      {formData.description.length >= 50 ? (
-                        <span className="text-green-600 font-medium">✓ Minimum length met</span>
-                      ) : (
-                        <span>{formData.description.length}/50 characters minimum</span>
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                {/* YouTube Video Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Youtube className="w-5 h-5 text-red-600" />
-                    </div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Video Content <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-4 sm:mb-6">
-                    Add multiple YouTube videos to showcase your business. Each video will be embedded on your website.
-                  </p>
-                  
-                  <div className="space-y-3 sm:space-y-4">
-                    {formData.youtubeVideos.map((video, index) => (
-                      <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
-                        <div className="flex items-center justify-between mb-2 sm:mb-3">
-                          <label className="block text-xs sm:text-sm font-semibold text-gray-700">
-                            Video {index + 1}
-                          </label>
-                          <button
-                            type="button"
-                            onClick={() => removeYouTubeVideo(index)}
-                            className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
-                            aria-label={`Remove video ${index + 1}`}
-                          >
-                            <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                          </button>
-                        </div>
-                        <FormInput
-                          label=""
-                          name={`youtubeVideo_${index}`}
-                          type="url"
-                          value={video}
-                          onChange={(e) => updateYouTubeVideo(index, e.target.value)}
-                          placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
-                          error={errors[`youtubeVideo_${index}`]}
-                          icon={Youtube}
-                        />
-                        {video && (
-                          <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-green-50 border border-green-200 rounded-lg">
-                            <p className="text-xs text-green-700 font-medium">
-                              ✓ Video URL added
-                            </p>
-                          </div>
-                        )}
+                    {subdomainStatus?.checking && (
+                      <div className="absolute right-40 top-3.5 flex items-center gap-2 text-sm text-blue-600">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        <span>Checking...</span>
                       </div>
-                    ))}
-                    
-                    <button
-                      type="button"
-                      onClick={addYouTubeVideo}
-                      className="w-full py-2.5 sm:py-3 border-2 border-dashed border-red-300 rounded-xl text-red-600 font-semibold hover:bg-red-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
-                    >
-                      <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-                      Add Another Video
-                    </button>
+                    )}
                   </div>
-                  
-                  {formData.youtubeVideos.length === 0 && (
-                    <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <p className="text-xs sm:text-sm text-blue-800">
-                        <strong>💡 Tip:</strong> Click "Add Another Video" to add your first video, or leave empty if you don't want to add videos.
-                      </p>
+
+                  {subdomainStatus?.available === true && (
+                    <div className="mt-3 flex items-center gap-2 text-green-600 animate-in fade-in slide-in-from-top-1">
+                      <CheckCircle className="w-5 h-5" />
+                      <span className="font-medium text-sm">Great! This subdomain is available.</span>
                     </div>
                   )}
-                </div>
 
-                {/* Media Upload Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 text-amber-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Media <span className="text-sm font-normal text-gray-500">(Optional - leave empty to keep existing)</span></h2>
-                  </div>
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Business Logo</label>
-                      {formData.existingLogo && (
-                        <div className="mb-3 p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
-                          <div className="flex items-center justify-between mb-2">
-                            <p className="text-sm text-gray-600 font-medium">Current Logo:</p>
-                            <button
-                              type="button"
-                              onClick={removeLogo}
-                              className="px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-1.5"
-                            >
-                              <X className="w-3 h-3" />
-                              Remove
-                            </button>
-                          </div>
-                          <div className="relative inline-block">
-                            <img src={formData.existingLogo} alt="Current logo" className="w-24 h-24 object-contain rounded-lg border-2 border-gray-200" />
-                          </div>
-                        </div>
-                      )}
-                      <FileUploader
-                        name="logo"
-                        label={formData.existingLogo ? "Upload New Logo to Replace" : "Upload Logo"}
-                        accept="image/*"
-                        onChange={(file) => handleFileChange('logo', file || null)}
-                        multiple={false}
-                        maxFiles={1}
-                        error={errors.logo}
-                      />
-                      {formData.logo && (
-                        <p className="mt-2 text-sm text-green-600 font-medium">✓ New logo selected (will replace existing)</p>
-                      )}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Business Images</label>
-                      {formData.existingImages && formData.existingImages.length > 0 && (
-                        <div className="mb-4 p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
-                          <p className="text-sm text-gray-600 mb-3 font-medium">Current Images ({formData.existingImages.length}):</p>
-                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                            {formData.existingImages.map((img, idx) => (
-                              <div key={idx} className="relative group">
-                                <img src={img} alt={`Current ${idx + 1}`} className="w-full h-20 object-cover rounded-lg border-2 border-gray-200" />
-                                <button
-                                  type="button"
-                                  onClick={() => removeExistingImage(idx)}
-                                  className="absolute top-1 right-1 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
-                                  aria-label={`Remove image ${idx + 1}`}
-                                >
-                                  <X className="w-3 h-3" />
-                                </button>
-                              </div>
+                  {subdomainStatus?.available === false && (
+                    <div className="mt-4 animate-in fade-in slide-in-from-top-2">
+                      <div className="flex items-center gap-2 text-red-600 mb-2">
+                        <XCircle className="w-5 h-5" />
+                        <span className="font-medium text-sm">Sorry, this subdomain is already taken.</span>
+                      </div>
+                      {subdomainStatus.suggestions?.length > 0 && (
+                        <div className="bg-red-50 p-4 rounded-xl border border-red-100">
+                          <p className="text-xs font-semibold text-red-800 uppercase tracking-wider mb-2">Try one of these available names:</p>
+                          <div className="flex flex-wrap gap-2">
+                            {subdomainStatus.suggestions.map((s) => (
+                              <button
+                                key={s}
+                                type="button"
+                                onClick={() => {
+                                  setFormData(prev => ({ ...prev, preferredSlug: s }));
+                                  checkSubdomain(s);
+                                }}
+                                className="px-3 py-1.5 bg-white border border-red-200 rounded-lg text-sm text-red-700 hover:bg-red-600 hover:text-white hover:border-red-600 transition-all"
+                              >
+                                {s}
+                              </button>
                             ))}
                           </div>
                         </div>
                       )}
-                      <FileUploader
-                        name="images"
-                        label="Upload New Images (will be added to existing)"
-                        accept="image/*"
-                        onChange={(files) => handleFileChange('images', files || [])}
-                        maxFiles={10}
-                        error={errors.images}
-                      />
-                      {formData.images && formData.images.length > 0 && (
-                        <p className="mt-2 text-sm text-green-600 font-medium">✓ {formData.images.length} new image(s) selected</p>
-                      )}
                     </div>
-                  </div>
+                  )}
+
+                  <p className="mt-3 text-xs text-gray-500">
+                    Your website will be live at: <span className="text-blue-600 font-medium">https://{formData.preferredSlug || 'your-name'}.varanasihub.com</span>
+                  </p>
                 </div>
+              </div>
 
-                {/* Social Links Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                      <LinkIcon className="w-5 h-5 text-green-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Social Links <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+              {/* Theme Selection Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center">
+                    <Palette className="w-5 h-5 text-purple-600" />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <FormInput
-                      label="Instagram"
-                      name="instagram"
-                      type="url"
-                      value={formData.instagram}
-                      onChange={handleChange}
-                      placeholder="https://instagram.com/..."
-                      error={errors.instagram}
-                      icon={Instagram}
-                    />
-                    <FormInput
-                      label="Facebook"
-                      name="facebook"
-                      type="url"
-                      value={formData.facebook}
-                      onChange={handleChange}
-                      placeholder="https://facebook.com/..."
-                      error={errors.facebook}
-                      icon={Facebook}
-                    />
-                    <FormInput
-                      label="Website"
-                      name="website"
-                      type="url"
-                      value={formData.website}
-                      onChange={handleChange}
-                      placeholder="https://yourwebsite.com"
-                      error={errors.website}
-                      icon={Globe}
-                    />
-                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Choose Your Theme <span className="text-sm font-normal text-gray-500">(Can be changed anytime)</span></h2>
                 </div>
-
-                {/* Navbar & Footer Customization Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center">
-                      <Navigation className="w-5 h-5 text-cyan-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Navbar & Footer Customization <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
-                  </div>
-                  <div className="space-y-6">
-                    <FormInput
-                      label="Navbar Tagline/Slogan"
-                      name="navbarTagline"
-                      value={formData.navbarTagline}
-                      onChange={handleChange}
-                      placeholder="e.g., 'Your Trusted Partner Since 2010' or 'Quality Service, Every Time'"
-                      error={errors.navbarTagline}
-                      icon={Navigation}
-                    />
-                    <p className="text-sm text-gray-500 -mt-4">
-                      A short tagline that will appear in your website's navbar below the business name
-                    </p>
-
-                    <div className="mt-6">
-                      <TextArea
-                        label="Footer Description"
-                        name="footerDescription"
-                        value={formData.footerDescription}
-                        onChange={handleChange}
-                        placeholder="Add a custom description or message for your footer (e.g., 'We are committed to providing the best service to our customers...')"
-                        rows={4}
-                        error={errors.footerDescription}
-                      />
-                      <p className="mt-2 text-sm text-gray-500">
-                        This text will appear in your website's footer section
+                <p className="text-sm text-gray-600 mb-6">
+                  Select a theme that best represents your business. You can change this anytime.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Modern Theme */}
+                  <div
+                    onClick={() => setFormData(prev => ({ ...prev, theme: 'modern' }))}
+                    className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all ${formData.theme === 'modern'
+                      ? 'border-purple-500 bg-purple-50 ring-2 ring-purple-200'
+                      : 'border-gray-200 bg-white hover:border-purple-300 hover:bg-purple-50/50'
+                      }`}
+                  >
+                    {formData.theme === 'modern' && (
+                      <div className="absolute top-4 right-4 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                    <div className="mb-4">
+                      <div className="h-32 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-xl mb-3"></div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Modern</h3>
+                      <p className="text-sm text-gray-600">
+                        Bold gradients, vibrant colors, and contemporary design. Perfect for tech startups and modern businesses.
                       </p>
                     </div>
-                  </div>
-                </div>
-
-                {/* Services / Menu / Pricing Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                      <ShoppingBag className="w-5 h-5 text-purple-600" />
+                    <div className="flex gap-2">
+                      <div className="w-8 h-8 bg-blue-500 rounded"></div>
+                      <div className="w-8 h-8 bg-indigo-500 rounded"></div>
+                      <div className="w-8 h-8 bg-purple-500 rounded"></div>
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Services / Menu / Pricing <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
                   </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Perfect for Salons, Restaurants, Tuition classes, Pandit ji, Photographers, etc.
-                  </p>
 
-                  <div className="space-y-6">
-                    {formData.services.map((service, index) => (
-                      <div key={index} className="p-6 bg-gray-50 rounded-xl border-2 border-gray-200">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-semibold text-gray-800">Service {index + 1}</h3>
-                          <div className="flex items-center gap-3">
-                            <button
-                              type="button"
-                              onClick={() => toggleServiceFeatured(index)}
-                              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${service.featured
-                                ? 'bg-yellow-500 text-white'
-                                : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-                                }`}
-                            >
-                              {service.featured ? '⭐ Featured' : 'Mark Featured'}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => removeService(index)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            >
-                              <X className="w-5 h-5" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormInput
-                            label="Service Title"
-                            value={service.title}
-                            onChange={(e) => updateService(index, 'title', e.target.value)}
-                            placeholder="e.g., Haircut, Pizza, Math Tuition"
-                          />
-                          <FormInput
-                            label="Price (Optional)"
-                            type="text"
-                            value={service.price}
-                            onChange={(e) => updateService(index, 'price', e.target.value)}
-                            placeholder="e.g., ₹500 or $20"
-                          />
-                        </div>
-                        <div className="mt-4">
-                          <TextArea
-                            label="Description"
-                            value={service.description}
-                            onChange={(e) => updateService(index, 'description', e.target.value)}
-                            placeholder="Brief description of the service..."
-                            rows={3}
-                          />
-                        </div>
-                        <div className="mt-4">
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Service Image (Optional)
-                          </label>
-                          {service.imageUrl && !service.image && (
-                            <div className="mb-3">
-                              <p className="text-sm text-gray-600 mb-2">Current Image:</p>
-                              <img src={service.imageUrl} alt={service.title} className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200" />
-                            </div>
-                          )}
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => updateService(index, 'image', e.target.files[0])}
-                            className="w-full px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                          />
-                          {service.image && (
-                            <p className="mt-2 text-sm text-green-600">✓ New image selected</p>
-                          )}
-                        </div>
+                  {/* Classic Theme */}
+                  <div
+                    onClick={() => setFormData(prev => ({ ...prev, theme: 'classic' }))}
+                    className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all ${formData.theme === 'classic'
+                      ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-200'
+                      : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-amber-50/50'
+                      }`}
+                  >
+                    {formData.theme === 'classic' && (
+                      <div className="absolute top-4 right-4 w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center">
+                        <CheckCircle2 className="w-4 h-4 text-white" />
                       </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={addService}
-                      className="w-full py-3 border-2 border-dashed border-purple-300 rounded-xl text-purple-600 font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Plus className="w-5 h-5" />
-                      Add Service
-                    </button>
+                    )}
+                    <div className="mb-4">
+                      <div className="h-32 bg-gradient-to-br from-amber-600 via-orange-600 to-red-600 rounded-xl mb-3"></div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Classic</h3>
+                      <p className="text-sm text-gray-600">
+                        Warm tones, elegant design, and traditional aesthetics. Ideal for restaurants, salons, and service businesses.
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="w-8 h-8 bg-amber-500 rounded"></div>
+                      <div className="w-8 h-8 bg-orange-500 rounded"></div>
+                      <div className="w-8 h-8 bg-red-500 rounded"></div>
+                    </div>
+                  </div>
+
+                  {/* Minimal Theme */}
+                  <div
+                    onClick={() => setFormData(prev => ({ ...prev, theme: 'minimal' }))}
+                    className={`relative p-6 rounded-2xl border-2 cursor-pointer transition-all ${formData.theme === 'minimal'
+                      ? 'border-gray-500 bg-gray-50 ring-2 ring-gray-200'
+                      : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50'
+                      }`}
+                  >
+                    {formData.theme === 'minimal' && (
+                      <div className="absolute top-4 right-4 w-6 h-6 bg-gray-500 rounded-full flex items-center justify-center">
+                        <CheckCircle2 className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                    <div className="mb-4">
+                      <div className="h-32 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 rounded-xl mb-3 border-2 border-gray-300"></div>
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">Minimal</h3>
+                      <p className="text-sm text-gray-600">
+                        Clean lines, subtle colors, and focus on content. Great for professional services and consultants.
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="w-8 h-8 bg-gray-400 rounded"></div>
+                      <div className="w-8 h-8 bg-gray-500 rounded"></div>
+                      <div className="w-8 h-8 bg-gray-600 rounded"></div>
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Special Offers / Deals Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
-                      <Gift className="w-5 h-5 text-orange-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Special Offers / Deals <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+              {/* Business Information Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <Building2 className="w-5 h-5 text-blue-600" />
                   </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Business Information</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormInput
+                    label="Business Name"
+                    name="businessName"
+                    value={formData.businessName}
+                    onChange={handleChange}
+                    placeholder="Enter business name"
+                    required
+                    error={errors.businessName}
+                    icon={Building2}
+                  />
+                  <FormInput
+                    label="Owner Name"
+                    name="ownerName"
+                    value={formData.ownerName}
+                    onChange={handleChange}
+                    placeholder="Enter owner name (optional)"
+                    error={errors.ownerName}
+                    icon={User}
+                  />
+                  <CategorySelect
+                    label="Business Category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    required
+                    error={errors.category}
+                  />
+                  <FormInput
+                    label="Mobile Number"
+                    name="mobileNumber"
+                    type="tel"
+                    value={formData.mobileNumber}
+                    onChange={handleChange}
+                    placeholder="10-digit mobile number"
+                    required
+                    error={errors.mobileNumber}
+                    icon={Phone}
+                  />
+                </div>
+              </div>
 
-                  <div className="space-y-6">
-                    {formData.specialOffers.map((offer, index) => (
-                      <div key={index} className="p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl border-2 border-orange-200">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-lg font-semibold text-gray-800">Offer {index + 1}</h3>
+              {/* Contact Information Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
+                    <Mail className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Contact Information</h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <FormInput
+                    label="Email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="business@example.com"
+                    required
+                    error={errors.email}
+                    icon={Mail}
+                  />
+                  <FormInput
+                    label="WhatsApp Number"
+                    name="whatsappNumber"
+                    type="tel"
+                    value={formData.whatsappNumber}
+                    onChange={handleChange}
+                    placeholder="10-digit WhatsApp number (optional)"
+                    error={errors.whatsappNumber}
+                    icon={MessageCircle}
+                  />
+                </div>
+              </div>
+
+              {/* Location Information Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900">Location Information</h2>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                    <MapPin className="w-4 h-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-700">Auto-Fill Available</span>
+                  </div>
+                </div>
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Full Address <span className="text-red-500">*</span>
+                      </label>
+                      <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                        🔍 Search & Auto-Fill
+                      </span>
+                    </div>
+                    <PlacesAutocomplete
+                      value={formData.address}
+                      onChange={handleChange}
+                      onPlaceSelect={(businessData) => {
+                        if (businessData) {
+                          // Auto-fill form fields with place data
+                          setFormData(prev => ({
+                            ...prev,
+                            address: businessData.address || prev.address,
+                            googleMapLink: businessData.googleMapLink || prev.googleMapLink,
+                            // Only auto-fill if field is empty
+                            businessName: prev.businessName || businessData.businessName || '',
+                            mobileNumber: prev.mobileNumber || formatPhoneNumber(businessData.phoneNumber) || '',
+                            website: prev.website || businessData.website || '',
+                          }));
+
+                          // Show success message
+                          setSuccessMessage({
+                            title: '✅ Business Details Extracted!',
+                            message: `We've auto-filled your business details from Google. Please review and update as needed.`,
+                            temporary: true,
+                          });
+
+                          // Clear temporary message after 5 seconds
+                          setTimeout(() => {
+                            setSuccessMessage(prev =>
+                              prev?.temporary ? null : prev
+                            );
+                          }, 5000);
+                        }
+                      }}
+                      placeholder="Type your business name or address (e.g., 'Restaurant in Varanasi')"
+                      error={errors.address}
+                    />
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-sm text-blue-800">
+                        <strong>💡 How to Extract Business Details:</strong>
+                      </p>
+                      <ol className="text-xs text-blue-700 mt-1 ml-4 list-decimal space-y-1">
+                        <li>Start typing your business name or address in the field above</li>
+                        <li>Select your business from the dropdown suggestions</li>
+                        <li>We'll automatically fill: Business Name, Address, Phone, Website, and Map Link</li>
+                      </ol>
+                    </div>
+                  </div>
+                  <FormInput
+                    label="Google Map Link"
+                    name="googleMapLink"
+                    type="url"
+                    value={formData.googleMapLink}
+                    onChange={handleChange}
+                    placeholder="https://maps.google.com/... (auto-filled if address found)"
+                    error={errors.googleMapLink}
+                    icon={LinkIcon}
+                  />
+                </div>
+              </div>
+
+              {/* Business Description */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-pink-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Business Description</h2>
+                </div>
+                <TextArea
+                  label="Description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="Describe your business in detail (minimum 50 characters)..."
+                  required
+                  rows={6}
+                  error={errors.description}
+                />
+                <div className="mt-2 flex items-center justify-between">
+                  <p className="text-sm text-gray-500">
+                    {formData.description.length >= 50 ? (
+                      <span className="text-green-600 font-medium">✓ Minimum length met</span>
+                    ) : (
+                      <span>{formData.description.length}/50 characters minimum</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              {/* YouTube Video Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Youtube className="w-5 h-5 text-red-600" />
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Video Content <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
+                </div>
+                <p className="text-sm text-gray-600 mb-4 sm:mb-6">
+                  Add multiple YouTube videos to showcase your business. Each video will be embedded on your website.
+                </p>
+
+                <div className="space-y-3 sm:space-y-4">
+                  {formData.youtubeVideos.map((video, index) => (
+                    <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
+                      <div className="flex items-center justify-between mb-2 sm:mb-3">
+                        <label className="block text-xs sm:text-sm font-semibold text-gray-700">
+                          Video {index + 1}
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => removeYouTubeVideo(index)}
+                          className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                          aria-label={`Remove video ${index + 1}`}
+                        >
+                          <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </button>
+                      </div>
+                      <FormInput
+                        label=""
+                        name={`youtubeVideo_${index}`}
+                        type="url"
+                        value={video}
+                        onChange={(e) => updateYouTubeVideo(index, e.target.value)}
+                        placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                        error={errors[`youtubeVideo_${index}`]}
+                        icon={Youtube}
+                      />
+                      {video && (
+                        <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <p className="text-xs text-green-700 font-medium">
+                            ✓ Video URL added
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={addYouTubeVideo}
+                    className="w-full py-2.5 sm:py-3 border-2 border-dashed border-red-300 rounded-xl text-red-600 font-semibold hover:bg-red-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                  >
+                    <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                    Add Another Video
+                  </button>
+                </div>
+
+                {formData.youtubeVideos.length === 0 && (
+                  <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <p className="text-xs sm:text-sm text-blue-800">
+                      <strong>💡 Tip:</strong> Click "Add Another Video" to add your first video, or leave empty if you don't want to add videos.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Media Upload Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Media <span className="text-sm font-normal text-gray-500">(Optional - leave empty to keep existing)</span></h2>
+                </div>
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Business Logo</label>
+                    {formData.existingLogo && (
+                      <div className="mb-3 p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm text-gray-600 font-medium">Current Logo:</p>
                           <button
                             type="button"
-                            onClick={() => removeSpecialOffer(index)}
+                            onClick={removeLogo}
+                            className="px-3 py-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors flex items-center gap-1.5"
+                          >
+                            <X className="w-3 h-3" />
+                            Remove
+                          </button>
+                        </div>
+                        <div className="relative inline-block">
+                          <img src={formData.existingLogo} alt="Current logo" className="w-24 h-24 object-contain rounded-lg border-2 border-gray-200" />
+                        </div>
+                      </div>
+                    )}
+                    <FileUploader
+                      name="logo"
+                      label={formData.existingLogo ? "Upload New Logo to Replace" : "Upload Logo"}
+                      accept="image/*"
+                      onChange={(file) => handleFileChange('logo', file || null)}
+                      multiple={false}
+                      maxFiles={1}
+                      error={errors.logo}
+                    />
+                    {formData.logo && (
+                      <p className="mt-2 text-sm text-green-600 font-medium">✓ New logo selected (will replace existing)</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Business Images</label>
+                    {formData.existingImages && formData.existingImages.length > 0 && (
+                      <div className="mb-4 p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                        <p className="text-sm text-gray-600 mb-3 font-medium">Current Images ({formData.existingImages.length}):</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          {formData.existingImages.map((img, idx) => (
+                            <div key={idx} className="relative group">
+                              <img src={img} alt={`Current ${idx + 1}`} className="w-full h-20 object-cover rounded-lg border-2 border-gray-200" />
+                              <button
+                                type="button"
+                                onClick={() => removeExistingImage(idx)}
+                                className="absolute top-1 right-1 p-1.5 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                                aria-label={`Remove image ${idx + 1}`}
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <FileUploader
+                      name="images"
+                      label="Upload New Images (will be added to existing)"
+                      accept="image/*"
+                      onChange={(files) => handleFileChange('images', files || [])}
+                      maxFiles={10}
+                      error={errors.images}
+                    />
+                    {formData.images && formData.images.length > 0 && (
+                      <p className="mt-2 text-sm text-green-600 font-medium">✓ {formData.images.length} new image(s) selected</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Social Links Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                    <LinkIcon className="w-5 h-5 text-green-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Social Links <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <FormInput
+                    label="Instagram"
+                    name="instagram"
+                    type="url"
+                    value={formData.instagram}
+                    onChange={handleChange}
+                    placeholder="https://instagram.com/..."
+                    error={errors.instagram}
+                    icon={Instagram}
+                  />
+                  <FormInput
+                    label="Facebook"
+                    name="facebook"
+                    type="url"
+                    value={formData.facebook}
+                    onChange={handleChange}
+                    placeholder="https://facebook.com/..."
+                    error={errors.facebook}
+                    icon={Facebook}
+                  />
+                  <FormInput
+                    label="Website"
+                    name="website"
+                    type="url"
+                    value={formData.website}
+                    onChange={handleChange}
+                    placeholder="https://yourwebsite.com"
+                    error={errors.website}
+                    icon={Globe}
+                  />
+                </div>
+              </div>
+
+              {/* Navbar & Footer Customization Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-cyan-100 rounded-xl flex items-center justify-center">
+                    <Navigation className="w-5 h-5 text-cyan-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Navbar & Footer Customization <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                </div>
+                <div className="space-y-6">
+                  <FormInput
+                    label="Navbar Tagline/Slogan"
+                    name="navbarTagline"
+                    value={formData.navbarTagline}
+                    onChange={handleChange}
+                    placeholder="e.g., 'Your Trusted Partner Since 2010' or 'Quality Service, Every Time'"
+                    error={errors.navbarTagline}
+                    icon={Navigation}
+                  />
+                  <p className="text-sm text-gray-500 -mt-4">
+                    A short tagline that will appear in your website's navbar below the business name
+                  </p>
+
+                  <div className="mt-6">
+                    <TextArea
+                      label="Footer Description"
+                      name="footerDescription"
+                      value={formData.footerDescription}
+                      onChange={handleChange}
+                      placeholder="Add a custom description or message for your footer (e.g., 'We are committed to providing the best service to our customers...')"
+                      rows={4}
+                      error={errors.footerDescription}
+                    />
+                    <p className="mt-2 text-sm text-gray-500">
+                      This text will appear in your website's footer section
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Services / Menu / Pricing Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+                    <ShoppingBag className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Services / Menu / Pricing <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                </div>
+                <p className="text-sm text-gray-600 mb-6">
+                  Perfect for Salons, Restaurants, Tuition classes, Pandit ji, Photographers, etc.
+                </p>
+
+                <div className="space-y-6">
+                  {formData.services.map((service, index) => (
+                    <div key={index} className="p-6 bg-gray-50 rounded-xl border-2 border-gray-200">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800">Service {index + 1}</h3>
+                        <div className="flex items-center gap-3">
+                          <button
+                            type="button"
+                            onClick={() => toggleServiceFeatured(index)}
+                            className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${service.featured
+                              ? 'bg-yellow-500 text-white'
+                              : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                              }`}
+                          >
+                            {service.featured ? '⭐ Featured' : 'Mark Featured'}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeService(index)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           >
                             <X className="w-5 h-5" />
                           </button>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <FormInput
-                            label="Offer Title"
-                            value={offer.title}
-                            onChange={(e) => updateSpecialOffer(index, 'title', e.target.value)}
-                            placeholder="e.g., 50% Off on All Services"
-                          />
-                          <FormInput
-                            label="Expiry Date"
-                            type="date"
-                            value={offer.expiryDate}
-                            onChange={(e) => updateSpecialOffer(index, 'expiryDate', e.target.value)}
-                          />
-                        </div>
-                        <div className="mt-4">
-                          <TextArea
-                            label="Offer Description"
-                            value={offer.description}
-                            onChange={(e) => updateSpecialOffer(index, 'description', e.target.value)}
-                            placeholder="Describe your special offer..."
-                            rows={3}
-                          />
-                        </div>
                       </div>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={addSpecialOffer}
-                      className="w-full py-3 border-2 border-dashed border-orange-300 rounded-xl text-orange-600 font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2"
-                    >
-                      <Plus className="w-5 h-5" />
-                      Add Special Offer
-                    </button>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormInput
+                          label="Service Title"
+                          value={service.title}
+                          onChange={(e) => updateService(index, 'title', e.target.value)}
+                          placeholder="e.g., Haircut, Pizza, Math Tuition"
+                        />
+                        <FormInput
+                          label="Price (Optional)"
+                          type="text"
+                          value={service.price}
+                          onChange={(e) => updateService(index, 'price', e.target.value)}
+                          placeholder="e.g., ₹500 or $20"
+                        />
+                      </div>
+                      <div className="mt-4">
+                        <TextArea
+                          label="Description"
+                          value={service.description}
+                          onChange={(e) => updateService(index, 'description', e.target.value)}
+                          placeholder="Brief description of the service..."
+                          rows={3}
+                        />
+                      </div>
+                      <div className="mt-4">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Service Image (Optional)
+                        </label>
+                        {service.imageUrl && !service.image && (
+                          <div className="mb-3">
+                            <p className="text-sm text-gray-600 mb-2">Current Image:</p>
+                            <img src={service.imageUrl} alt={service.title} className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200" />
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => updateService(index, 'image', e.target.files[0])}
+                          className="w-full px-4 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        />
+                        {service.image && (
+                          <p className="mt-2 text-sm text-green-600">✓ New image selected</p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addService}
+                    className="w-full py-3 border-2 border-dashed border-purple-300 rounded-xl text-purple-600 font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Service
+                  </button>
+                </div>
+              </div>
+
+              {/* Special Offers / Deals Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center">
+                    <Gift className="w-5 h-5 text-orange-600" />
                   </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Special Offers / Deals <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
                 </div>
 
-                {/* Business Hours Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
-                      <Clock className="w-5 h-5 text-teal-600" />
+                <div className="space-y-6">
+                  {formData.specialOffers.map((offer, index) => (
+                    <div key={index} className="p-6 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl border-2 border-orange-200">
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-lg font-semibold text-gray-800">Offer {index + 1}</h3>
+                        <button
+                          type="button"
+                          onClick={() => removeSpecialOffer(index)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <FormInput
+                          label="Offer Title"
+                          value={offer.title}
+                          onChange={(e) => updateSpecialOffer(index, 'title', e.target.value)}
+                          placeholder="e.g., 50% Off on All Services"
+                        />
+                        <FormInput
+                          label="Expiry Date"
+                          type="date"
+                          value={offer.expiryDate}
+                          onChange={(e) => updateSpecialOffer(index, 'expiryDate', e.target.value)}
+                        />
+                      </div>
+                      <div className="mt-4">
+                        <TextArea
+                          label="Offer Description"
+                          value={offer.description}
+                          onChange={(e) => updateSpecialOffer(index, 'description', e.target.value)}
+                          placeholder="Describe your special offer..."
+                          rows={3}
+                        />
+                      </div>
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Business Hours <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Set your business hours. The website will automatically show "Open Now" or "Closed" status.
-                  </p>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addSpecialOffer}
+                    className="w-full py-3 border-2 border-dashed border-orange-300 rounded-xl text-orange-600 font-semibold hover:bg-orange-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Add Special Offer
+                  </button>
+                </div>
+              </div>
 
-                  <div className="space-y-4">
-                    {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
-                      <div key={day} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-                        <div className="flex items-center gap-4">
+              {/* Business Hours Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-teal-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Business Hours <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                </div>
+                <p className="text-sm text-gray-600 mb-6">
+                  Set your business hours. The website will automatically show "Open Now" or "Closed" status.
+                </p>
+
+                <div className="space-y-4">
+                  {['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].map((day) => (
+                    <div key={day} className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                      <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3 flex-1">
+                          <input
+                            type="checkbox"
+                            checked={formData.businessHours[day]?.open || false}
+                            onChange={(e) => updateBusinessHours(day, 'open', e.target.checked)}
+                            className="w-5 h-5 text-teal-600 rounded focus:ring-teal-500"
+                          />
+                          <label className="text-lg font-semibold text-gray-800 capitalize min-w-[100px]">
+                            {day}
+                          </label>
+                        </div>
+                        {formData.businessHours[day]?.open ? (
                           <div className="flex items-center gap-3 flex-1">
                             <input
-                              type="checkbox"
-                              checked={formData.businessHours[day]?.open || false}
-                              onChange={(e) => updateBusinessHours(day, 'open', e.target.checked)}
-                              className="w-5 h-5 text-teal-600 rounded focus:ring-teal-500"
+                              type="time"
+                              value={formData.businessHours[day].start || '09:00'}
+                              onChange={(e) => updateBusinessHours(day, 'start', e.target.value)}
+                              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                             />
-                            <label className="text-lg font-semibold text-gray-800 capitalize min-w-[100px]">
-                              {day}
-                            </label>
-                          </div>
-                          {formData.businessHours[day]?.open ? (
-                            <div className="flex items-center gap-3 flex-1">
-                              <input
-                                type="time"
-                                value={formData.businessHours[day].start || '09:00'}
-                                onChange={(e) => updateBusinessHours(day, 'start', e.target.value)}
-                                className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                              />
-                              <span className="text-gray-600 font-medium">to</span>
-                              <input
-                                type="time"
-                                value={formData.businessHours[day].end || '18:00'}
-                                onChange={(e) => updateBusinessHours(day, 'end', e.target.value)}
-                                className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
-                              />
-                            </div>
-                          ) : (
-                            <span className="text-gray-400 italic">Closed</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Appointment / Booking Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
-                      <Calendar className="w-5 h-5 text-pink-600" />
-                    </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Appointment / Booking <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
-                  </div>
-                  <p className="text-sm text-gray-600 mb-6">
-                    Enable customers to book appointments. The form will automatically send a message via WhatsApp or call.
-                  </p>
-
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Preferred Contact Method
-                      </label>
-                      <div className="flex gap-4">
-                        <button
-                          type="button"
-                          onClick={() => updateAppointmentSettings('contactMethod', 'whatsapp')}
-                          className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all ${formData.appointmentSettings.contactMethod === 'whatsapp'
-                            ? 'bg-green-600 text-white shadow-lg'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }`}
-                        >
-                          WhatsApp
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => updateAppointmentSettings('contactMethod', 'call')}
-                          className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all ${formData.appointmentSettings.contactMethod === 'call'
-                            ? 'bg-blue-600 text-white shadow-lg'
-                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                            }`}
-                        >
-                          Call
-                        </button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-3">
-                        Available Time Slots (Optional)
-                      </label>
-                      <div className="space-y-3">
-                        {formData.appointmentSettings.availableSlots.map((slot, index) => (
-                          <div key={index} className="flex gap-3">
+                            <span className="text-gray-600 font-medium">to</span>
                             <input
                               type="time"
-                              value={slot.time}
-                              onChange={(e) => updateTimeSlot(index, 'time', e.target.value)}
-                              placeholder="Time"
-                              className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                              value={formData.businessHours[day].end || '18:00'}
+                              onChange={(e) => updateBusinessHours(day, 'end', e.target.value)}
+                              className="px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                             />
-                            <input
-                              type="text"
-                              value={slot.label}
-                              onChange={(e) => updateTimeSlot(index, 'label', e.target.value)}
-                              placeholder="Label (e.g., Morning, Evening)"
-                              className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => removeTimeSlot(index)}
-                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            >
-                              <X className="w-5 h-5" />
-                            </button>
                           </div>
-                        ))}
-                        <button
-                          type="button"
-                          onClick={addTimeSlot}
-                          className="w-full py-2 border-2 border-dashed border-pink-300 rounded-lg text-pink-600 font-semibold hover:bg-pink-50 transition-colors flex items-center justify-center gap-2"
-                        >
-                          <Plus className="w-4 h-4" />
-                          Add Time Slot
-                        </button>
+                        ) : (
+                          <span className="text-gray-400 italic">Closed</span>
+                        )}
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
+              </div>
 
-                {/* Google Maps Section */}
-                <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                      <Map className="w-5 h-5 text-red-600" />
+              {/* Appointment / Booking Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center">
+                    <Calendar className="w-5 h-5 text-pink-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Appointment / Booking <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                </div>
+                <p className="text-sm text-gray-600 mb-6">
+                  Enable customers to book appointments. The form will automatically send a message via WhatsApp or call.
+                </p>
+
+                <div className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Preferred Contact Method
+                    </label>
+                    <div className="flex gap-4">
+                      <button
+                        type="button"
+                        onClick={() => updateAppointmentSettings('contactMethod', 'whatsapp')}
+                        className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all ${formData.appointmentSettings.contactMethod === 'whatsapp'
+                          ? 'bg-green-600 text-white shadow-lg'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                      >
+                        WhatsApp
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => updateAppointmentSettings('contactMethod', 'call')}
+                        className={`flex-1 px-6 py-4 rounded-xl font-semibold transition-all ${formData.appointmentSettings.contactMethod === 'call'
+                          ? 'bg-blue-600 text-white shadow-lg'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                      >
+                        Call
+                      </button>
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Google Maps <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
                   </div>
-                  <FormInput
-                    label="Google Maps Link"
-                    name="googleMapLink"
-                    type="url"
-                    value={formData.googleMapLink}
-                    onChange={handleChange}
-                    placeholder="https://maps.google.com/... or Google Maps embed URL"
-                    error={errors.googleMapLink}
-                    icon={Map}
-                  />
-                  <p className="mt-2 text-sm text-gray-500">
-                    Paste your Google Maps link. An interactive map will be embedded on your website's contact section.
-                  </p>
-                </div>
 
-                {/* Submit Button */}
-                <div className="pt-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Available Time Slots (Optional)
+                    </label>
+                    <div className="space-y-3">
+                      {formData.appointmentSettings.availableSlots.map((slot, index) => (
+                        <div key={index} className="flex gap-3">
+                          <input
+                            type="time"
+                            value={slot.time}
+                            onChange={(e) => updateTimeSlot(index, 'time', e.target.value)}
+                            placeholder="Time"
+                            className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          />
+                          <input
+                            type="text"
+                            value={slot.label}
+                            onChange={(e) => updateTimeSlot(index, 'label', e.target.value)}
+                            placeholder="Label (e.g., Morning, Evening)"
+                            className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeTimeSlot(index)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <X className="w-5 h-5" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={addTimeSlot}
+                        className="w-full py-2 border-2 border-dashed border-pink-300 rounded-lg text-pink-600 font-semibold hover:bg-pink-50 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Add Time Slot
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Google Maps Section */}
+              <div className="border-b border-gray-200 pb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                    <Map className="w-5 h-5 text-red-600" />
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900">Google Maps <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                </div>
+                <FormInput
+                  label="Google Maps Link"
+                  name="googleMapLink"
+                  type="url"
+                  value={formData.googleMapLink}
+                  onChange={handleChange}
+                  placeholder="https://maps.google.com/... or Google Maps embed URL"
+                  error={errors.googleMapLink}
+                  icon={Map}
+                />
+                <p className="mt-2 text-sm text-gray-500">
+                  Paste your Google Maps link. An interactive map will be embedded on your website's contact section.
+                </p>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-75"></div>
                   <div className="relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-75"></div>
-                    <div className="relative">
-                      <SubmitButton loading={submitting} text="Update Website" />
-                    </div>
+                    <SubmitButton loading={submitting} text="Update Website" />
                   </div>
                 </div>
+              </div>
             </form>
           </div>
         </div>
