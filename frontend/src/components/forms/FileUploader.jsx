@@ -26,13 +26,17 @@ const FileUploader = ({
     });
 
     let newPreviews = [];
-    
-    if (multiple && Array.isArray(value) && value.length > 0) {
-      newPreviews = value.map((file) => ({
-        file,
-        preview: file instanceof File ? URL.createObjectURL(file) : file,
-        name: file instanceof File ? file.name : 'image',
-      }));
+
+    if (multiple && Array.isArray(value)) {
+      if (value.length > 0) {
+        newPreviews = value.map((file) => ({
+          file,
+          preview: file instanceof File ? URL.createObjectURL(file) : file,
+          name: file instanceof File ? file.name : 'image',
+        }));
+      } else {
+        newPreviews = []; // Explicitly clear if empty array
+      }
       setPreviews(newPreviews);
       prevPreviewsRef.current = newPreviews;
     } else if (!multiple && value) {
@@ -63,12 +67,12 @@ const FileUploader = ({
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
-    
+
     if (files.length === 0) return;
 
     // Limit number of files
     const filesToProcess = multiple ? files.slice(0, maxFiles - previews.length) : files.slice(0, 1);
-    
+
     if (filesToProcess.length === 0) {
       alert(`Maximum ${maxFiles} files allowed`);
       return;

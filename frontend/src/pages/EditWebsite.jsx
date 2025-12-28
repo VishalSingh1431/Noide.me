@@ -1125,6 +1125,7 @@ const EditWebsite = () => {
                       accept="image/*"
                       onChange={(file) => handleFileChange('logo', file || null)}
                       multiple={false}
+                      value={formData.logo}
                       maxFiles={1}
                       error={errors.logo}
                     />
@@ -1159,6 +1160,8 @@ const EditWebsite = () => {
                       label="Upload New Images (will be added to existing)"
                       accept="image/*"
                       onChange={(files) => handleFileChange('images', files || [])}
+                      multiple={true}
+                      value={formData.images}
                       maxFiles={10}
                       error={errors.images}
                     />
