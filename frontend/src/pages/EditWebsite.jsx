@@ -37,7 +37,7 @@ const EditWebsite = () => {
     existingImages: [],
     logo: null,
     existingLogo: null,
-    youtubeVideo: '',
+    youtubeVideos: [],
     instagram: '',
     facebook: '',
     website: '',
@@ -98,7 +98,11 @@ const EditWebsite = () => {
           existingImages: business.imagesUrl || [],
           logo: null,
           existingLogo: business.logoUrl || null,
-          youtubeVideo: business.youtubeVideo || '',
+          youtubeVideos: Array.isArray(business.youtubeVideo) 
+            ? business.youtubeVideo 
+            : business.youtubeVideo 
+              ? [business.youtubeVideo] 
+              : [],
           instagram: business.socialLinks?.instagram || '',
           facebook: business.socialLinks?.facebook || '',
           website: business.socialLinks?.website || '',
@@ -323,6 +327,30 @@ const EditWebsite = () => {
     }));
   };
 
+  // YouTube Videos handlers
+  const addYouTubeVideo = () => {
+    setFormData(prev => ({
+      ...prev,
+      youtubeVideos: [...prev.youtubeVideos, '']
+    }));
+  };
+
+  const removeYouTubeVideo = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      youtubeVideos: prev.youtubeVideos.filter((_, i) => i !== index)
+    }));
+  };
+
+  const updateYouTubeVideo = (index, value) => {
+    setFormData(prev => ({
+      ...prev,
+      youtubeVideos: prev.youtubeVideos.map((video, i) =>
+        i === index ? value : video
+      )
+    }));
+  };
+
   const validateForm = () => {
     const newErrors = {};
 
@@ -386,7 +414,7 @@ const EditWebsite = () => {
         googleMapLink: formData.googleMapLink,
         whatsappNumber: formData.whatsappNumber,
         description: formData.description,
-        youtubeVideo: formData.youtubeVideo,
+        youtubeVideo: formData.youtubeVideos,
         instagram: formData.instagram,
         facebook: formData.facebook,
         website: formData.website,
@@ -951,25 +979,69 @@ const EditWebsite = () => {
 
                 {/* YouTube Video Section */}
                 <div className="border-b border-gray-200 pb-8">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
+                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Youtube className="w-5 h-5 text-red-600" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Video Content <span className="text-sm font-normal text-gray-500">(Optional)</span></h2>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Video Content <span className="text-xs sm:text-sm font-normal text-gray-500">(Optional)</span></h2>
                   </div>
-                  <FormInput
-                    label="YouTube Video URL"
-                    name="youtubeVideo"
-                    type="url"
-                    value={formData.youtubeVideo}
-                    onChange={handleChange}
-                    placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/... or https://youtube.com/shorts/..."
-                    error={errors.youtubeVideo}
-                    icon={Youtube}
-                  />
-                  <p className="mt-2 text-sm text-gray-500">
-                    Paste your YouTube video URL here (regular videos or Shorts). It will be embedded on your website.
+                  <p className="text-sm text-gray-600 mb-4 sm:mb-6">
+                    Add multiple YouTube videos to showcase your business. Each video will be embedded on your website.
                   </p>
+                  
+                  <div className="space-y-3 sm:space-y-4">
+                    {formData.youtubeVideos.map((video, index) => (
+                      <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
+                        <div className="flex items-center justify-between mb-2 sm:mb-3">
+                          <label className="block text-xs sm:text-sm font-semibold text-gray-700">
+                            Video {index + 1}
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => removeYouTubeVideo(index)}
+                            className="p-1.5 sm:p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0"
+                            aria-label={`Remove video ${index + 1}`}
+                          >
+                            <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                          </button>
+                        </div>
+                        <FormInput
+                          label=""
+                          name={`youtubeVideo_${index}`}
+                          type="url"
+                          value={video}
+                          onChange={(e) => updateYouTubeVideo(index, e.target.value)}
+                          placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                          error={errors[`youtubeVideo_${index}`]}
+                          icon={Youtube}
+                        />
+                        {video && (
+                          <div className="mt-2 sm:mt-3 p-2 sm:p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <p className="text-xs text-green-700 font-medium">
+                              ✓ Video URL added
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    
+                    <button
+                      type="button"
+                      onClick={addYouTubeVideo}
+                      className="w-full py-2.5 sm:py-3 border-2 border-dashed border-red-300 rounded-xl text-red-600 font-semibold hover:bg-red-50 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                    >
+                      <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+                      Add Another Video
+                    </button>
+                  </div>
+                  
+                  {formData.youtubeVideos.length === 0 && (
+                    <div className="mt-3 sm:mt-4 p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                      <p className="text-xs sm:text-sm text-blue-800">
+                        <strong>💡 Tip:</strong> Click "Add Another Video" to add your first video, or leave empty if you don't want to add videos.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Media Upload Section */}
@@ -993,7 +1065,8 @@ const EditWebsite = () => {
                         name="logo"
                         label={formData.existingLogo ? "Upload New Logo (optional)" : "Upload Logo"}
                         accept="image/*"
-                        onChange={(files) => handleFileChange('logo', files?.[0] || null)}
+                        onChange={(file) => handleFileChange('logo', file || null)}
+                        multiple={false}
                         maxFiles={1}
                         error={errors.logo}
                       />

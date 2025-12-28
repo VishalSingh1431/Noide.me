@@ -249,18 +249,21 @@ export const businessAPI = {
       }
     });
 
-    // Add files
-    if (formData.logo) {
+    // Add files - only append File objects, not strings/URLs
+    if (formData.logo && formData.logo instanceof File) {
       submitData.append('logo', formData.logo);
     }
     if (formData.images && Array.isArray(formData.images)) {
+      // Only append File objects, filter out strings/URLs
       formData.images.forEach((image) => {
-        submitData.append('images', image);
+        if (image instanceof File) {
+          submitData.append('images', image);
+        }
       });
     }
     if (formData.services && Array.isArray(formData.services)) {
       formData.services.forEach((service, index) => {
-        if (service.image) {
+        if (service.image && service.image instanceof File) {
           submitData.append(`serviceImage_${index}`, service.image);
         }
       });
@@ -328,18 +331,21 @@ export const businessAPI = {
       }
     });
 
-    // Add files
-    if (formData.logo) {
+    // Add files - only append File objects, not strings/URLs
+    if (formData.logo && formData.logo instanceof File) {
       submitData.append('logo', formData.logo);
     }
     if (formData.images && Array.isArray(formData.images)) {
+      // Only append File objects, filter out strings/URLs
       formData.images.forEach((image) => {
-        submitData.append('images', image);
+        if (image instanceof File) {
+          submitData.append('images', image);
+        }
       });
     }
     if (formData.services && Array.isArray(formData.services)) {
       formData.services.forEach((service, index) => {
-        if (service.image) {
+        if (service.image && service.image instanceof File) {
           submitData.append(`serviceImage_${index}`, service.image);
         }
       });

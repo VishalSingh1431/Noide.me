@@ -164,8 +164,10 @@ const WebsitePreview = ({ formData, onClose }) => {
     return match && match[2].length === 11 ? match[2] : null;
   };
 
-  const videoId = getYouTubeId(formData.youtubeVideo);
-  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+  // Handle both array and string for backward compatibility
+  const youtubeVideos = Array.isArray(formData.youtubeVideo) 
+    ? formData.youtubeVideo 
+    : (formData.youtubeVideo ? [formData.youtubeVideo] : []);
 
   // Check if business is open now
   const isOpenNow = () => {
@@ -1061,40 +1063,45 @@ const WebsitePreview = ({ formData, onClose }) => {
 
           {/* Enhanced Video Section */}
           {
-            embedUrl && (
-              <section className="py-12 md:py-16 bg-gradient-to-br from-gray-50 to-blue-50">
-                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-                  <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-8 md:mb-12 text-center">
-                    Our < span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent" > Video</span >
-                  </h2 >
-                  <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
-                    <iframe
-                      src={embedUrl}
-                      title="Business Video"
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      referrerPolicy="strict-origin-when-cross-origin"
-                    ></iframe>
-                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/20 to-transparent"></div>
+            youtubeVideos.length > 0 && (
+              <section className="py-8 sm:py-12 md:py-16 bg-gradient-to-br from-gray-50 to-blue-50">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-6 sm:mb-8 md:mb-12 text-center">
+                    Our <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Videos</span>
+                  </h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+                    {youtubeVideos.map((video, index) => {
+                      const videoId = getYouTubeId(video);
+                      if (!videoId) return null;
+                      return (
+                        <div key={index} className="relative aspect-video rounded-xl sm:rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white">
+                          <iframe
+                            src={`https://www.youtube.com/embed/${videoId}`}
+                            title={`Business Video ${index + 1}`}
+                            className="w-full h-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            referrerPolicy="strict-origin-when-cross-origin"
+                          ></iframe>
+                          <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/20 to-transparent"></div>
+                          <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4">
+                            <a
+                              href={video}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-black/70 hover:bg-black/90 text-white rounded-lg text-xs sm:text-sm font-semibold transition-colors backdrop-blur-sm"
+                            >
+                              <Youtube className="w-3 h-3 sm:w-4 sm:h-4" />
+                              <span className="hidden sm:inline">Watch on YouTube</span>
+                              <span className="sm:hidden">YouTube</span>
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                  {
-                    formData.youtubeVideo && (
-                      <div className="text-center mt-6">
-                        <a
-                          href={formData.youtubeVideo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-semibold transition-colors"
-                        >
-                          <Youtube className="w-5 h-5" />
-                          Watch on YouTube
-                        </a>
-                      </div>
-                    )
-                  }
-                </div >
-              </section >
+                </div>
+              </section>
             )
           }
 
@@ -1356,21 +1363,29 @@ const WebsitePreview = ({ formData, onClose }) => {
           }
 
           {/* Video Section */}
-          {formData.youtubeVideo && (
+          {youtubeVideos.length > 0 && (
             <section id="video" className="py-12 md:py-16 bg-white">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-8 md:mb-12 text-center">
-                  Watch Our <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Story</span>
+                  Watch Our <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Videos</span>
                 </h2>
-                <div className="relative aspect-video max-w-4xl mx-auto rounded-[32px] overflow-hidden shadow-2xl border-4 border-white">
-                  <iframe
-                    className="absolute inset-0 w-full h-full"
-                    src={`https://www.youtube.com/embed/${getYouTubeId(formData.youtubeVideo)}`}
-                    title="Business Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    referrerPolicy="strict-origin-when-cross-origin"
-                  ></iframe>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                  {youtubeVideos.map((video, index) => {
+                    const videoId = getYouTubeId(video);
+                    if (!videoId) return null;
+                    return (
+                      <div key={index} className="relative aspect-video rounded-[32px] overflow-hidden shadow-2xl border-4 border-white">
+                        <iframe
+                          className="absolute inset-0 w-full h-full"
+                          src={`https://www.youtube.com/embed/${videoId}`}
+                          title={`Business Video ${index + 1}`}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          referrerPolicy="strict-origin-when-cross-origin"
+                        ></iframe>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </section>

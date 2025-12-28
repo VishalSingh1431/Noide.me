@@ -533,7 +533,7 @@ export const createBusiness = async (req, res) => {
       description,
       logoUrl,
       imagesUrl,
-      youtubeVideo: youtubeVideo || '',
+      youtubeVideo: youtubeVideoData,
       navbarTagline: navbarTagline || '',
       footerDescription: footerDescription || '',
       services: servicesData,
@@ -799,6 +799,30 @@ export const updateBusiness = async (req, res) => {
       appointmentSettingsData = existingBusiness.appointmentSettings || {};
     }
 
+    // Parse YouTube videos
+    let youtubeVideoData = existingBusiness.youtubeVideo || [];
+    if (youtubeVideo !== undefined) {
+      try {
+        if (typeof youtubeVideo === 'string') {
+          // Try to parse as JSON first
+          try {
+            youtubeVideoData = JSON.parse(youtubeVideo);
+          } catch {
+            // If not JSON, treat as single video string
+            youtubeVideoData = youtubeVideo.trim() ? [youtubeVideo] : [];
+          }
+        } else if (Array.isArray(youtubeVideo)) {
+          youtubeVideoData = youtubeVideo.filter(v => v && v.trim());
+        } else if (youtubeVideo) {
+          youtubeVideoData = [youtubeVideo];
+        } else {
+          youtubeVideoData = [];
+        }
+      } catch (error) {
+        youtubeVideoData = existingBusiness.youtubeVideo || [];
+      }
+    }
+
     // Check user role - content admins need approval for edits
     // userRole already fetched above
     const needsApproval = userRole === 'content_admin';
@@ -885,7 +909,7 @@ export const updateBusiness = async (req, res) => {
       description: description || existingBusiness.description,
       logoUrl,
       imagesUrl,
-      youtubeVideo: youtubeVideo || existingBusiness.youtubeVideo,
+      youtubeVideo: youtubeVideoData,
       navbarTagline: navbarTagline || existingBusiness.navbarTagline,
       footerDescription: footerDescription || existingBusiness.footerDescription,
       services: servicesData,

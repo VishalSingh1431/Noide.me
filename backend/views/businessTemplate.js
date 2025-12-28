@@ -69,8 +69,10 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     return match && match[2].length === 11 ? match[2] : null;
   };
 
-  const videoId = getYouTubeId(business.youtubeVideo);
-  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+  // Handle both array and string for backward compatibility
+  const youtubeVideos = Array.isArray(business.youtubeVideo) 
+    ? business.youtubeVideo 
+    : (business.youtubeVideo ? [business.youtubeVideo] : []);
 
   // Escape HTML to prevent XSS (robustly handles non-strings)
   const escapeHtml = (text) => {
@@ -1586,27 +1588,35 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     }
 
 
-  ${business.youtubeVideoId ? `
-      <section id="video" class="py-12 md:py-20 bg-white px-4 sm:px-6 lg:px-8">
+  ${youtubeVideos.length > 0 ? `
+      <section id="video" class="py-8 sm:py-12 md:py-20 bg-white px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
-          <div class="text-center mb-12 sm:mb-16">
-            <div class="inline-block px-4 py-2 rounded-full ${theme.accent.replace('text-', 'bg-')}/10 ${theme.accent} text-sm font-bold mb-4">
-              Watch Our Story
+          <div class="text-center mb-8 sm:mb-12 md:mb-16">
+            <div class="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-full ${theme.accent.replace('text-', 'bg-')}/10 ${theme.accent} text-xs sm:text-sm font-bold mb-3 sm:mb-4">
+              Watch Our Videos
             </div>
-            <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-6">Our Video Tour</h2>
-            <div class="h-1.5 w-24 ${theme.primarySolid.replace('bg-', 'bg-')} mx-auto rounded-full"></div>
+            <h2 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-gray-900 mb-4 sm:mb-6">Our Video Tour</h2>
+            <div class="h-1 sm:h-1.5 w-20 sm:w-24 ${theme.primarySolid.replace('bg-', 'bg-')} mx-auto rounded-full"></div>
           </div>
-          <div class="aspect-video rounded-3xl overflow-hidden shadow-2xl border border-gray-100 max-w-4xl mx-auto">
-            <iframe 
-              width="100%" 
-              height="100%" 
-              src="https://www.youtube.com/embed/${escapeHtml(business.youtubeVideoId)}" 
-              title="YouTube video player" 
-              frameborder="0" 
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-              allowfullscreen
-              referrerpolicy="strict-origin-when-cross-origin">
-            </iframe>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-7xl mx-auto">
+            ${youtubeVideos.map((video, index) => {
+              const videoId = getYouTubeId(video);
+              if (!videoId) return '';
+              return `
+                <div class="aspect-video rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border border-gray-100">
+                  <iframe 
+                    width="100%" 
+                    height="100%" 
+                    src="https://www.youtube.com/embed/${escapeHtml(videoId)}" 
+                    title="YouTube video player ${index + 1}" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen
+                    referrerpolicy="strict-origin-when-cross-origin">
+                  </iframe>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
       </section>

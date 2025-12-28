@@ -93,7 +93,7 @@ class Business {
       data.description,
       data.logoUrl || null,
       JSON.stringify(data.imagesUrl || []),
-      data.youtubeVideo || null,
+      data.youtubeVideo ? (Array.isArray(data.youtubeVideo) ? JSON.stringify(data.youtubeVideo) : JSON.stringify([data.youtubeVideo])) : null,
       data.navbarTagline || null,
       data.footerDescription || null,
       JSON.stringify(data.services || []),
@@ -243,7 +243,7 @@ class Business {
       data.description || null,
       data.logoUrl || null,
       data.imagesUrl ? JSON.stringify(data.imagesUrl) : null,
-      data.youtubeVideo || null,
+      data.youtubeVideo ? (Array.isArray(data.youtubeVideo) ? JSON.stringify(data.youtubeVideo) : JSON.stringify([data.youtubeVideo])) : null,
       data.navbarTagline || null,
       data.footerDescription || null,
       data.services ? JSON.stringify(data.services) : null,
@@ -312,7 +312,13 @@ class Business {
       description: row.description,
       logoUrl: row.logo_url,
       imagesUrl: Array.isArray(row.images_url) ? row.images_url : JSON.parse(row.images_url || '[]'),
-      youtubeVideo: row.youtube_video,
+      youtubeVideo: row.youtube_video 
+        ? (Array.isArray(row.youtube_video) 
+          ? row.youtube_video 
+          : (typeof row.youtube_video === 'string' && row.youtube_video.startsWith('[')
+            ? JSON.parse(row.youtube_video)
+            : [row.youtube_video]))
+        : [],
       navbarTagline: row.navbar_tagline || '',
       footerDescription: row.footer_description || '',
       services: typeof row.services === 'object' && row.services !== null ? row.services : JSON.parse(row.services || '[]'),
