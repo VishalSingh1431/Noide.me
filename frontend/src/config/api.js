@@ -4,7 +4,12 @@ import { API_BASE_URL } from './constants';
 
 // Helper function to make API calls
 export const apiCall = async (endpoint, options = {}) => {
-  const token = localStorage.getItem('token');
+  let token = null;
+  try {
+    token = localStorage.getItem('token');
+  } catch (storageError) {
+    console.warn('localStorage not available:', storageError);
+  }
   
   const defaultHeaders = {
     'Content-Type': 'application/json',
@@ -24,19 +29,42 @@ export const apiCall = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    const data = await response.json();
+    
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        // If JSON parsing fails, try to get text for error message
+        const text = await response.text();
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+      }
+    } else {
+      // If not JSON, get text response
+      const text = await response.text();
+      throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+    }
 
     if (!response.ok) {
       // Check if token has expired - auto logout
       if (response.status === 401 && (data.error === 'Token has expired' || data.error === 'Invalid token')) {
-        // Clear token and user data
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        // Clear token and user data with error handling
+        try {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        } catch (storageError) {
+          console.warn('Failed to clear localStorage:', storageError);
+        }
         // Dispatch event to update navbar and other components
-        window.dispatchEvent(new Event('authChange'));
-        // Redirect to login page
-        if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
-          window.location.href = '/login';
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('authChange'));
+          // Redirect to login page
+          if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
+            window.location.href = '/login';
+          }
         }
         // Throw a special error that won't show alert
         const expiredError = new Error('Token has expired');
@@ -238,7 +266,13 @@ export const businessAPI = {
       });
     }
 
-    const token = localStorage.getItem('token');
+    let token = null;
+    try {
+      token = localStorage.getItem('token');
+    } catch (storageError) {
+      console.warn('localStorage not available:', storageError);
+    }
+    
     const response = await fetch(`${API_BASE_URL}/admin/businesses/${id}`, {
       method: 'PUT',
       headers: {
@@ -247,7 +281,22 @@ export const businessAPI = {
       body: submitData,
     });
 
-    const data = await response.json();
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        const text = await response.text();
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+      }
+    } else {
+      const text = await response.text();
+      throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+    }
+    
     if (!response.ok) {
       throw new Error(data.error || 'Failed to update business');
     }
@@ -296,7 +345,13 @@ export const businessAPI = {
       });
     }
 
-    const token = localStorage.getItem('token');
+    let token = null;
+    try {
+      token = localStorage.getItem('token');
+    } catch (storageError) {
+      console.warn('localStorage not available:', storageError);
+    }
+    
     const response = await fetch(`${API_BASE_URL}/business/edit/${id}`, {
       method: 'PUT',
       headers: {
@@ -305,7 +360,22 @@ export const businessAPI = {
       body: submitData,
     });
 
-    const data = await response.json();
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        const text = await response.text();
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+      }
+    } else {
+      const text = await response.text();
+      throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+    }
+    
     if (!response.ok) {
       throw new Error(data.error || 'Failed to update business');
     }

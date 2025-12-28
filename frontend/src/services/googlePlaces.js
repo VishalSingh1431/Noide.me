@@ -21,7 +21,21 @@ export const getAutocompleteSuggestions = async (input, location = null) => {
       body: JSON.stringify({ input, location }),
     });
 
-    const data = await response.json();
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        const text = await response.text();
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+      }
+    } else {
+      const text = await response.text();
+      throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+    }
 
     if (!response.ok) {
       const errorMsg = data.error || 'Failed to get autocomplete suggestions';
@@ -51,7 +65,21 @@ export const getPlaceDetails = async (placeId) => {
       body: JSON.stringify({ placeId }),
     });
 
-    const data = await response.json();
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    let data;
+    
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        const text = await response.text();
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+      }
+    } else {
+      const text = await response.text();
+      throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+    }
 
     if (!response.ok) {
       throw new Error(data.error || 'Failed to get place details');

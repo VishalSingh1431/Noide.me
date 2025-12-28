@@ -58,7 +58,22 @@ const Businesses = () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/business`);
-      const data = await response.json();
+      
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          const text = await response.text();
+          throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+        }
+      } else {
+        const text = await response.text();
+        throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+      }
 
       // Backend already filters to approved only, but add extra safety check
       const activeBusinesses = data.businesses.filter(

@@ -925,7 +925,21 @@ const CreateWebsite = () => {
         body: submitData,
       });
 
-      const data = await response.json();
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          const text = await response.text();
+          throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+        }
+      } else {
+        const text = await response.text();
+        throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+      }
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to create business website');
@@ -1747,12 +1761,12 @@ const CreateWebsite = () => {
                     type="url"
                     value={formData.youtubeVideo}
                     onChange={handleChange}
-                    placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                    placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/... or https://youtube.com/shorts/..."
                     error={errors.youtubeVideo}
                     icon={Youtube}
                   />
                   <p className="mt-2 text-sm text-gray-500">
-                    Paste your YouTube video URL here. It will be embedded on your website.
+                    Paste your YouTube video URL here (regular videos or Shorts). It will be embedded on your website.
                   </p>
                 </div >
 

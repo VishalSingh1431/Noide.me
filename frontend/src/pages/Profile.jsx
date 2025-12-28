@@ -31,7 +31,14 @@ const Profile = () => {
 
   useEffect(() => {
     // Check if user is logged in
-    const token = localStorage.getItem('token');
+    let token = null;
+    try {
+      token = localStorage.getItem('token');
+    } catch (storageError) {
+      console.warn('localStorage not available:', storageError);
+      navigate('/login');
+      return;
+    }
 
     if (!token) {
       navigate('/login');
@@ -54,7 +61,12 @@ const Profile = () => {
         });
 
         // Update localStorage with fresh data
-        localStorage.setItem('user', JSON.stringify(userData));
+        try {
+          localStorage.setItem('user', JSON.stringify(userData));
+        } catch (storageError) {
+          console.warn('Failed to save user to localStorage:', storageError);
+          // Continue anyway - user data is still in state
+        }
       } catch (error) {
         console.error('Error fetching user data:', error);
         // Fallback to localStorage if API fails
@@ -175,7 +187,12 @@ const Profile = () => {
         ...user,
         ...response.user,
       };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
+      try {
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      } catch (storageError) {
+        console.warn('Failed to save user to localStorage:', storageError);
+        // Continue anyway - user data is still updated in state
+      }
       setUser(updatedUser);
       setIsEditing(false);
 

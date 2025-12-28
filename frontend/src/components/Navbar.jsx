@@ -16,12 +16,18 @@ const Navbar = () => {
 
 
   const checkAuthStatus = () => {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    if (token && userData) {
-      setIsLoggedIn(true);
-      setUser(JSON.parse(userData));
-    } else {
+    try {
+      const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('user');
+      if (token && userData) {
+        setIsLoggedIn(true);
+        setUser(JSON.parse(userData));
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    } catch (storageError) {
+      console.warn('localStorage not available:', storageError);
       setIsLoggedIn(false);
       setUser(null);
     }

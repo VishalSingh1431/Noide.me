@@ -73,11 +73,18 @@ const Signup = () => {
       const data = await authAPI.verifyOTP(email, otp, true);
 
       // Store token and user data
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      try {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      } catch (storageError) {
+        console.warn('Failed to save to localStorage:', storageError);
+        // Continue anyway - user is still logged in for this session
+      }
 
       // Dispatch event to update navbar
-      window.dispatchEvent(new Event('authChange'));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('authChange'));
+      }
 
       // Redirect to home
       navigate('/');
@@ -190,11 +197,18 @@ const Signup = () => {
             })));
 
             // Store token and user data
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('user', JSON.stringify(data.user));
+            try {
+              localStorage.setItem('token', data.token);
+              localStorage.setItem('user', JSON.stringify(data.user));
+            } catch (storageError) {
+              console.warn('Failed to save to localStorage:', storageError);
+              // Continue anyway - user is still logged in for this session
+            }
 
             // Dispatch event to update navbar
-            window.dispatchEvent(new Event('authChange'));
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new Event('authChange'));
+            }
 
             // Redirect to home
             navigate('/');
@@ -231,11 +245,18 @@ const Signup = () => {
       const data = await authAPI.googleAuth(response.credential);
 
       // Store token and user data
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      try {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+      } catch (storageError) {
+        console.warn('Failed to save to localStorage:', storageError);
+        // Continue anyway - user is still logged in for this session
+      }
 
       // Dispatch event to update navbar
-      window.dispatchEvent(new Event('authChange'));
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('authChange'));
+      }
 
       // Redirect to home
       navigate('/');

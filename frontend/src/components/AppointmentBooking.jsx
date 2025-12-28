@@ -33,7 +33,25 @@ export const AppointmentBooking = ({ businessId, businessName, appointmentSettin
       const response = await fetch(
         `${API_BASE_URL}/appointments/business/${businessId}/available-slots?date=${selectedDate}`
       );
-      const data = await response.json();
+      
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          const text = await response.text();
+          toast.error(`Invalid response: ${text.substring(0, 50)}`);
+          return;
+        }
+      } else {
+        const text = await response.text();
+        toast.error(`Server error (${response.status}): ${text.substring(0, 100)}`);
+        return;
+      }
+      
       if (response.ok) {
         setAvailableSlots(data.availableSlots || []);
       } else {
@@ -77,7 +95,23 @@ export const AppointmentBooking = ({ businessId, businessName, appointmentSettin
         }
       );
 
-      const data = await response.json();
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        try {
+          data = await response.json();
+        } catch (jsonError) {
+          const text = await response.text();
+          toast.error(`Invalid response: ${text.substring(0, 50)}`);
+          return;
+        }
+      } else {
+        const text = await response.text();
+        toast.error(`Server error (${response.status}): ${text.substring(0, 100)}`);
+        return;
+      }
 
       if (response.ok) {
         toast.success('Appointment booked successfully!');

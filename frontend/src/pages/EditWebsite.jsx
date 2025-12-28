@@ -66,7 +66,15 @@ const EditWebsite = () => {
   useEffect(() => {
     const loadBusiness = async () => {
       try {
-        const token = localStorage.getItem('token');
+        let token = null;
+        try {
+          token = localStorage.getItem('token');
+        } catch (storageError) {
+          console.warn('localStorage not available:', storageError);
+          navigate('/login');
+          return;
+        }
+        
         if (!token) {
           navigate('/login');
           return;
@@ -955,12 +963,12 @@ const EditWebsite = () => {
                     type="url"
                     value={formData.youtubeVideo}
                     onChange={handleChange}
-                    placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..."
+                    placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/... or https://youtube.com/shorts/..."
                     error={errors.youtubeVideo}
                     icon={Youtube}
                   />
                   <p className="mt-2 text-sm text-gray-500">
-                    Paste your YouTube video URL here. It will be embedded on your website.
+                    Paste your YouTube video URL here (regular videos or Shorts). It will be embedded on your website.
                   </p>
                 </div>
 

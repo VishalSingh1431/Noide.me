@@ -62,7 +62,22 @@ const BusinessWebsite = () => {
                     throw new Error(response.status === 404 ? 'Business not found' : 'Failed to load business');
                 }
 
-                const data = await response.json();
+                // Check if response is JSON before parsing
+                const contentType = response.headers.get('content-type');
+                let data;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    try {
+                        data = await response.json();
+                    } catch (jsonError) {
+                        const text = await response.text();
+                        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+                    }
+                } else {
+                    const text = await response.text();
+                    throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+                }
+                
                 const business = data.business;
 
                 // Map API data to component state structure
@@ -170,7 +185,8 @@ const BusinessWebsite = () => {
     // Helpers
     const getYouTubeId = (url) => {
         if (!url) return null;
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        // Support regular YouTube URLs, Shorts URLs, and youtu.be links
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
         const match = url.match(regExp);
         return match && match[2].length === 11 ? match[2] : null;
     };
