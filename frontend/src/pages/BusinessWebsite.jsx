@@ -93,7 +93,15 @@ const BusinessWebsite = () => {
                     };
                 }
 
-                setFormData(business);
+                // Map socialLinks to top level for easier access
+                const mappedBusiness = {
+                    ...business,
+                    instagram: business.socialLinks?.instagram || '',
+                    facebook: business.socialLinks?.facebook || '',
+                    website: business.socialLinks?.website || '',
+                };
+
+                setFormData(mappedBusiness);
 
                 // Setup initial images
                 if (business.logoUrl) setLogoUrl(business.logoUrl);
@@ -1057,13 +1065,18 @@ const BusinessWebsite = () => {
                             <p className="text-blue-50 text-sm leading-relaxed max-w-xs">{formData.footerDescription || `Premium services in Varanasi. Quality and trust you can count on.`}</p>
                             <div className="flex gap-4">
                                 {formData.instagram && (
-                                    <a href={formData.instagram} className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all group scale-100 hover:scale-110 shadow-lg backdrop-blur-sm border border-white/10">
+                                    <a href={formData.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all group scale-100 hover:scale-110 shadow-lg backdrop-blur-sm border border-white/10">
                                         <Instagram className="w-5 h-5 text-white" />
                                     </a>
                                 )}
                                 {formData.facebook && (
-                                    <a href={formData.facebook} className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all group scale-100 hover:scale-110 shadow-lg backdrop-blur-sm border border-white/10">
+                                    <a href={formData.facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all group scale-100 hover:scale-110 shadow-lg backdrop-blur-sm border border-white/10">
                                         <Facebook className="w-5 h-5 text-white" />
+                                    </a>
+                                )}
+                                {formData.website && (
+                                    <a href={formData.website} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all group scale-100 hover:scale-110 shadow-lg backdrop-blur-sm border border-white/10">
+                                        <Globe className="w-5 h-5 text-white" />
                                     </a>
                                 )}
                             </div>
