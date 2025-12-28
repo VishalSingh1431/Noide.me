@@ -915,6 +915,7 @@ const BusinessWebsite = () => {
                                 title="Business Video"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
+                                referrerPolicy="strict-origin-when-cross-origin"
                             ></iframe>
                         </div>
                     </div>

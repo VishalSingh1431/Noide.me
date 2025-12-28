@@ -1074,6 +1074,7 @@ const WebsitePreview = ({ formData, onClose }) => {
                       className="w-full h-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
+                      referrerPolicy="strict-origin-when-cross-origin"
                     ></iframe>
                     <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/20 to-transparent"></div>
                   </div>
@@ -1368,6 +1369,7 @@ const WebsitePreview = ({ formData, onClose }) => {
                     title="Business Video"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
+                    referrerPolicy="strict-origin-when-cross-origin"
                   ></iframe>
                 </div>
               </div>
