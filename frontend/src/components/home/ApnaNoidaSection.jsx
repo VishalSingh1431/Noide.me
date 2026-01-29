@@ -1,44 +1,44 @@
 import { motion } from 'framer-motion';
 import { Sparkles, Star, Map, MapPin, CheckCircle, Building2 } from 'lucide-react';
 
-const ApnaBanarasSection = () => {
+const ApnaNoidaSection = () => {
   const features = [
     {
-      title: 'Spiritual Experience',
-      description: 'Witness the mesmerizing Ganga Aarti at Dashashwamedh Ghat, perform rituals at sacred ghats, experience divine peace, and immerse yourself in the spiritual energy that flows through every corner of this ancient city.'
+      title: 'Modern Infrastructure',
+      description: 'Experience world-class infrastructure with planned sectors, wide roads, excellent connectivity, and modern amenities that make Noida one of the most livable cities in the NCR region.'
     },
     {
-      title: 'Rich Heritage',
-      description: 'Explore ancient temples like Kashi Vishwanath, wander through narrow lanes filled with history, discover traditional crafts including world-famous Banarasi silk, and experience timeless Banarasi culture that has been preserved for millennia.'
+      title: 'Business Hub',
+      description: 'Noida is home to numerous IT companies, multinational corporations, tech parks, and startups. It offers excellent opportunities for business growth and career advancement in a thriving economic environment.'
     },
     {
-      title: 'Vibrant Life',
-      description: 'From sunrise yoga at Assi Ghat to evening boat rides on the Ganges, from street food adventures to classical music performances, Banaras never stops amazing with its 24/7 spiritual and cultural activities.'
+      title: 'Vibrant Lifestyle',
+      description: 'From shopping malls and entertainment centers to parks and recreational facilities, from fine dining restaurants to street food, Noida offers a dynamic lifestyle for residents and visitors alike.'
     },
     {
-      title: 'Sacred Ghats',
-      description: 'With 88 sacred ghats along the holy Ganges River, each with its own unique history and significance, Varanasi offers countless opportunities for spiritual reflection, ritual ceremonies, and peaceful contemplation.'
+      title: 'Excellent Connectivity',
+      description: 'With seamless connectivity to Delhi via metro, expressways, and highways, Noida provides easy access to the entire NCR region while maintaining its own distinct identity and charm.'
     },
     {
-      title: 'Cultural Capital',
-      description: 'As the birthplace of Hindustani classical music, home to legendary artists, center of Sanskrit learning, and hub of traditional arts, Varanasi continues to be India\'s cultural and spiritual heart.'
+      title: 'Smart City',
+      description: 'As part of India\'s Smart Cities Mission, Noida features modern urban planning, green spaces, efficient public transport, and technology-driven solutions for sustainable living.'
     }
   ];
 
   const stats = [
-    { number: '3000+', label: 'Years Old', icon: Building2 },
-    { number: '88', label: 'Sacred Ghats', icon: Map },
-    { number: '100+', label: 'Temples', icon: Sparkles },
-    { number: '24/7', label: 'Spiritual Energy', icon: Star }
+    { number: '50+', label: 'Sectors', icon: Building2 },
+    { number: '200+', label: 'IT Companies', icon: Map },
+    { number: '100+', label: 'Shopping Malls', icon: Sparkles },
+    { number: '24/7', label: 'Active City', icon: Star }
   ];
 
   const highlights = [
-    { title: '3,000+ Years Old', description: 'One of the oldest continuously inhabited cities in the world, with a rich history spanning millennia' },
-    { title: '88 Sacred Ghats', description: 'On the banks of holy Ganges River, each ghat has unique spiritual significance and history' },
-    { title: '100+ Ancient Temples', description: 'Home to Kashi Vishwanath, Sankat Mochan, and countless other sacred temples' },
-    { title: 'World Heritage Site', description: 'Recognized by UNESCO for its cultural and spiritual significance to humanity' },
-    { title: 'Banarasi Silk Capital', description: 'Famous worldwide for exquisite Banarasi silk sarees with intricate zari work' },
-    { title: 'Classical Music Hub', description: 'Birthplace of legendary musicians and center for Hindustani classical music' }
+    { title: 'IT & Tech Hub', description: 'Home to major IT parks, software companies, and tech startups making it a prime destination for professionals' },
+    { title: 'Planned City', description: 'Well-planned sectors with modern infrastructure, green spaces, and excellent civic amenities' },
+    { title: 'Shopping Paradise', description: 'Multiple shopping malls, markets, and entertainment centers offering diverse retail experiences' },
+    { title: 'Metro Connectivity', description: 'Direct metro connectivity to Delhi and other NCR cities for seamless commuting' },
+    { title: 'Quality Education', description: 'Reputed schools, colleges, and universities providing excellent educational opportunities' },
+    { title: 'Growing Economy', description: 'Rapidly developing commercial and residential sectors with promising investment opportunities' }
   ];
 
   return (
@@ -53,11 +53,11 @@ const ApnaBanarasSection = () => {
           className="text-center mb-3 md:mb-4"
         >
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 md:mb-2 tracking-tight leading-tight">
-            Apna <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">Banaras</span>
+            Apna <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">Noida</span>
           </h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-700 max-w-3xl mx-auto font-light leading-relaxed">
 
-            The spiritual capital of India, where tradition meets timelessness
+            The smart city of opportunities, where modernity meets convenience
           </p>
         </motion.div>
 
@@ -80,7 +80,7 @@ const ApnaBanarasSection = () => {
                 </div>
                 <div className="min-w-0">
                   <h3 className="text-xl sm:text-2xl font-bold leading-tight">What Makes It Great</h3>
-                  <p className="text-white/90 text-sm sm:text-base mt-1">The essence of spiritual India</p>
+                  <p className="text-white/90 text-sm sm:text-base mt-1">The essence of modern India</p>
                 </div>
               </div>
 
@@ -98,7 +98,7 @@ const ApnaBanarasSection = () => {
             </div>
           </motion.div>
 
-          {/* Explore Varanasi & Location Card */}
+          {/* Explore Noida & Location Card */}
           <motion.div
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -110,36 +110,36 @@ const ApnaBanarasSection = () => {
 
               <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-2">
                 <Map className="w-5 h-5 sm:w-6 sm:h-6 text-orange-600 flex-shrink-0" />
-                <span>Explore Varanasi</span>
+                <span>Explore Noida</span>
               </h3>
 
               <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
                 <div className="relative rounded-xl overflow-hidden h-28 sm:h-32 md:h-36 group cursor-pointer">
                   <img
-                    src="/images/2-sarnath-varanasi-2-city-hero.jpeg"
-                    alt="Varanasi Ghats"
+                    src="/images/Modern Noida.jpeg"
+                    alt="Modern Noida"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     onError={(e) => {
-                      e.target.src = 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop';
+                      e.target.src = '/images/Modern City.webp';
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                   <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3">
-                    <p className="text-white text-xs sm:text-sm font-semibold drop-shadow-lg">Varanasi Ghats</p>
+                    <p className="text-white text-xs sm:text-sm font-semibold drop-shadow-lg">Modern Noida</p>
                   </div>
                 </div>
                 <div className="relative rounded-xl overflow-hidden h-28 sm:h-32 md:h-36 group cursor-pointer">
                   <img
-                    src="/images/Kashi V temple.jpg"
-                    alt="Kashi Vishwanath"
+                    src="/images/IT & Business Hub.jpg"
+                    alt="IT & Business Hub"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                     onError={(e) => {
-                      e.target.src = 'https://images.unsplash.com/photo-1548013146-72479768bada?w=400&h=300&fit=crop';
+                      e.target.src = '/images/IT Hub.jpg';
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                   <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3">
-                    <p className="text-white text-xs sm:text-sm font-semibold drop-shadow-lg">Kashi Vishwanath</p>
+                    <p className="text-white text-xs sm:text-sm font-semibold drop-shadow-lg">IT & Business Hub</p>
                   </div>
                 </div>
               </div>
@@ -160,7 +160,7 @@ const ApnaBanarasSection = () => {
             {/* Map Section */}
             <div className="relative h-56 sm:h-64 md:h-72 lg:h-80 w-full border-t border-gray-200">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115132.8324682005!2d82.97391573955075!3d25.31764526077926!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x398e2e2ef5a0e36f%3A0xd2a3f752f10c90d2!2sVaranasi%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56048.22645523411!2d77.315783525!3d28.5355161!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5a43173357b%3A0x37ffce30c87cc03f!2sNoida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -168,12 +168,12 @@ const ApnaBanarasSection = () => {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="w-full h-full"
-                title="Varanasi Location Map"
+                title="Noida Location Map"
               ></iframe>
               <div className="absolute top-3 sm:top-4 left-3 sm:left-4 bg-white/95 backdrop-blur-md px-3 sm:px-4 py-2 rounded-xl shadow-lg">
                 <div className="flex items-center gap-2">
                   <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 flex-shrink-0" />
-                  <span className="font-bold text-gray-900 text-sm sm:text-base">Varanasi, UP</span>
+                  <span className="font-bold text-gray-900 text-sm sm:text-base">Noida, UP</span>
                 </div>
               </div>
             </div>
@@ -216,5 +216,5 @@ const ApnaBanarasSection = () => {
   );
 };
 
-export default ApnaBanarasSection;
+export default ApnaNoidaSection;
 

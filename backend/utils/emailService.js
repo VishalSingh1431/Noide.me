@@ -26,9 +26,9 @@ export const sendWelcomeEmail = async (userEmail, userName) => {
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"VaranasiHub" <${process.env.SMTP_USER}>`,
+      from: `"NoidaHub" <${process.env.SMTP_USER}>`,
       to: userEmail,
-      subject: 'Welcome to VaranasiHub! 🎉',
+      subject: 'Welcome to NoidaHub! 🎉',
       html: `
         <!DOCTYPE html>
         <html>
@@ -44,21 +44,21 @@ export const sendWelcomeEmail = async (userEmail, userName) => {
         <body>
           <div class="container">
             <div class="header">
-              <h1>Welcome to VaranasiHub! 🎉</h1>
+              <h1>Welcome to NoidaHub! 🎉</h1>
             </div>
             <div class="content">
               <p>Hi ${userName || 'there'},</p>
-              <p>Thank you for joining VaranasiHub! We're excited to help you create a stunning online presence for your business.</p>
-              <p>With VaranasiHub, you can:</p>
+              <p>Thank you for joining NoidaHub! We're excited to help you create a stunning online presence for your business.</p>
+              <p>With NoidaHub, you can:</p>
               <ul>
                 <li>Create a professional website in minutes</li>
                 <li>Get a custom subdomain instantly</li>
                 <li>Showcase your business with photos and videos</li>
                 <li>Connect with customers via WhatsApp and phone</li>
               </ul>
-              <a href="${process.env.FRONTEND_URL || 'https://varanasihub.com'}/create-website" class="button">Create Your Website</a>
+              <a href="${process.env.FRONTEND_URL || 'https://noida.me'}/create-website" class="button">Create Your Website</a>
               <p>If you have any questions, feel free to reach out to us.</p>
-              <p>Best regards,<br>The VaranasiHub Team</p>
+              <p>Best regards,<br>The NoidaHub Team</p>
             </div>
           </div>
         </body>
@@ -87,7 +87,7 @@ export const sendApprovalEmail = async (businessEmail, businessName, businessUrl
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"VaranasiHub" <${process.env.SMTP_USER}>`,
+      from: `"NoidaHub" <${process.env.SMTP_USER}>`,
       to: businessEmail,
       subject: `🎉 Your Business "${businessName}" is Now Live!`,
       html: `
@@ -122,8 +122,8 @@ export const sendApprovalEmail = async (businessEmail, businessName, businessUrl
                 <li>Manage appointments and bookings</li>
               </ul>
               <a href="${businessUrl}" class="button">Visit Your Website</a>
-              <p>Thank you for choosing VaranasiHub!</p>
-              <p>Best regards,<br>The VaranasiHub Team</p>
+              <p>Thank you for choosing NoidaHub!</p>
+              <p>Best regards,<br>The NoidaHub Team</p>
             </div>
           </div>
         </body>
@@ -151,7 +151,7 @@ export const sendRejectionEmail = async (businessEmail, businessName, reason) =>
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"VaranasiHub" <${process.env.SMTP_USER}>`,
+      from: `"NoidaHub" <${process.env.SMTP_USER}>`,
       to: businessEmail,
       subject: `Update on Your Business "${businessName}"`,
       html: `
@@ -176,9 +176,9 @@ export const sendRejectionEmail = async (businessEmail, businessName, reason) =>
               <p>We reviewed your business listing for <strong>"${businessName}"</strong> and need some additional information or corrections.</p>
               ${reason ? `<p><strong>Reason:</strong> ${reason}</p>` : ''}
               <p>Please update your business information and resubmit for review.</p>
-              <a href="${process.env.FRONTEND_URL || 'https://varanasihub.com'}/profile" class="button">Update Business</a>
+              <a href="${process.env.FRONTEND_URL || 'https://noida.me'}/profile" class="button">Update Business</a>
               <p>If you have any questions, please contact our support team.</p>
-              <p>Best regards,<br>The VaranasiHub Team</p>
+              <p>Best regards,<br>The NoidaHub Team</p>
             </div>
           </div>
         </body>
@@ -206,7 +206,7 @@ export const sendAppointmentConfirmation = async (customerEmail, customerName, b
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"VaranasiHub" <${process.env.SMTP_USER}>`,
+      from: `"NoidaHub" <${process.env.SMTP_USER}>`,
       to: customerEmail,
       subject: `Appointment Confirmed with ${businessName}`,
       html: `

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, MapPin, Phone, Mail, ExternalLink, Grid, List, Building2, X, BadgeCheck, ArrowUpDown, Filter } from 'lucide-react';
@@ -10,7 +10,7 @@ import { VerifiedBadge } from '../components/VerifiedBadge';
 import { useToast } from '../contexts/ToastContext';
 import { API_BASE_URL } from '../config/constants';
 import { SEOHead } from '../components/SEOHead';
-import { getBusinessUrl, getOrigin } from '../utils/urlHelper';
+import { getBusinessUrl, getBusinessPageUrl, getOrigin } from '../utils/urlHelper';
 import Pagination from '../components/Pagination';
 import ShareButton from '../components/ShareButton';
 import { trackSearch, trackButtonClick } from '../utils/analytics';
@@ -19,7 +19,6 @@ const Businesses = () => {
   const toast = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const [businesses, setBusinesses] = useState([]);
-  const [filteredBusinesses, setFilteredBusinesses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
@@ -40,10 +39,8 @@ const Businesses = () => {
     if (searchTerm) params.set('search', searchTerm);
     if (selectedCategory !== 'All') params.set('category', selectedCategory);
     setSearchParams(params, { replace: true });
-
-    filterBusinesses();
     setCurrentPage(1); // Reset to first page on filter change
-  }, [searchTerm, selectedCategory, businesses, sortBy]);
+  }, [searchTerm, selectedCategory, setSearchParams]);
 
   // Handle URL search param on mount
   useEffect(() => {
@@ -54,7 +51,7 @@ const Businesses = () => {
     }
   }, []);
 
-  const fetchBusinesses = async () => {
+  const fetchBusinesses = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`${API_BASE_URL}/business`);
@@ -81,16 +78,16 @@ const Businesses = () => {
       );
 
       setBusinesses(activeBusinesses);
-      setFilteredBusinesses(activeBusinesses);
     } catch (error) {
       console.error('Error fetching businesses:', error);
       toast.error('Failed to load businesses. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
 
-  const filterBusinesses = () => {
+  // Optimize filtering with useMemo - only recalculates when dependencies change
+  const filteredBusinesses = useMemo(() => {
     let filtered = [...businesses];
 
     // Category filter
@@ -123,16 +120,19 @@ const Businesses = () => {
       }
     });
 
-    setFilteredBusinesses(filtered);
-  };
+    return filtered;
+  }, [businesses, selectedCategory, searchTerm, sortBy]);
 
-  // Pagination
-  const totalPages = Math.ceil(filteredBusinesses.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedBusinesses = filteredBusinesses.slice(startIndex, endIndex);
+  // Pagination - memoized
+  const { totalPages, paginatedBusinesses } = useMemo(() => {
+    const total = Math.ceil(filteredBusinesses.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginated = filteredBusinesses.slice(startIndex, endIndex);
+    return { totalPages: total, paginatedBusinesses: paginated };
+  }, [filteredBusinesses, currentPage, itemsPerPage]);
 
-  const getCategoryColor = (category) => {
+  const getCategoryColor = useCallback((category) => {
     const colors = {
       Shop: 'bg-blue-100 text-blue-700 border-blue-200',
       Clinic: 'bg-red-100 text-red-700 border-red-200',
@@ -142,12 +142,12 @@ const Businesses = () => {
       Services: 'bg-green-100 text-green-700 border-green-200',
     };
     return colors[category] || 'bg-gray-100 text-gray-700 border-gray-200';
-  };
+  }, []);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSearchTerm('');
     setSelectedCategory('All');
-  };
+  }, []);
 
   if (loading) {
     return (
@@ -167,11 +167,11 @@ const Businesses = () => {
   return (
     <>
       <SEOHead
-        title="Businesses in Varanasi - Discover Local Shops, Clinics, Hotels & More | VaranasiHub"
-        description="Discover amazing businesses in Varanasi. Browse shops, clinics, hotels, restaurants, libraries, and services. Find local businesses with verified listings, contact information, and direct website links."
+        title="Businesses in Noida - Discover Local Shops, Clinics, Hotels & More | Noida"
+        description="Discover amazing businesses in Noida. Browse shops, clinics, hotels, restaurants, libraries, and services. Find local businesses with verified listings, contact information, and direct website links."
         image="/og-image.jpg"
         url={`${getOrigin()}/businesses`}
-        keywords="Varanasi businesses, shops in Varanasi, clinics Varanasi, hotels Varanasi, restaurants Varanasi, local business directory Varanasi, business listings Varanasi"
+        keywords="Noida businesses, shops in Noida, clinics Noida, hotels Noida, restaurants Noida, local business directory Noida, business listings Noida"
         breadcrumbs={[
           { name: 'Home', path: '/', url: '/' },
           { name: 'Businesses', path: '/businesses', url: '/businesses' }
@@ -188,7 +188,7 @@ const Businesses = () => {
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-3 tracking-tight leading-tight px-4" itemProp="name">
-              Businesses in Varanasi
+              Businesses in Noida
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto font-light px-4">
               Discover amazing businesses. Find shops, clinics, hotels, and more.
@@ -464,7 +464,7 @@ const Businesses = () => {
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row gap-2 mt-auto pt-4 border-t border-gray-100">
                       <a
-                        href={business.subdomainUrl || getBusinessUrl(business.slug)}
+                        href={getBusinessPageUrl(business)}
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => trackButtonClick('visit_website', `business_${business.id}`)}
@@ -488,7 +488,7 @@ const Businesses = () => {
                         </a>
                       )}
                       <ShareButton
-                        url={business.subdomainUrl || getBusinessUrl(business.slug)}
+                        url={getBusinessPageUrl(business)}
                         title={business.businessName}
                         description={business.description}
                         businessId={business.id}

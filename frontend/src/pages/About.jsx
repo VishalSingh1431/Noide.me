@@ -15,13 +15,13 @@ const About = () => {
     {
       icon: Target,
       title: 'Our Mission',
-      description: 'To help local businesses in Varanasi establish a strong online presence and reach more customers through professional websites.',
+      description: 'To help local businesses in Noida establish a strong online presence and reach more customers through professional websites.',
       gradient: 'from-blue-500 to-cyan-500'
     },
     {
       icon: Users,
       title: 'Our Vision',
-      description: 'To become the leading platform for businesses in Varanasi to showcase their services and connect with their community.',
+      description: 'To become the leading platform for businesses in Noida to showcase their services and connect with their community.',
       gradient: 'from-purple-500 to-pink-500'
     },
     {
@@ -42,8 +42,8 @@ const About = () => {
   const team = [
     {
       name: 'Local Expertise',
-      role: 'Deep understanding of Varanasi market',
-      description: 'We know the local business landscape and what works best for Varanasi businesses.',
+      role: 'Deep understanding of Noida market',
+      description: 'We know the local business landscape and what works best for Noida businesses.',
       gradient: 'from-blue-500 to-cyan-500'
     },
     {
@@ -85,31 +85,31 @@ const About = () => {
   return (
     <>
       <SEOHead
-        title="About Us - VaranasiHub | Empowering Varanasi Businesses Online Since 2019"
-        description="VaranasiHub helps local businesses in Varanasi create professional websites in minutes. Learn about our mission, vision, and team. We've helped 500+ businesses go online. Trusted by shop owners, clinics, hotels, and services across Varanasi."
+        title="About Us - NoidaHub | Empowering Noida Businesses Online Since 2019"
+        description="NoidaHub helps local businesses in Noida create professional websites in minutes. Learn about our mission, vision, and team. We've helped 500+ businesses go online. Trusted by shop owners, clinics, hotels, and services across Noida."
         image="/og-image.jpg"
         url={`${getOrigin()}/about`}
-        keywords="about VaranasiHub, Varanasi website builder, local business support Varanasi, digital transformation Varanasi, business website platform"
+        keywords="about NoidaHub, Noida website builder, local business support Noida, digital transformation Noida, business website platform"
         breadcrumbs={[
           { name: 'Home', path: '/', url: '/' },
           { name: 'About', path: '/about', url: '/about' }
         ]}
         faqItems={[
           {
-            question: 'When was VaranasiHub founded?',
-            answer: 'VaranasiHub was founded in 2019 with a mission to help local businesses in Varanasi establish their online presence.'
+            question: 'When was NoidaHub founded?',
+            answer: 'NoidaHub was founded in 2019 with a mission to help local businesses in Noida establish their online presence.'
           },
           {
             question: 'How many businesses have you helped?',
-            answer: 'We have successfully helped over 500 businesses in Varanasi create their professional websites and establish their online presence.'
+            answer: 'We have successfully helped over 500 businesses in Noida create their professional websites and establish their online presence.'
           },
           {
-            question: 'What makes VaranasiHub different?',
-            answer: 'We specialize in the Varanasi market, understand local business needs, and provide personalized support. Our platform is designed specifically for Varanasi businesses with local features and integrations.'
+            question: 'What makes NoidaHub different?',
+            answer: 'We specialize in the Noida market, understand local business needs, and provide personalized support. Our platform is designed specifically for Noida businesses with local features and integrations.'
           },
           {
-            question: 'Do you only serve Varanasi?',
-            answer: 'Yes, we focus exclusively on Varanasi businesses to provide the best localized service and support for the local market.'
+            question: 'Do you only serve Noida?',
+            answer: 'Yes, we focus exclusively on Noida businesses to provide the best localized service and support for the local market.'
           }
         ]}
       />
@@ -125,11 +125,11 @@ const About = () => {
             className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 text-center"
           >
             <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-2 md:mb-3 tracking-tight leading-tight">
-              About <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">VaranasiHub</span>
+              About <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">NoidaHub</span>
             </h1>
             <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 max-w-3xl mx-auto font-light">
 
-              Empowering local businesses in Varanasi with professional websites and digital presence.
+              Empowering local businesses in Noida with professional websites and digital presence.
             </p>
           </motion.div>
         </section>
@@ -148,18 +148,18 @@ const About = () => {
             <div className="prose prose-sm sm:prose-base md:prose-lg max-w-none text-gray-600 space-y-3 sm:space-y-4 md:space-y-6 text-sm sm:text-base md:text-lg leading-relaxed">
 
               <p>
-                VaranasiHub was born from a simple idea: every local business in Varanasi deserves
+                NoidaHub was born from a simple idea: every local business in Noida deserves
                 a professional online presence. In today's digital age, having a website is not just
                 a luxury—it's a necessity.
               </p>
               <p>
-                We started with a mission to help small and medium businesses in Varanasi establish
+                We started with a mission to help small and medium businesses in Noida establish
                 their digital footprint without the complexity and high costs typically associated
                 with web development. Our team understands the unique needs of local businesses and
                 creates websites that truly represent their brand and connect with their customers.
               </p>
               <p>
-                Today, we're proud to have helped hundreds of businesses in Varanasi grow their
+                Today, we're proud to have helped hundreds of businesses in Noida grow their
                 online presence, reach more customers, and thrive in the digital marketplace.
               </p>
             </div>
@@ -266,11 +266,11 @@ const About = () => {
           >
             <div className="relative z-10">
               <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-black text-gray-900 mb-2 sm:mb-3 md:mb-4 tracking-tight">
-                Join the VaranasiHub Community
+                Join the NoidaHub Community
               </h2>
               <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 mb-4 sm:mb-6 md:mb-8 max-w-2xl mx-auto font-light">
 
-                Be part of the growing network of successful businesses in Varanasi.
+                Be part of the growing network of successful businesses in Noida.
               </p>
               <Link to="/create-website">
                 <motion.button

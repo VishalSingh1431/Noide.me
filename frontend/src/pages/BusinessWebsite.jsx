@@ -132,7 +132,7 @@ const BusinessWebsite = () => {
     const handleShare = async () => {
         const shareData = {
             title: formData?.businessName,
-            text: `Check out ${formData?.businessName} on VaranasiHub!`,
+            text: `Check out ${formData?.businessName} on Noida!`,
             url: window.location.href
         };
 
@@ -447,10 +447,10 @@ const BusinessWebsite = () => {
                                 </div>
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight">
                                     <span className="block">{formData.businessName}</span>
-                                    <span className="opacity-90">Varanasi's Finest</span>
+                                    <span className="opacity-90">Noida's Finest</span>
                                 </h1>
                                 <p className="text-lg md:text-xl text-blue-50 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                                    {formData.navbarTagline || 'Experience excellence in every detail. Your trusted partner in Varanasi for premium services.'}
+                                    {formData.navbarTagline || 'Experience excellence in every detail. Your trusted partner in Noida for premium services.'}
                                 </p>
                             </div>
 
@@ -491,7 +491,7 @@ const BusinessWebsite = () => {
                                             </div>
                                             <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Location</span>
                                         </div>
-                                        <p className="text-sm font-bold text-gray-900 truncate">{formData.address || 'Varanasi, UP'}</p>
+                                        <p className="text-sm font-bold text-gray-900 truncate">{formData.address || 'Noida, UP'}</p>
                                     </div>
                                 </div>
                             </div>
@@ -505,7 +505,7 @@ const BusinessWebsite = () => {
             {/* Quick Contact Info Section */}
             {
                 (formData.businessHours || formData.address) && (
-                    <section className="py-8 md:py-12 bg-gradient-to-br from-gray-50 to-white border-b border-gray-200">
+                    <section className="py-4 md:py-6 bg-gradient-to-br from-gray-50 to-white border-b border-gray-200">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                                 {formData.businessHours && Object.keys(formData.businessHours).length > 0 && (
@@ -584,7 +584,7 @@ const BusinessWebsite = () => {
             }
 
             {/* About Section */}
-            <section id="about" className="py-12 md:py-16 bg-gray-50">
+            <section id="about" className="py-6 md:py-8 bg-gray-50">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-8 md:mb-12 text-center">
                         About <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Us</span>
@@ -649,7 +649,7 @@ const BusinessWebsite = () => {
                                     </>
                                 ) : (
                                     <p className="text-base md:text-lg text-gray-600 leading-relaxed italic">
-                                        Welcome to {formData.businessName}! We are committed to providing excellent service and quality products to our customers in Varanasi.
+                                        Welcome to {formData.businessName}! We are committed to providing excellent service and quality products to our customers in Noida.
                                     </p>
                                 )}
                             </div>
@@ -687,7 +687,7 @@ const BusinessWebsite = () => {
             {/* Services Section */}
             {
                 formData.services && formData.services.length > 0 && (
-                    <section id="services" className="py-12 md:py-16 bg-white">
+                    <section id="services" className="py-6 md:py-8 bg-white">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-8 md:mb-12 text-center">
                                 Our <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Services</span>
@@ -756,7 +756,7 @@ const BusinessWebsite = () => {
             {/* Special Offers Section */}
             {
                 formData.specialOffers && formData.specialOffers.length > 0 && (
-                    <section className="py-12 md:py-16 bg-gradient-to-r from-red-50 via-orange-50 to-yellow-50 relative overflow-hidden">
+                    <section className="py-6 md:py-8 bg-gradient-to-r from-red-50 via-orange-50 to-yellow-50 relative overflow-hidden">
                         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="text-center mb-8 md:mb-12">
                                 <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
@@ -855,7 +855,7 @@ const BusinessWebsite = () => {
             {/* Business Attributes */}
             {
                 (hasAttributes() || hasPaymentOptions() || hasParkingOptions()) && (
-                    <section className="py-12 md:py-16 bg-white">
+                    <section className="py-6 md:py-8 bg-white">
                         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                             {hasAttributes() && (
                                 <>
@@ -884,7 +884,7 @@ const BusinessWebsite = () => {
             {/* Appointment Section */}
             {
                 formData.appointmentSettings && formData.appointmentSettings.contactMethod && (formData.whatsappNumber || formData.mobileNumber) && (
-                    <section className="py-12 md:py-16 bg-blue-50">
+                    <section className="py-6 md:py-8 bg-blue-50">
                         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 md:mb-8 text-center">Book an Appointment</h2>
                             <div className="bg-white rounded-xl shadow-lg p-8 text-center">
@@ -915,7 +915,7 @@ const BusinessWebsite = () => {
 
             {/* Video Section */}
             {youtubeVideos.length > 0 && (
-                <section id="video" className="py-8 sm:py-12 md:py-16 bg-white">
+                <section id="video" className="py-4 sm:py-6 md:py-8 bg-white">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-gray-900 mb-6 sm:mb-8 md:mb-12 text-center">
                             Watch Our <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Videos</span>
@@ -944,7 +944,7 @@ const BusinessWebsite = () => {
 
             {/* Reviews Section */}
             {formData.googlePlacesData?.reviews && formData.googlePlacesData.reviews.length > 0 && (
-                <section id="reviews" className="py-12 md:py-16 bg-gray-50 border-y border-gray-100 italic">
+                <section id="reviews" className="py-6 md:py-8 bg-gray-50 border-y border-gray-100 italic">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12">
                             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
@@ -957,9 +957,9 @@ const BusinessWebsite = () => {
                                 <span className="ml-2 font-bold text-gray-700">5.0 average rating</span>
                             </div>
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
                             {formData.googlePlacesData.reviews.map((review, idx) => (
-                                <div key={idx} className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all">
+                                <div key={idx} className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all flex-shrink-0 w-full max-w-sm">
                                     <div className="flex items-center gap-4 mb-4">
                                         <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
                                             {review.author?.charAt(0) || 'G'}
@@ -984,7 +984,7 @@ const BusinessWebsite = () => {
             {/* Gallery Section */}
             {
                 images.length > 0 && (
-                    <section id="gallery" className="py-12 md:py-16 bg-white border-y border-gray-50">
+                    <section id="gallery" className="py-6 md:py-8 bg-white border-y border-gray-50">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="text-center mb-12">
                                 <div className={`inline-block px-4 py-2 rounded-full bg-blue-600/10 text-blue-600 text-sm font-bold mb-4`}>
@@ -1074,7 +1074,7 @@ const BusinessWebsite = () => {
                             <h3 className="text-3xl font-black text-white italic">
                                 {formData.businessName}
                             </h3>
-                            <p className="text-blue-50 text-sm leading-relaxed max-w-xs">{formData.footerDescription || `Premium services in Varanasi. Quality and trust you can count on.`}</p>
+                            <p className="text-blue-50 text-sm leading-relaxed max-w-xs">{formData.footerDescription || `Premium services in Noida. Quality and trust you can count on.`}</p>
                             <div className="flex gap-4">
                                 {formData.instagram && (
                                     <a href={formData.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/10 text-white flex items-center justify-center hover:bg-white/20 transition-all group scale-100 hover:scale-110 shadow-lg backdrop-blur-sm border border-white/10">
@@ -1137,7 +1137,7 @@ const BusinessWebsite = () => {
                         <p className="text-blue-50 text-xs font-bold uppercase tracking-[0.2em]">&copy; {new Date().getFullYear()} {formData.businessName}</p>
                         <div className="flex items-center gap-2">
                             <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                            <p className="text-blue-50 text-xs font-bold uppercase tracking-widest">Powered by <a href="https://varanasihub.com" className="text-white hover:underline" target="_blank" rel="noopener noreferrer">VaranasiHub</a></p>
+                            <p className="text-blue-50 text-xs font-bold uppercase tracking-widest">Powered by <a href="https://noida.me" className="text-white hover:underline" target="_blank" rel="noopener noreferrer">Noida</a></p>
                         </div>
                     </div>
                 </div>

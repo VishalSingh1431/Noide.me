@@ -74,7 +74,7 @@ const Privacy = () => {
                 })}
               </p>
               <p>
-                At VaranasiHub, we are committed to protecting your privacy. This Privacy Policy
+                At NoidaHub, we are committed to protecting your privacy. This Privacy Policy
                 explains how we collect, use, disclose, and safeguard your information when you
                 use our website and services.
               </p>
@@ -113,7 +113,7 @@ const Privacy = () => {
                 please contact us at:
               </p>
               <p className="text-blue-600 mb-2">
-                Email: varanasihub.com@gmail.com
+                Email: info.noidahub@gmail.com
               </p>
               <p className="text-blue-600">
                 Phone: +91 9305715031

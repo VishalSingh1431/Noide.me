@@ -20,7 +20,7 @@ const ReadyToGoLiveCTA = () => {
             Ready to Go Live? 🚀
           </motion.h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-700 mb-4 sm:mb-6 md:mb-8 max-w-2xl mx-auto font-light leading-relaxed">
-            Create your Varanasi website now — starting at ₹1,000/year with 14-day free trial!
+            Create your Noida website now — starting at ₹1,000/year with 14-day free trial!
           </p>
           <Link to="/create-website">
             <motion.button

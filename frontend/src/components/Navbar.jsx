@@ -1,7 +1,69 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, User } from 'lucide-react';
 
+// Move categories array outside component to prevent recreation on every render
+const CATEGORIES = [
+  'Shops',
+  'Restaurants',
+  'Hotels',
+  'Clinics',
+  'Libraries',
+  'Services',
+  'Temples',
+  'Schools',
+  'Colleges',
+  'Gyms',
+  'Salons',
+  'Spas',
+  'Pharmacies',
+  'Banks',
+  'Travel Agencies',
+  'Real Estate',
+  'Law Firms',
+  'Accounting',
+  'IT Services',
+  'Photography',
+  'Event Management',
+  'Catering',
+  'Bakeries',
+  'Jewelry',
+  'Fashion',
+  'Electronics',
+  'Furniture',
+  'Automobile',
+  'Repair Services',
+  'Education',
+  'Healthcare',
+  'Beauty',
+  'Fitness',
+  'Entertainment',
+  'Tourism',
+  'Food & Beverage',
+  'Retail',
+  'Wholesale',
+  'Manufacturing',
+  'Construction',
+  'Other'
+];
+
+// Move styles outside component to prevent recreation
+const categorySliderStyles = `
+  .category-slider::-webkit-scrollbar {
+    width: 6px;
+  }
+  .category-slider::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  .category-slider::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+  .category-slider::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+`;
 
 const Navbar = () => {
   const location = useLocation();
@@ -13,9 +75,9 @@ const Navbar = () => {
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(true);
   const categorySliderRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
 
-
-  const checkAuthStatus = () => {
+  const checkAuthStatus = useCallback(() => {
     try {
       const token = localStorage.getItem('token');
       const userData = localStorage.getItem('user');
@@ -31,7 +93,7 @@ const Navbar = () => {
       setIsLoggedIn(false);
       setUser(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // Check if user is logged in on mount
@@ -48,9 +110,9 @@ const Navbar = () => {
       window.removeEventListener('storage', checkAuthStatus);
       window.removeEventListener('authChange', handleAuthChange);
     };
-  }, []);
+  }, [checkAuthStatus]);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsLoggedIn(false);
@@ -58,75 +120,38 @@ const Navbar = () => {
     setIsMobileMenuOpen(false);
     // Dispatch event to update navbar in other components
     window.dispatchEvent(new Event('authChange'));
-  };
+  }, []);
 
-  const categories = [
-    'Shops',
-    'Restaurants',
-    'Hotels',
-    'Clinics',
-    'Libraries',
-    'Services',
-    'Temples',
-    'Schools',
-    'Colleges',
-    'Gyms',
-    'Salons',
-    'Spas',
-    'Pharmacies',
-    'Banks',
-    'Travel Agencies',
-    'Real Estate',
-    'Law Firms',
-    'Accounting',
-    'IT Services',
-    'Photography',
-    'Event Management',
-    'Catering',
-    'Bakeries',
-    'Jewelry',
-    'Fashion',
-    'Electronics',
-    'Furniture',
-    'Automobile',
-    'Repair Services',
-    'Education',
-    'Healthcare',
-    'Beauty',
-    'Fitness',
-    'Entertainment',
-    'Tourism',
-    'Food & Beverage',
-    'Retail',
-    'Wholesale',
-    'Manufacturing',
-    'Construction',
-    'Other'
-  ];
+  const toggleMobileMenu = useCallback(() => {
+    setIsMobileMenuOpen(prev => !prev);
+  }, []);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const toggleCategories = useCallback(() => {
+    setIsCategoriesOpen(prev => !prev);
+  }, []);
 
-  const toggleCategories = () => {
-    setIsCategoriesOpen(!isCategoriesOpen);
-  };
+  const toggleMobileCategories = useCallback(() => {
+    setIsMobileCategoriesOpen(prev => !prev);
+  }, []);
 
-  const toggleMobileCategories = () => {
-    setIsMobileCategoriesOpen(!isMobileCategoriesOpen);
-  };
-
-  // Check scroll position for category slider
-  const checkScrollPosition = () => {
-    if (categorySliderRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = categorySliderRef.current;
-      setCanScrollUp(scrollTop > 0);
-      setCanScrollDown(scrollTop < scrollHeight - clientHeight - 1);
+  // Check scroll position for category slider with throttling
+  const checkScrollPosition = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      return; // Skip if already scheduled
     }
-  };
+    
+    scrollTimeoutRef.current = requestAnimationFrame(() => {
+      if (categorySliderRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = categorySliderRef.current;
+        setCanScrollUp(scrollTop > 0);
+        setCanScrollDown(scrollTop < scrollHeight - clientHeight - 1);
+      }
+      scrollTimeoutRef.current = null;
+    });
+  }, []);
 
   // Scroll category slider
-  const scrollCategories = (direction) => {
+  const scrollCategories = useCallback((direction) => {
     if (categorySliderRef.current) {
       const scrollAmount = 150;
       const currentScroll = categorySliderRef.current.scrollTop;
@@ -139,39 +164,32 @@ const Navbar = () => {
         behavior: 'smooth'
       });
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkScrollPosition();
     const slider = categorySliderRef.current;
     if (slider) {
-      slider.addEventListener('scroll', checkScrollPosition);
-      window.addEventListener('resize', checkScrollPosition);
+      slider.addEventListener('scroll', checkScrollPosition, { passive: true });
+      window.addEventListener('resize', checkScrollPosition, { passive: true });
       return () => {
         slider.removeEventListener('scroll', checkScrollPosition);
         window.removeEventListener('resize', checkScrollPosition);
+        if (scrollTimeoutRef.current) {
+          cancelAnimationFrame(scrollTimeoutRef.current);
+        }
       };
     }
-  }, []);
+  }, [checkScrollPosition]);
+
+  // Memoize active pathname check
+  const isActivePath = useCallback((path) => {
+    return location.pathname === path;
+  }, [location.pathname]);
 
   return (
     <>
-      <style>{`
-        .category-slider::-webkit-scrollbar {
-          width: 6px;
-        }
-        .category-slider::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 10px;
-        }
-        .category-slider::-webkit-scrollbar-thumb {
-          background: #888;
-          border-radius: 10px;
-        }
-        .category-slider::-webkit-scrollbar-thumb:hover {
-          background: #555;
-        }
-      `}</style>
+      <style>{categorySliderStyles}</style>
       <nav className="sticky top-0 z-[100] bg-white/95 backdrop-blur-md shadow-[0_4px_20px_rgba(0,0,0,0.08)] border-b border-gray-200/50 relative transition-all duration-300">
 
         <div className="w-full px-4 sm:px-4 lg:px-6 relative z-10">
@@ -184,11 +202,11 @@ const Navbar = () => {
                 className="h-8 md:h-10 w-auto drop-shadow-md object-contain"
               />
               <Link to="/" className="text-2xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all duration-300 tracking-tight">
-                VaranasiHub
+                Noida
               </Link>
               <img
-                src="/images/Kashi V temple.jpg"
-                alt="Kashi Vishwanath Temple"
+                src="/images/logo_Noida.png"
+                alt="NoidaHub Logo"
                 className="h-10 md:h-12 w-auto rounded-lg object-cover drop-shadow-md"
               />
             </div>
@@ -197,7 +215,7 @@ const Navbar = () => {
             <div className="hidden md:flex md:items-center md:space-x-1 flex-1 justify-center">
               <Link
                 to="/"
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${location.pathname === '/'
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
@@ -206,7 +224,7 @@ const Navbar = () => {
               </Link>
               <Link
                 to="/businesses"
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${location.pathname === '/businesses'
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/businesses')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
@@ -215,7 +233,7 @@ const Navbar = () => {
               </Link>
               <Link
                 to="/about"
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${location.pathname === '/about'
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/about')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
@@ -264,7 +282,7 @@ const Navbar = () => {
                         className="category-slider flex flex-col gap-1 overflow-y-auto scroll-smooth max-h-80 px-2"
                         onScroll={checkScrollPosition}
                       >
-                        {categories.map((category) => (
+                        {CATEGORIES.map((category) => (
                           <Link
                             key={category}
                             to={`/businesses?category=${category}`}
@@ -293,7 +311,7 @@ const Navbar = () => {
 
               <Link
                 to="/pricing"
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${location.pathname === '/pricing'
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/pricing')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
@@ -302,7 +320,7 @@ const Navbar = () => {
               </Link>
               <Link
                 to="/contact"
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${location.pathname === '/contact'
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/contact')
                     ? 'text-blue-600 bg-blue-50'
                     : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
@@ -385,7 +403,7 @@ const Navbar = () => {
               <div className="flex flex-col space-y-1">
                 <Link
                   to="/"
-                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${location.pathname === '/'
+                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/')
                       ? 'text-blue-600 bg-blue-50'
                       : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
@@ -395,7 +413,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   to="/businesses"
-                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${location.pathname === '/businesses'
+                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/businesses')
                       ? 'text-blue-600 bg-blue-50'
                       : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
@@ -405,7 +423,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   to="/about"
-                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${location.pathname === '/about'
+                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/about')
                       ? 'text-blue-600 bg-blue-50'
                       : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
@@ -447,7 +465,7 @@ const Navbar = () => {
                           className="category-slider flex flex-col gap-1 overflow-y-auto scroll-smooth max-h-64"
                           onScroll={checkScrollPosition}
                         >
-                          {categories.map((category) => (
+                          {CATEGORIES.map((category) => (
                             <Link
                               key={category}
                               to={`/businesses?category=${category}`}
@@ -479,7 +497,7 @@ const Navbar = () => {
 
                 <Link
                   to="/pricing"
-                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${location.pathname === '/pricing'
+                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/pricing')
                       ? 'text-blue-600 bg-blue-50'
                       : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
@@ -489,7 +507,7 @@ const Navbar = () => {
                 </Link>
                 <Link
                   to="/contact"
-                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${location.pathname === '/contact'
+                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/contact')
                       ? 'text-blue-600 bg-blue-50'
                       : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}

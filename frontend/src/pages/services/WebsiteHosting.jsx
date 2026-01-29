@@ -66,17 +66,17 @@ const WebsiteHosting = () => {
   return (
     <>
       <SEOHead
-        title="Website Hosting Services in Varanasi | Reliable & Fast | VaranasiHub"
-        description="Professional website hosting for Varanasi businesses. 99.9% uptime, SSL certificate, daily backups, starting at ₹1,000/year. Free trial available."
-        keywords="website hosting Varanasi, web hosting, reliable hosting, SSL certificate, website hosting India"
-        url={`${getOrigin()}/services/website-hosting-varanasi`}
+        title="Website Hosting Services in Noida | Reliable & Fast | NoidaHub"
+        description="Professional website hosting for Noida businesses. 99.9% uptime, SSL certificate, daily backups, starting at ₹1,000/year. Free trial available."
+        keywords="website hosting Noida, web hosting, reliable hosting, SSL certificate, website hosting India"
+        url={`${getOrigin()}/services/website-hosting-noida`}
         serviceType="Web Hosting"
-        serviceArea="Varanasi"
+        serviceArea="Noida"
         faqItems={faqItems}
         breadcrumbs={[
           { name: 'Home', path: '/' },
           { name: 'Services', path: '/services' },
-          { name: 'Website Hosting', path: '/services/website-hosting-varanasi' }
+          { name: 'Website Hosting', path: '/services/website-hosting-noida' }
         ]}
       />
       <Navbar />
@@ -92,7 +92,7 @@ const WebsiteHosting = () => {
               className="text-center mb-12"
             >
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-4">
-                Reliable <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Website Hosting</span> in Varanasi
+                Reliable <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Website Hosting</span> in Noida
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
                 99.9% uptime guarantee, SSL certificate, daily backups, and expert support. Keep your website online 24/7.

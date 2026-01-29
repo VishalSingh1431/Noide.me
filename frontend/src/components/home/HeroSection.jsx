@@ -68,13 +68,13 @@ const HeroSection = ({ heroImages = [] }) => {
           >
             <img
               src={heroImages[currentSlide]}
-              alt={`Varanasi landscape ${currentSlide + 1} - Ghats, temples, and spiritual heritage`}
+              alt={`Noida landscape ${currentSlide + 1} - Modern city, IT hubs, and vibrant lifestyle`}
               className="w-full h-full object-cover object-center"
               loading="eager"
               onError={(e) => {
                 if (imageErrorCount < 2) {
                   setImageErrorCount(prev => prev + 1);
-                  e.target.src = '/images/Home page Silder 1.jpg';
+                  e.target.src = '/images/Slider1.avif';
                 } else {
                   e.target.style.display = 'none';
                   e.target.parentElement.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center"><p class="text-white text-xl">Image unavailable</p></div>';
@@ -182,7 +182,7 @@ const HeroSection = ({ heroImages = [] }) => {
             transition={{ duration: 0.8, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 max-w-4xl mx-auto mb-6 leading-relaxed font-light px-4"
           >
-            Give your Varanasi shop, clinic, hotel, or service a stunning online presence. 
+            Give your Noida shop, clinic, hotel, or service a stunning online presence. 
             <span className="text-yellow-300 font-semibold"> Zero coding. </span>
             <span className="text-green-300 font-semibold"> Instant results.</span>
           </motion.p>

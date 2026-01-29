@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-const LivingVaranasiStories = ({ highlights = [] }) => {
+const LivingNoidaStories = ({ highlights = [] }) => {
   if (!highlights || highlights.length === 0) return null;
 
   return (
@@ -15,10 +15,10 @@ const LivingVaranasiStories = ({ highlights = [] }) => {
           className="text-center mb-3 md:mb-4"
         >
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 md:mb-2 tracking-tight leading-tight">
-            Living Varanasi <span className="bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">Stories</span>
+            Living Noida <span className="bg-gradient-to-r from-orange-400 to-yellow-300 bg-clip-text text-transparent">Stories</span>
           </h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
-            From sunrise yoga at Assi Ghat to midnight aartis at Dashashwamedh, Banaras never sleeps. Explore the experiences locals swear by.
+            From modern shopping malls to tech parks, from fine dining to street food, Noida offers a vibrant lifestyle. Explore the experiences locals love.
           </p>
         </motion.div>
 
@@ -33,7 +33,7 @@ const LivingVaranasiStories = ({ highlights = [] }) => {
               whileHover={{ y: -10, scale: 1.02 }}
               className="relative overflow-hidden rounded-lg md:rounded-2xl lg:rounded-3xl border-2 border-gray-200 bg-white hover:border-blue-300 hover:shadow-xl transition-all duration-500"
             >
-              <Link to={`/varanasi/${highlight.slug}`} className="grid grid-cols-1 lg:grid-cols-2 h-full">
+              <Link to={`/noida/${highlight.slug}`} className="grid grid-cols-1 lg:grid-cols-2 h-full">
                 <div className="p-3 sm:p-4 md:p-6 lg:p-8 flex flex-col gap-2 sm:gap-3 md:gap-4">
                   <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900">{highlight.title}</h3>
                   <p className="text-xs sm:text-sm md:text-base text-gray-600 leading-relaxed">{highlight.tagline}</p>
@@ -45,7 +45,7 @@ const LivingVaranasiStories = ({ highlights = [] }) => {
                   <div className="absolute inset-0">
                     <img
                       src={highlight.heroImage}
-                      alt={`${highlight.title} - ${highlight.subtitle || 'Varanasi experience'}`}
+                      alt={`${highlight.title} - ${highlight.subtitle || 'Noida experience'}`}
                       className="w-full h-full object-cover"
                       loading="lazy"
                       onError={(e) => { e.target.style.display = 'none'; }}
@@ -62,5 +62,5 @@ const LivingVaranasiStories = ({ highlights = [] }) => {
   );
 };
 
-export default LivingVaranasiStories;
+export default LivingNoidaStories;
 

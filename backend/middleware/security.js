@@ -10,7 +10,7 @@ export const securityMiddleware = helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
       scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
-      connectSrc: ["'self'", "https://varanasihub.com", "http://localhost:5000"],
+      connectSrc: ["'self'", "https://noida.me", "http://localhost:50002"],
       fontSrc: ["'self'", "data:"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],

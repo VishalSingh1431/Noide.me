@@ -833,7 +833,7 @@ export const authAPI = {
 export const GOOGLE_CLIENT_ID = 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com';
 
 // API Base URL
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:50002/api';
 ```
 
 ### 3. Signup Page (`frontend/src/pages/Signup.jsx`)
@@ -1310,13 +1310,13 @@ SMTP_USER=your-email@gmail.com
 SMTP_PASS=your-app-password
 
 # Server
-PORT=5000
+PORT=50002
 NODE_ENV=production
 ```
 
 ### Frontend `.env`
 ```env
-VITE_API_BASE_URL=http://localhost:5000/api
+VITE_API_BASE_URL=http://localhost:50002/api
 ```
 
 ---

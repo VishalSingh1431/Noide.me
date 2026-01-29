@@ -20,7 +20,7 @@ export const testCreateCollege = async (req, res) => {
       category = 'College',
       mobileNumber = '0123456789',
       email = `test-college-${Date.now()}@example.com`,
-      address = 'Test Address, Varanasi, UP',
+      address = 'Test Address, Noida, UP',
       description = 'This is a test business with College category to verify it works correctly',
     } = req.body;
 
@@ -97,7 +97,7 @@ export const testCreateCollege = async (req, res) => {
         website: '',
       },
       slug: `test-college-${Date.now()}`,
-      subdomainUrl: `https://test-college-${Date.now()}.varanasihub.com`,
+      subdomainUrl: `https://test-college-${Date.now()}.noida.me`,
       subdirectoryUrl: null,
       status: 'pending',
       userId: null,
@@ -513,14 +513,14 @@ export const createBusiness = async (req, res) => {
     // Generate subdomain URL only
     // Default to production unless explicitly in development mode
     const isDevelopment = process.env.NODE_ENV === 'development';
-    const baseDomain = process.env.BASE_DOMAIN || 'varanasihub.com';
+    const baseDomain = process.env.BASE_DOMAIN || 'noida.me';
 
     let subdomainUrl;
     let subdirectoryUrl;
 
     if (isDevelopment) {
       // For localhost: use http://subdomain.localhost:PORT
-      const port = process.env.PORT || 5000;
+      const port = process.env.PORT || 50002;
       subdomainUrl = `http://${slug}.localhost:${port}`;
       subdirectoryUrl = `http://localhost:${port}/${slug}`;
     } else {
@@ -950,7 +950,7 @@ export const updateBusiness = async (req, res) => {
       newSlug = preferredSlug;
 
       // Update URLs based on the new slug
-      const BASE_DOMAIN = process.env.BASE_DOMAIN || 'varanasihub.com';
+      const BASE_DOMAIN = process.env.BASE_DOMAIN || 'noida.me';
       newSubdomainUrl = `https://${newSlug}.${BASE_DOMAIN}`;
       newSubdirectoryUrl = `https://${BASE_DOMAIN}/${newSlug}`;
 
@@ -1024,9 +1024,9 @@ export const getBusinessBySlug = async (req, res) => {
 
     // Return HTML template for business page
     const NODE_ENV = process.env.NODE_ENV || 'development';
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 50002;
     const apiBaseUrl = NODE_ENV === 'production'
-      ? `https://${process.env.BASE_DOMAIN || 'varanasihub.com'}/api`
+      ? `https://${process.env.BASE_DOMAIN || 'noida.me'}/api`
       : `http://localhost:${PORT}/api`;
 
     const html = generateBusinessHTML(business, apiBaseUrl);
@@ -1058,9 +1058,9 @@ export const getBusinessBySubdomain = async (req, res) => {
 
     // Return HTML template for business page
     const NODE_ENV = process.env.NODE_ENV || 'development';
-    const PORT = process.env.PORT || 5000;
+    const PORT = process.env.PORT || 50002;
     const apiBaseUrl = NODE_ENV === 'production'
-      ? `https://${process.env.BASE_DOMAIN || 'varanasihub.com'}/api`
+      ? `https://${process.env.BASE_DOMAIN || 'noida.me'}/api`
       : `http://localhost:${PORT}/api`;
     const html = generateBusinessHTML(business, apiBaseUrl);
     res.setHeader('Content-Type', 'text/html');

@@ -4,8 +4,8 @@ import { getOrigin } from '../utils/urlHelper';
 
 export const SEOHead = ({
 
-  title = 'VaranasiHub - Create Your Business Website in Minutes',
-  description = 'Help your Varanasi business go online. Create a professional website in minutes with zero coding skills.',
+  title = 'NoidaHub - Create Your Business Website in Minutes',
+  description = 'Help your Noida business go online. Create a professional website in minutes with zero coding skills.',
   image = '/og-image.jpg',
   url,
   type = 'website',
@@ -14,7 +14,7 @@ export const SEOHead = ({
   businessPhone,
   businessCategory,
   keywords,
-  author = 'VaranasiHub',
+  author = 'NoidaHub',
   publishedTime,
   modifiedTime,
   breadcrumbs,
@@ -100,7 +100,7 @@ export const SEOHead = ({
     updateMetaTag('og:image:alt', title, true);
     updateMetaTag('og:url', currentUrl, true);
     updateMetaTag('og:type', type, true);
-    updateMetaTag('og:site_name', 'VaranasiHub', true);
+    updateMetaTag('og:site_name', 'NoidaHub', true);
     updateMetaTag('og:locale', 'en_IN', true);
     updateMetaTag('og:locale:alternate', 'hi_IN', true);
 
@@ -110,8 +110,8 @@ export const SEOHead = ({
     updateMetaTag('twitter:description', description);
     updateMetaTag('twitter:image', image.startsWith('http') ? image : `${siteUrl}${image}`);
     updateMetaTag('twitter:image:alt', title);
-    updateMetaTag('twitter:site', '@VaranasiHub');
-    updateMetaTag('twitter:creator', '@VaranasiHub');
+    updateMetaTag('twitter:site', '@NoidaHub');
+    updateMetaTag('twitter:creator', '@NoidaHub');
 
     // Canonical URL
     let canonicalLink = document.querySelector('link[rel="canonical"]');
@@ -132,9 +132,9 @@ export const SEOHead = ({
     const websiteSchema = {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
-      name: 'VaranasiHub',
+      name: 'NoidaHub',
       url: siteUrl,
-      description: 'Platform for Varanasi businesses to create professional websites',
+      description: 'Platform for Noida businesses to create professional websites',
       potentialAction: {
         '@type': 'SearchAction',
         target: {
@@ -150,8 +150,8 @@ export const SEOHead = ({
     const organizationSchema = {
       '@context': 'https://schema.org',
       '@type': 'Organization',
-      name: 'VaranasiHub',
-      description: 'Platform for Varanasi businesses to create professional websites',
+      name: 'NoidaHub',
+      description: 'Platform for Noida businesses to create professional websites',
       url: siteUrl,
       logo: `${siteUrl}/logo.png`,
       contactPoint: {
@@ -165,7 +165,7 @@ export const SEOHead = ({
 
       address: {
         '@type': 'PostalAddress',
-        addressLocality: 'Varanasi',
+        addressLocality: 'Noida',
         addressRegion: 'Uttar Pradesh',
         addressCountry: 'IN'
       }
@@ -219,14 +219,14 @@ export const SEOHead = ({
         businessSchema.address = {
           '@type': 'PostalAddress',
           streetAddress: businessAddress,
-          addressLocality: 'Varanasi',
+          addressLocality: 'Noida',
           addressRegion: 'Uttar Pradesh',
           postalCode: '221001',
           addressCountry: 'IN',
         };
         businessSchema.areaServed = {
           '@type': 'City',
-          name: 'Varanasi'
+          name: 'Noida'
         };
       }
 
@@ -280,8 +280,8 @@ export const SEOHead = ({
       // Add ServiceArea
       businessSchema.areaServed = {
         '@type': 'City',
-        name: 'Varanasi',
-        '@id': 'https://www.wikidata.org/wiki/Q79980'
+        name: 'Noida',
+        '@id': 'https://www.wikidata.org/wiki/Q499142'
       };
 
       structuredDataArray.push(businessSchema);
@@ -303,7 +303,7 @@ export const SEOHead = ({
         },
         publisher: {
           '@type': 'Organization',
-          name: 'VaranasiHub',
+          name: 'NoidaHub',
           logo: {
             '@type': 'ImageObject',
             url: `${siteUrl}/logo.png`
@@ -322,11 +322,11 @@ export const SEOHead = ({
         description: description,
         provider: {
           '@type': 'Organization',
-          name: 'VaranasiHub',
+          name: 'NoidaHub',
           url: siteUrl,
           address: {
             '@type': 'PostalAddress',
-            addressLocality: 'Varanasi',
+            addressLocality: 'Noida',
             addressRegion: 'Uttar Pradesh',
             addressCountry: 'IN'
           }
@@ -334,8 +334,8 @@ export const SEOHead = ({
         serviceType: serviceType,
         areaServed: serviceArea || {
           '@type': 'City',
-          name: 'Varanasi',
-          '@id': 'https://www.wikidata.org/wiki/Q79980'
+          name: 'Noida',
+          '@id': 'https://www.wikidata.org/wiki/Q203460'
         },
         availableChannel: {
           '@type': 'ServiceChannel',
@@ -383,7 +383,7 @@ export const SEOHead = ({
           : videoUrl,
         publisher: {
           '@type': 'Organization',
-          name: 'VaranasiHub',
+          name: 'NoidaHub',
           logo: {
             '@type': 'ImageObject',
             url: `${siteUrl}/logo.png`
@@ -403,7 +403,7 @@ export const SEOHead = ({
         image: image.startsWith('http') ? image : `${siteUrl}${image}`,
         brand: {
           '@type': 'Brand',
-          name: 'VaranasiHub'
+          name: 'NoidaHub'
         },
         offers: {
           '@type': 'Offer',

@@ -45,7 +45,7 @@ const HowItWorks = () => {
           className="text-center mb-3 md:mb-4"
         >
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black text-gray-900 mb-1 md:mb-2 tracking-tight leading-tight px-2 sm:px-4">
-            How <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">VaranasiHub</span> Works
+            How <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">NoidaHub</span> Works
           </h2>
           <p className="text-xs sm:text-sm md:text-base text-gray-600 max-w-2xl mx-auto font-light leading-relaxed px-2 sm:px-4">
 

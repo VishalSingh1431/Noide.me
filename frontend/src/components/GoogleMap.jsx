@@ -33,41 +33,48 @@ export const GoogleMap = ({
 
     const coords = extractCoordinates(googleMapLink);
 
-    if (coords && window.google && window.google.maps) {
-      const map = new window.google.maps.Map(mapRef.current, {
-        center: coords,
-        zoom: 15,
-        styles: [
-          {
-            featureType: 'poi',
-            elementType: 'labels',
-            stylers: [{ visibility: 'on' }],
-          },
-        ],
-      });
+    try {
+      if (coords && window.google && window.google.maps) {
+        const map = new window.google.maps.Map(mapRef.current, {
+          center: coords,
+          zoom: 15,
+          styles: [
+            {
+              featureType: 'poi',
+              elementType: 'labels',
+              stylers: [{ visibility: 'on' }],
+            },
+          ],
+        });
 
-      new window.google.maps.Marker({
-        position: coords,
-        map: map,
-        title: businessName || 'Business Location',
-      });
-    } else if (address) {
-      // Fallback: Use geocoding API or embed
-      const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address: address }, (results, status) => {
-        if (status === 'OK' && results[0]) {
-          const map = new window.google.maps.Map(mapRef.current, {
-            center: results[0].geometry.location,
-            zoom: 15,
-          });
+        new window.google.maps.Marker({
+          position: coords,
+          map: map,
+          title: businessName || 'Business Location',
+        });
+      } else if (address && window.google && window.google.maps) {
+        // Fallback: Use geocoding API or embed
+        const geocoder = new window.google.maps.Geocoder();
+        geocoder.geocode({ address: address }, (results, status) => {
+          if (status === 'OK' && results[0]) {
+            const map = new window.google.maps.Map(mapRef.current, {
+              center: results[0].geometry.location,
+              zoom: 15,
+            });
 
-          new window.google.maps.Marker({
-            position: results[0].geometry.location,
-            map: map,
-            title: businessName || address,
-          });
-        }
-      });
+            new window.google.maps.Marker({
+              position: results[0].geometry.location,
+              map: map,
+              title: businessName || address,
+            });
+          }
+        });
+      }
+    } catch (error) {
+      // Silently handle Google Maps API errors (e.g., blocked by extensions)
+      if (import.meta.env.DEV) {
+        console.warn('Google Maps initialization error:', error);
+      }
     }
   }, [address, googleMapLink, businessName]);
 
@@ -103,6 +110,15 @@ export const GoogleMapsScript = () => {
       script.src = `https://maps.googleapis.com/maps/api/js?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}&libraries=places`;
       script.async = true;
       script.defer = true;
+      
+      // Handle script loading errors silently
+      script.onerror = () => {
+        // Silently handle errors (e.g., blocked by ad blocker)
+        if (import.meta.env.DEV) {
+          console.warn('Google Maps script failed to load. Maps may not work if blocked by extensions.');
+        }
+      };
+      
       document.head.appendChild(script);
     }
   }, []);

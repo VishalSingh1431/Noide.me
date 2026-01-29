@@ -571,8 +571,8 @@ const CreateWebsite = () => {
         services: data.services.map(s => ({ ...s, image: null })), // Remove file objects
         specialOffers: data.specialOffers.map(o => ({ ...o, image: null })), // Remove file objects
       };
-      localStorage.setItem('varanasihub_form_draft', JSON.stringify(dataToSave));
-      localStorage.setItem('varanasihub_form_timestamp', Date.now().toString());
+      localStorage.setItem('noida_form_draft', JSON.stringify(dataToSave));
+      localStorage.setItem('noida_form_timestamp', Date.now().toString());
     } catch (error) {
       console.warn('Failed to save form to localStorage:', error);
     }
@@ -610,8 +610,8 @@ const CreateWebsite = () => {
   // Load from localStorage on mount
   useEffect(() => {
     try {
-      const savedData = localStorage.getItem('varanasihub_form_draft');
-      const savedTimestamp = localStorage.getItem('varanasihub_form_timestamp');
+      const savedData = localStorage.getItem('noida_form_draft');
+      const savedTimestamp = localStorage.getItem('noida_form_timestamp');
 
       if (savedData && savedTimestamp) {
         // Check if saved data is less than 7 days old
@@ -630,8 +630,8 @@ const CreateWebsite = () => {
           }
         } else {
           // Clear old data
-          localStorage.removeItem('varanasihub_form_draft');
-          localStorage.removeItem('varanasihub_form_timestamp');
+          localStorage.removeItem('noida_form_draft');
+          localStorage.removeItem('noida_form_timestamp');
         }
       }
     } catch (error) {
@@ -1326,7 +1326,7 @@ const CreateWebsite = () => {
                         }, 5000);
                       }
                     }}
-                    placeholder="Type your business name or address (e.g., 'Restaurant in Varanasi', 'Kashi Vishwanath Temple')"
+                    placeholder="Type your business name or address (e.g., 'Restaurant in Noida', 'Sector 18 Market')"
                     error={errors.address}
                     className="text-lg"
                   />
@@ -1539,7 +1539,7 @@ const CreateWebsite = () => {
                                     pattern="[a-z0-9-]{3,50}"
                                     maxLength={50}
                                   />
-                                  <span className="absolute right-3 top-2.5 text-xs text-gray-400 font-mono">.varanasihub.com</span>
+                                  <span className="absolute right-3 top-2.5 text-xs text-gray-400 font-mono">.noida.me</span>
                                 </div>
                                 {subdomainStatus?.checking && (
                                   <Loader2 className="w-5 h-5 animate-spin text-blue-600 flex-shrink-0" />
@@ -1562,7 +1562,7 @@ const CreateWebsite = () => {
                                   <div className="flex-1">
                                     <p className="text-sm font-semibold text-green-900">Available!</p>
                                     <p className="text-xs text-green-700 mt-0.5">
-                                      Your website will be at: <code className="bg-green-100 px-1.5 py-0.5 rounded font-mono">{subdomainStatus.slug}.varanasihub.com</code>
+                                      Your website will be at: <code className="bg-green-100 px-1.5 py-0.5 rounded font-mono">{subdomainStatus.slug}.noida.me</code>
                                     </p>
                                   </div>
                                 </div>

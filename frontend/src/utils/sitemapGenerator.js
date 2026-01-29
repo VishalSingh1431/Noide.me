@@ -3,7 +3,7 @@
  * Generates sitemap.xml for SEO
  */
 
-const BASE_URL = import.meta.env.VITE_SITE_URL || 'https://www.varanasihub.com';
+const BASE_URL = import.meta.env.VITE_SITE_URL || 'https://www.noida.me';
 
 // Static routes that should always be in sitemap
 const staticRoutes = [

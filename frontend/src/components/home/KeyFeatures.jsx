@@ -64,8 +64,8 @@ const KeyFeatures = () => {
   };
 
   return (
-    <section className="py-4 md:py-6 lg:py-8 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 relative z-10">
+    <section className="py-4 md:py-6 lg:py-8 bg-white shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8">
 
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -88,7 +88,7 @@ const KeyFeatures = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-50px" }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4 lg:gap-6"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5 lg:gap-6"
 
         >
           {features.map((feature, index) => {
@@ -100,7 +100,7 @@ const KeyFeatures = () => {
                 whileHover={{ y: -8, scale: 1.05 }}
                 className="group relative"
               >
-                <div className="relative bg-white rounded-lg md:rounded-xl lg:rounded-2xl p-3 sm:p-4 md:p-5 lg:p-6 border-2 border-gray-200 aspect-square hover:border-blue-300 hover:shadow-xl transition-all duration-500 overflow-hidden group/card flex flex-col items-center justify-center text-center">
+                <div className="relative bg-white rounded-lg md:rounded-xl lg:rounded-2xl p-3 sm:p-4 md:p-5 lg:p-6 border-2 border-gray-200 hover:border-blue-300 hover:shadow-xl transition-all duration-500 overflow-hidden group/card flex flex-col items-center justify-center text-center">
                   <div className="absolute top-0 right-0 w-24 md:w-32 h-24 md:h-32 bg-gradient-to-br from-blue-500 to-purple-500 opacity-5 rounded-full blur-3xl -z-10 group-hover/card:opacity-15 transition-opacity duration-500"></div>
                   <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg md:rounded-xl flex items-center justify-center mb-2 sm:mb-3 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
                     <Icon className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white" />

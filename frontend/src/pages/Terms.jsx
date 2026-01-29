@@ -8,12 +8,12 @@ const Terms = () => {
     {
       icon: FileText,
       title: 'Acceptance of Terms',
-      content: 'By accessing and using VaranasiHub, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.'
+      content: 'By accessing and using NoidaHub, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.'
     },
     {
       icon: Shield,
       title: 'Service Description',
-      content: 'VaranasiHub provides website creation and hosting services for businesses in Varanasi. We offer various plans with different features and pricing. All services are subject to availability and our terms of service.'
+      content: 'NoidaHub provides website creation and hosting services for businesses in Noida. We offer various plans with different features and pricing. All services are subject to availability and our terms of service.'
     },
     {
       icon: Lock,
@@ -28,12 +28,12 @@ const Terms = () => {
     {
       icon: Shield,
       title: 'Intellectual Property',
-      content: 'All content, features, and functionality of VaranasiHub are owned by us or our licensors. You may not copy, modify, distribute, or create derivative works without our express written permission.'
+      content: 'All content, features, and functionality of NoidaHub are owned by us or our licensors. You may not copy, modify, distribute, or create derivative works without our express written permission.'
     },
     {
       icon: Lock,
       title: 'Limitation of Liability',
-      content: 'VaranasiHub shall not be liable for any indirect, incidental, special, or consequential damages resulting from the use or inability to use our services. Our total liability shall not exceed the amount paid by you in the past 12 months.'
+      content: 'NoidaHub shall not be liable for any indirect, incidental, special, or consequential damages resulting from the use or inability to use our services. Our total liability shall not exceed the amount paid by you in the past 12 months.'
     }
   ];
 
@@ -74,7 +74,7 @@ const Terms = () => {
                 })}
               </p>
               <p>
-                These Terms of Service ("Terms") govern your access to and use of VaranasiHub's
+                These Terms of Service ("Terms") govern your access to and use of NoidaHub's
                 website and services. By using our services, you agree to be bound by these Terms.
               </p>
             </div>
@@ -111,7 +111,7 @@ const Terms = () => {
                 If you have any questions about these Terms, please contact us at:
               </p>
               <p className="text-blue-600">
-                Email: varanasihub.com@gmail.com
+                Email: info.noidahub@gmail.com
               </p>
             </motion.div>
           </motion.div>

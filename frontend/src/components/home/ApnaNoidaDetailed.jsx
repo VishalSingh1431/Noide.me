@@ -2,118 +2,118 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, ChevronDown } from 'lucide-react';
 
-const ApnaBanarasDetailed = () => {
-  const [showAllGhats, setShowAllGhats] = useState(false);
-  const [showAllTemples, setShowAllTemples] = useState(false);
+const ApnaNoidaDetailed = () => {
+  const [showAllMalls, setShowAllMalls] = useState(false);
+  const [showAllParks, setShowAllParks] = useState(false);
   const initialItems = 3;
 
-  const ghats = [
+  const malls = [
     {
-      name: 'Dashashwamedh Ghat',
-      description: 'The most famous ghat, known for its spectacular evening Ganga Aarti. Legend says Lord Brahma performed a Dashashwamedh Yajna here.',
-      location: 'Main Ghat, Near Kashi Vishwanath',
-      image: '/images/Dashashwamedh Ghat.jpg'
+      name: 'DLF Mall of India',
+      description: 'One of the largest shopping malls in Noida, featuring over 300 retail stores, entertainment zones, fine dining restaurants, and a multiplex.',
+      location: 'Sector 18, Noida',
+      image: '/images/DLF Mall of India.jpeg'
     },
     {
-      name: 'Manikarnika Ghat',
-      description: 'One of the oldest and most sacred cremation ghats. It\'s believed that Goddess Parvati\'s earring (Manikarnika) fell here.',
-      location: 'Sacred Cremation Ghat',
-      image: '/images/Manikarnika Ghat.webp'
+      name: 'GIP Mall',
+      description: 'Great India Place is a premier shopping destination with international brands, food courts, and entertainment facilities.',
+      location: 'Sector 18, Noida',
+      image: '/images/GIP Mall.webp'
     },
     {
-      name: 'Assi Ghat',
-      description: 'The southernmost ghat where the Assi River meets the Ganges. Famous for Subah-e-Banaras morning ritual.',
-      location: 'Southern End, Near BHU',
-      image: '/images/Assi Ghat.jpg'
+      name: 'Centrestage Mall',
+      description: 'A modern shopping mall offering a mix of retail stores, dining options, and entertainment in the heart of Noida.',
+      location: 'Sector 18, Noida',
+      image: '/images/Centrestage Mall.jpg'
     },
     {
-      name: 'Harishchandra Ghat',
-      description: 'Another important cremation ghat named after the legendary King Harishchandra.',
-      location: 'Near Manikarnika Ghat',
-      image: '/images/Harishchandra Ghat.png'
+      name: 'Gardenia Gateway',
+      description: 'A luxury shopping destination featuring premium brands, fine dining restaurants, and lifestyle stores.',
+      location: 'Sector 18, Noida',
+      image: '/images/Gardenia Gateway.avif'
     },
     {
-      name: 'Tulsi Ghat',
-      description: 'Named after the great poet-saint Tulsidas, who wrote the Ramcharitmanas here.',
-      location: 'Near Assi Ghat',
-      image: '/images/Tulsi Ghat.jpg'
+      name: 'Logix City Centre',
+      description: 'A popular shopping and entertainment hub with multiple retail outlets, restaurants, and recreational facilities.',
+      location: 'Sector 32, Noida',
+      image: '/images/Logix City Centre.avif'
     },
     {
-      name: 'Pancaganga Ghat',
-      description: 'A beautiful ghat where five rivers are believed to meet.',
-      location: 'Central Varanasi',
-      image: '/images/Pancaganga Ghat.jpg'
+      name: 'Spice World Mall',
+      description: 'A vibrant shopping mall offering diverse retail options, food courts, and entertainment for the whole family.',
+      location: 'Sector 25, Noida',
+      image: '/images/Spice World Mall.avif'
     }
   ];
 
-  const temples = [
+  const parks = [
     {
-      name: 'Kashi Vishwanath Temple',
-      description: 'One of the twelve Jyotirlingas, dedicated to Lord Shiva. The current temple was built in 1780 by Queen Ahilyabai Holkar.',
-      location: 'Near Dashashwamedh Ghat',
-      image: '/images/Kashi Vishwanath Temple.jpg'
+      name: 'DLF IT Park',
+      description: 'A major IT hub housing numerous tech companies, startups, and multinational corporations in modern office spaces.',
+      location: 'Sector 5, Noida',
+      image: '/images/IT & Business Hub.jpg'
     },
     {
-      name: 'Sankat Mochan Hanuman Temple',
-      description: 'A famous temple dedicated to Lord Hanuman, established by Tulsidas.',
-      location: 'Near BHU Campus',
-      image: '/images/Sankat Mochan Hanuman Temple.jpg'
+      name: 'Techzone',
+      description: 'A prominent IT park featuring state-of-the-art infrastructure for technology companies and business centers.',
+      location: 'Sector 127, Noida',
+      image: '/images/IT & Business Hub 1.jpg'
     },
     {
-      name: 'Vishalakshi Temple',
-      description: 'Dedicated to Goddess Vishalakshi, an aspect of Parvati. It\'s considered one of the 51 Shakti Pithas.',
-      location: 'Mir Ghat Area',
-      image: '/images/Vishalakshi Temple.png'
+      name: 'Logix Cyber Park',
+      description: 'A modern business park designed for IT companies with world-class facilities and excellent connectivity.',
+      location: 'Sector 62, Noida',
+      image: '/images/IT Hub.jpg'
     },
     {
-      name: 'Durga Temple',
-      description: 'Also known as Monkey Temple, this 18th-century temple is dedicated to Goddess Durga.',
-      location: 'Durga Kund Area',
-      image: '/images/Durga Temple.jpeg'
+      name: 'Mindspace IT Park',
+      description: 'A premium business destination offering office spaces for leading technology companies and corporate headquarters.',
+      location: 'Sector 62, Noida',
+      image: '/images/IT & Business Hub.jpg'
     },
     {
-      name: 'Bharat Mata Temple',
-      description: 'A unique temple dedicated to Mother India, featuring a marble relief map of undivided India.',
-      location: 'Mahatma Gandhi Kashi Vidyapith',
-      image: '/images/Bharat Mata Temple.jpg'
+      name: 'Noida Special Economic Zone',
+      description: 'A designated SEZ area providing excellent infrastructure and facilities for export-oriented businesses.',
+      location: 'Sector 81, Noida',
+      image: '/images/IT & Business Hub 1.jpg'
     },
     {
-      name: 'Tulsi Manas Temple',
-      description: 'Built in 1964, this temple is dedicated to Lord Rama. The walls are inscribed with verses from the Ramcharitmanas.',
-      location: 'Near Durga Temple',
-      image: '/images/Tulsi Manas Temple.jpeg'
+      name: 'Sector 62 Business Hub',
+      description: 'A thriving business district with multiple IT parks, corporate offices, and commercial establishments.',
+      location: 'Sector 62, Noida',
+      image: '/images/IT & Business Hub.jpg'
     }
   ];
 
   const culturalHeritage = [
     {
-      title: 'Dev Deepawali',
-      description: 'The Festival of Lights of the Gods, celebrated 15 days after Diwali. All ghats are illuminated with thousands of diyas, creating a magical spectacle.',
-      image: '/images/Dev Deepawali.jpg',
+      title: 'Modern Shopping',
+      description: 'Noida is home to numerous modern shopping malls offering international brands, entertainment zones, and diverse dining experiences.',
+      image: '/images/Modern Shopping.jpg',
       gradient: 'from-yellow-500 to-orange-500'
     },
     {
-      title: 'Classical Arts',
-      description: 'Varanasi is a hub for Hindustani classical music, dance, and traditional arts. The city has produced legendary artists.',
-      image: '/images/Classical Arts.jpg',
+      title: 'IT & Business Hub',
+      description: 'Noida is a major IT and business hub, home to numerous tech companies, multinational corporations, and startups.',
+      image: '/images/IT & Business Hub.jpg',
       gradient: 'from-purple-500 to-pink-500'
     },
     {
-      title: 'Banarasi Cuisine',
-      description: 'From kachori sabzi to malaiyyo, thandai to lassi, and the famous Banarasi paan - the city\'s culinary heritage is rich.',
-      image: '/images/Banarasi Cuisine.webp',
+      title: 'Diverse Dining',
+      description: 'From fine dining restaurants to street food, Noida offers a wide variety of cuisines including North Indian, Chinese, Continental, and international flavors.',
+      image: '/images/Diverse Dining.jpg',
       gradient: 'from-orange-500 to-red-500'
     },
     {
-      title: 'Handicrafts',
-      description: 'Beyond Banarasi silk, the city is known for brassware, wooden toys, stone carvings, and traditional crafts.',
-      image: '/images/Handicrafts.jpg',
+      title: 'Entertainment Centers',
+      description: 'Noida features multiple entertainment centers, multiplexes, gaming zones, and recreational facilities for residents and visitors.',
+      image: '/images/Entertainment.jpeg',
       gradient: 'from-blue-500 to-cyan-500'
     }
   ];
 
   return (
-    <section id="apna-banaras" className="py-4 md:py-6 lg:py-8 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
+    <section id="apna-noida" className="py-4 md:py-6 lg:py-8 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 relative z-10">
 
         <motion.div
@@ -124,15 +124,15 @@ const ApnaBanarasDetailed = () => {
           className="text-center mb-3 md:mb-4"
         >
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 md:mb-2 tracking-tight leading-tight">
-            Apna <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Banaras</span>
+            Apna <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">Noida</span>
           </h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-700 max-w-3xl mx-auto font-light leading-relaxed">
 
-            Discover the essence of Varanasi through its iconic ghats, sacred temples, and rich cultural heritage
+            Discover the essence of Noida through its modern infrastructure, IT hubs, shopping malls, and vibrant lifestyle
           </p>
         </motion.div>
 
-        {/* Ghats Section */}
+        {/* Malls Section */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -140,9 +140,9 @@ const ApnaBanarasDetailed = () => {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="mb-3 md:mb-4"
         >
-          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight mb-3 md:mb-4">Famous Ghats of Varanasi</h3>
+          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight mb-3 md:mb-4">Major Shopping Malls & Entertainment</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-            {(showAllGhats ? ghats : ghats.slice(0, initialItems)).map((ghat, index) => (
+            {(showAllMalls ? malls : malls.slice(0, initialItems)).map((mall, index) => (
 
               <motion.div
                 key={index}
@@ -156,8 +156,8 @@ const ApnaBanarasDetailed = () => {
                 <div className="h-48 sm:h-56 md:h-64 relative overflow-hidden">
 
                   <img
-                    src={ghat.image}
-                    alt={`${ghat.name} - ${ghat.description ? ghat.description.substring(0, 60) : 'Famous ghat in Varanasi'}...`}
+                    src={mall.image}
+                    alt={`${mall.name} - ${mall.description ? mall.description.substring(0, 60) : 'Popular destination in Noida'}...`}
                     className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700"
                     loading="lazy"
                     onError={(e) => {
@@ -167,32 +167,32 @@ const ApnaBanarasDetailed = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 </div>
                 <div className="p-3 sm:p-4 md:p-5 lg:p-6">
-                  <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 md:mb-3">{ghat.name}</h4>
-                  <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 md:mb-4 leading-relaxed">{ghat.description}</p>
+                  <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 md:mb-3">{mall.name}</h4>
+                  <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 md:mb-4 leading-relaxed">{mall.description}</p>
                   <div className="flex items-center gap-2 text-blue-600 font-semibold text-xs sm:text-sm">
                     <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
 
-                    <span>{ghat.location}</span>
+                    <span>{mall.location}</span>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
-          {ghats.length > initialItems && (
+          {malls.length > initialItems && (
             <div className="text-center mt-4">
               <button
-                onClick={() => setShowAllGhats(!showAllGhats)}
+                onClick={() => setShowAllMalls(!showAllMalls)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg md:rounded-xl font-semibold text-sm sm:text-base hover:shadow-lg transition-all duration-300"
               >
-                {showAllGhats ? 'Show Less' : `View All Ghats (${ghats.length - initialItems} more)`}
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllGhats ? 'rotate-180' : ''}`} />
+                {showAllMalls ? 'Show Less' : `View All Malls (${malls.length - initialItems} more)`}
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllMalls ? 'rotate-180' : ''}`} />
               </button>
             </div>
           )}
 
         </motion.div>
 
-        {/* Temples Section */}
+        {/* IT Parks Section */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -200,9 +200,9 @@ const ApnaBanarasDetailed = () => {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="mb-3 md:mb-4"
         >
-          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight mb-3 md:mb-4">Sacred Temples of Varanasi</h3>
+          <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 tracking-tight mb-3 md:mb-4">IT Parks & Business Centers</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
-            {(showAllTemples ? temples : temples.slice(0, initialItems)).map((temple, index) => (
+            {(showAllParks ? parks : parks.slice(0, initialItems)).map((park, index) => (
 
               <motion.div
                 key={index}
@@ -216,8 +216,8 @@ const ApnaBanarasDetailed = () => {
                 <div className="h-48 sm:h-56 md:h-64 relative overflow-hidden">
 
                   <img
-                    src={temple.image}
-                    alt={`${temple.name} - ${temple.description ? temple.description.substring(0, 60) : 'Sacred temple in Varanasi'}...`}
+                    src={park.image}
+                    alt={`${park.name} - ${park.description ? park.description.substring(0, 60) : 'Business center in Noida'}...`}
                     className="w-full h-full object-cover group-hover:scale-125 transition-transform duration-700"
                     loading="lazy"
                     onError={(e) => {
@@ -227,25 +227,25 @@ const ApnaBanarasDetailed = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 </div>
                 <div className="p-3 sm:p-4 md:p-5 lg:p-6">
-                  <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 md:mb-3">{temple.name}</h4>
-                  <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 md:mb-4 leading-relaxed">{temple.description}</p>
+                  <h4 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-gray-900 mb-1 sm:mb-2 md:mb-3">{park.name}</h4>
+                  <p className="text-xs sm:text-sm md:text-base text-gray-600 mb-2 sm:mb-3 md:mb-4 leading-relaxed">{park.description}</p>
                   <div className="flex items-center gap-2 text-purple-600 font-semibold text-xs sm:text-sm">
                     <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
 
-                    <span>{temple.location}</span>
+                    <span>{park.location}</span>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
-          {temples.length > initialItems && (
+          {parks.length > initialItems && (
             <div className="text-center mt-4">
               <button
-                onClick={() => setShowAllTemples(!showAllTemples)}
+                onClick={() => setShowAllParks(!showAllParks)}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg md:rounded-xl font-semibold text-sm sm:text-base hover:shadow-lg transition-all duration-300"
               >
-                {showAllTemples ? 'Show Less' : `View All Temples (${temples.length - initialItems} more)`}
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllTemples ? 'rotate-180' : ''}`} />
+                {showAllParks ? 'Show Less' : `View All IT Parks (${parks.length - initialItems} more)`}
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAllParks ? 'rotate-180' : ''}`} />
               </button>
             </div>
           )}
@@ -300,5 +300,5 @@ const ApnaBanarasDetailed = () => {
   );
 };
 
-export default ApnaBanarasDetailed;
+export default ApnaNoidaDetailed;
 

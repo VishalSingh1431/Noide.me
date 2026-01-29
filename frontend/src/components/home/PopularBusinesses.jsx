@@ -18,7 +18,7 @@ const PopularBusinesses = ({ businesses = [] }) => {
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-4 tracking-tight leading-tight">
               Popular <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Businesses</span>
             </h2>
-            <p className="text-xl text-gray-600 font-light">Discover amazing local businesses in Varanasi</p>
+            <p className="text-xl text-gray-600 font-light">Discover amazing local businesses in Noida</p>
           </motion.div>
           <Link to="/businesses">
             <motion.button
@@ -47,7 +47,7 @@ const PopularBusinesses = ({ businesses = [] }) => {
                 <div className="h-64 bg-gradient-to-br from-blue-400 to-purple-500 relative overflow-hidden">
                   <img
                     src={business.image}
-                    alt={`${business.name} - ${business.category} in Varanasi`}
+                    alt={`${business.name} - ${business.category} in Noida`}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy"
                     onError={(e) => {

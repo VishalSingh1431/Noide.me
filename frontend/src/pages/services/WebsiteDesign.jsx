@@ -43,7 +43,7 @@ const WebsiteDesign = () => {
   const faqItems = [
     {
       question: 'How long does it take to design a website?',
-      answer: 'With VaranasiHub, you can have your professional website ready in just minutes. Simply fill in your business details and your website goes live instantly.'
+      answer: 'With NoidaHub, you can have your professional website ready in just minutes. Simply fill in your business details and your website goes live instantly.'
     },
     {
       question: 'Do I need design skills?',
@@ -55,7 +55,7 @@ const WebsiteDesign = () => {
     },
     {
       question: 'Will my website work on mobile phones?',
-      answer: 'Absolutely! All websites created on VaranasiHub are fully responsive and look perfect on mobile phones, tablets, and desktop computers.'
+      answer: 'Absolutely! All websites created on NoidaHub are fully responsive and look perfect on mobile phones, tablets, and desktop computers.'
     },
     {
       question: 'What if I need help with the design?',
@@ -66,17 +66,17 @@ const WebsiteDesign = () => {
   return (
     <>
       <SEOHead
-        title="Professional Website Design Services in Varanasi | VaranasiHub"
-        description="Get a custom-designed, mobile-responsive website for your Varanasi business. Professional design, SEO optimized, starting at ₹1,000/year. Free trial available."
-        keywords="website design Varanasi, professional website design, custom website Varanasi, business website design, responsive website design"
-        url={`${getOrigin()}/services/website-design-varanasi`}
+        title="Professional Website Design Services in Noida | NoidaHub"
+        description="Get a custom-designed, mobile-responsive website for your Noida business. Professional design, SEO optimized, starting at ₹1,000/year. Free trial available."
+        keywords="website design Noida, professional website design, custom website Noida, business website design, responsive website design"
+        url={`${getOrigin()}/services/website-design-noida`}
         serviceType="Website Design"
-        serviceArea="Varanasi"
+        serviceArea="Noida"
         faqItems={faqItems}
         breadcrumbs={[
           { name: 'Home', path: '/' },
           { name: 'Services', path: '/services' },
-          { name: 'Website Design', path: '/services/website-design-varanasi' }
+          { name: 'Website Design', path: '/services/website-design-noida' }
         ]}
       />
       <Navbar />
@@ -92,10 +92,10 @@ const WebsiteDesign = () => {
               className="text-center mb-12"
             >
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-4">
-                Professional <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Website Design</span> in Varanasi
+                Professional <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Website Design</span> in Noida
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                Create a stunning, professional website for your Varanasi business. Mobile-responsive, SEO-optimized, and ready in minutes.
+                Create a stunning, professional website for your Noida business. Mobile-responsive, SEO-optimized, and ready in minutes.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
@@ -187,7 +187,7 @@ const WebsiteDesign = () => {
                 Ready to Create Your Professional Website?
               </h2>
               <p className="text-xl mb-8 opacity-90">
-                Join hundreds of Varanasi businesses already online. Start your free trial today!
+                Join hundreds of Noida businesses already online. Start your free trial today!
               </p>
               <Link
                 to="/create-website"

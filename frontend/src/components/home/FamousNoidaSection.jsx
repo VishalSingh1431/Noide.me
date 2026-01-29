@@ -2,57 +2,57 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Sparkles, Building2, Music, Utensils, Map, ChevronDown } from 'lucide-react';
 
-const FamousVaranasiSection = () => {
+const FamousNoidaSection = () => {
   const [showAll, setShowAll] = useState(false);
   const initialItems = 3;
 
   const famousItems = [
     {
       icon: Globe,
-      title: 'Spiritual Capital',
-      description: 'Varanasi, also known as Kashi or Banaras, is one of the world\'s oldest continuously inhabited cities and the spiritual capital of India.',
-      image: '/images/Spiritual Capital.jpeg',
+      title: 'Modern City',
+      description: 'Noida, short for New Okhla Industrial Development Authority, is a planned city in the National Capital Region (NCR) known for its modern infrastructure, IT hubs, and vibrant lifestyle.',
+      image: '/images/Modern City.webp',
       gradient: 'from-blue-600 to-purple-600'
     },
     {
       icon: Sparkles,
-      title: 'Ganga Aarti',
-      description: 'The mesmerizing Ganga Aarti at Dashashwamedh Ghat is a daily evening ritual that attracts thousands of devotees and tourists.',
-      image: '/images/Ganga Aarti.jpg',
+      title: 'Shopping Malls',
+      description: 'Noida is home to numerous modern shopping malls including DLF Mall of India, GIP Mall, and Centrestage Mall offering world-class retail experiences.',
+      image: '/images/Shopping Malls.jpg',
       gradient: 'from-blue-600 to-purple-600'
     },
     {
       icon: Building2,
-      title: 'Banarasi Silk',
-      description: 'Varanasi is world-famous for its exquisite Banarasi silk sarees, known for their intricate zari work and traditional designs.',
-      image: '/images/Banarasi Silk.webp',
+      title: 'IT & Business Hub',
+      description: 'Noida is a major IT and business hub, home to numerous tech companies, IT parks, and modern infrastructure.',
+      image: '/images/Noida IT Parks.webp',
       gradient: 'from-blue-600 to-purple-600'
     },
     {
       icon: Music,
-      title: 'Classical Music',
-      description: 'Varanasi is the birthplace of many legendary musicians and is a center for Hindustani classical music.',
-      image: '/images/Classical Music.jpg',
+      title: 'Entertainment',
+      description: 'Noida offers excellent entertainment options including multiplexes, gaming zones, and recreational facilities for residents and visitors.',
+      image: '/images/Entertainment.jpeg',
       gradient: 'from-blue-600 to-purple-600'
     },
     {
       icon: Utensils,
-      title: 'Street Food',
-      description: 'Varanasi offers an incredible variety of street food including kachori sabzi, chaat, lassi, malaiyyo, and the famous Banarasi paan.',
-      image: '/images/Street Food.webp',
+      title: 'Diverse Dining',
+      description: 'Noida offers diverse dining options from fine dining restaurants to street food, along with modern shopping malls and entertainment centers.',
+      image: '/images/Noida Food Scene.jpg',
       gradient: 'from-blue-600 to-purple-600'
     },
     {
       icon: Map,
-      title: 'Ghats & Temples',
-      description: 'The city is home to over 80 ghats along the Ganges River and countless ancient temples with unique histories.',
-      image: '/images/Ghats & Temples.jpeg',
+      title: 'Metro Connectivity',
+      description: 'Noida features excellent metro connectivity to Delhi and other NCR cities, making it easily accessible for commuters and visitors.',
+      image: '/images/Metro Connectivity.webp',
       gradient: 'from-blue-600 to-purple-600'
     }
   ];
 
   return (
-    <section id="famous-varanasi" className="py-4 md:py-6 lg:py-8 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
+    <section id="famous-noida" className="py-4 md:py-6 lg:py-8 bg-white relative overflow-hidden shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
       <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 relative z-10">
 
         <motion.div
@@ -63,11 +63,11 @@ const FamousVaranasiSection = () => {
           className="text-center mb-3 md:mb-4"
         >
           <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-black text-gray-900 mb-1 md:mb-2 tracking-tight leading-tight">
-            Famous <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Varanasi</span>
+            Famous <span className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">Noida</span>
           </h2>
           <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl text-gray-700 max-w-3xl mx-auto font-light leading-relaxed">
 
-            Discover what makes Varanasi one of the world's most spiritual and culturally rich cities
+            Discover what makes Noida one of India's most modern and rapidly developing cities
           </p>
         </motion.div>
 
@@ -134,5 +134,5 @@ const FamousVaranasiSection = () => {
   );
 };
 
-export default FamousVaranasiSection;
+export default FamousNoidaSection;
 

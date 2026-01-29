@@ -630,7 +630,7 @@ const EditWebsite = () => {
                         }, 5000);
                       }
                     }}
-                    placeholder="Type your business name or address (e.g., 'Restaurant in Varanasi', 'Kashi Vishwanath Temple')"
+                    placeholder="Type your business name or address (e.g., 'Restaurant in Noida', 'Sector 18 Market')"
                     error={errors.address}
                     className="text-lg"
                   />
@@ -681,7 +681,7 @@ const EditWebsite = () => {
                         placeholder="mybusiness"
                       />
                       <div className="bg-gray-100 px-4 py-3 text-gray-500 font-medium border-l border-gray-200">
-                        .varanasihub.com
+                        .noida.me
                       </div>
                     </div>
                     {subdomainStatus?.checking && (
@@ -729,7 +729,7 @@ const EditWebsite = () => {
                   )}
 
                   <p className="mt-3 text-xs text-gray-500">
-                    Your website will be live at: <span className="text-blue-600 font-medium">https://{formData.preferredSlug || 'your-name'}.varanasihub.com</span>
+                    Your website will be live at: <span className="text-blue-600 font-medium">https://{formData.preferredSlug || 'your-name'}.noida.me</span>
                   </p>
                 </div>
               </div>
@@ -967,7 +967,7 @@ const EditWebsite = () => {
                           }, 5000);
                         }
                       }}
-                      placeholder="Type your business name or address (e.g., 'Restaurant in Varanasi')"
+                      placeholder="Type your business name or address (e.g., 'Restaurant in Noida')"
                       error={errors.address}
                     />
                     <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">

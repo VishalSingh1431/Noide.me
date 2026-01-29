@@ -1,4 +1,4 @@
-# robots.txt for VaranasiHub.com
+# robots.txt for NoidaHub.com
 # Allow all search engines to crawl the site
 
 User-agent: *
@@ -23,14 +23,14 @@ Allow: /privacy
 Allow: /blog
 Allow: /services/
 Allow: /areas/
-Allow: /restaurants-varanasi
-Allow: /hotels-varanasi
-Allow: /clinics-varanasi
-Allow: /shops-varanasi
+Allow: /restaurants-noida
+Allow: /hotels-noida
+Allow: /clinics-noida
+Allow: /shops-noida
 
 # Sitemap location
-Sitemap: https://varanasihub.com/sitemap.xml
-Sitemap: https://www.varanasihub.com/sitemap.xml
+Sitemap: https://noida.me/sitemap.xml
+Sitemap: https://www.noida.me/sitemap.xml
 
 # Crawl delay (optional, helps with server load)
 Crawl-delay: 1

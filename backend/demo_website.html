@@ -2580,7 +2580,7 @@
 
           try {
             const businessSlug = 'elite-fitness-varanasi';
-            const API_BASE_URL = 'http://localhost:5000/api';
+            const API_BASE_URL = 'http://localhost:50002/api';
             const response = await fetch(API_BASE_URL + '/ecommerce/' + businessSlug + '/contact', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -2637,7 +2637,7 @@
         const trackEvent = async (eventType) => {
           try {
             const businessId = 123;
-            const API_BASE_URL = 'http://localhost:5000/api';
+            const API_BASE_URL = 'http://localhost:50002/api';
             await fetch(API_BASE_URL + '/analytics/track', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },

@@ -12,44 +12,44 @@ import { getOrigin } from '../utils/urlHelper';
 const blogPosts = [
   {
     id: 1,
-    slug: 'how-to-create-website-for-varanasi-business',
-    title: 'How to Create a Website for Your Varanasi Business in 2024',
-    excerpt: 'Step-by-step guide to creating a professional website for your Varanasi business. Learn how to get online in minutes without any technical skills.',
-    image: '/images/Home page Silder 1.jpg',
-    author: 'VaranasiHub Team',
+    slug: 'how-to-create-website-for-noida-business',
+    title: 'How to Create a Website for Your Noida Business in 2024',
+    excerpt: 'Step-by-step guide to creating a professional website for your Noida business. Learn how to get online in minutes without any technical skills.',
+    image: '/images/Slider1.avif',
+    author: 'NoidaHub Team',
     date: '2024-01-15',
     readTime: '5 min read',
     category: 'Guide'
   },
   {
     id: 2,
-    slug: 'top-features-every-varanasi-business-website-needs',
-    title: 'Top 10 Features Every Varanasi Business Website Needs',
-    excerpt: 'Discover the essential features that will help your Varanasi business website attract customers and drive sales.',
-    image: '/images/Home page Silder 2.jpg',
-    author: 'VaranasiHub Team',
+    slug: 'top-features-every-noida-business-website-needs',
+    title: 'Top 10 Features Every Noida Business Website Needs',
+    excerpt: 'Discover the essential features that will help your Noida business website attract customers and drive sales.',
+    image: '/images/slider2.jpg',
+    author: 'NoidaHub Team',
     date: '2024-01-10',
     readTime: '7 min read',
     category: 'Tips'
   },
   {
     id: 3,
-    slug: 'why-your-varanasi-business-needs-website',
-    title: 'Why Your Varanasi Business Needs a Website in 2024',
-    excerpt: 'Learn why having an online presence is crucial for Varanasi businesses and how it can help you reach more customers.',
-    image: '/images/Home page Silder 1.jpg',
-    author: 'VaranasiHub Team',
+    slug: 'why-your-noida-business-needs-website',
+    title: 'Why Your Noida Business Needs a Website in 2024',
+    excerpt: 'Learn why having an online presence is crucial for Noida businesses and how it can help you reach more customers.',
+    image: '/images/Slider1.avif',
+    author: 'NoidaHub Team',
     date: '2024-01-05',
     readTime: '6 min read',
     category: 'Business'
   },
   {
     id: 4,
-    slug: 'digital-marketing-tips-varanasi-businesses',
-    title: 'Digital Marketing Tips for Varanasi Businesses',
-    excerpt: 'Simple and effective digital marketing strategies that Varanasi businesses can use to grow their online presence.',
-    image: '/images/Home page Silder 2.jpg',
-    author: 'VaranasiHub Team',
+    slug: 'digital-marketing-tips-noida-businesses',
+    title: 'Digital Marketing Tips for Noida Businesses',
+    excerpt: 'Simple and effective digital marketing strategies that Noida businesses can use to grow their online presence.',
+    image: '/images/slider2.jpg',
+    author: 'NoidaHub Team',
     date: '2024-01-01',
     readTime: '8 min read',
     category: 'Marketing'
@@ -85,7 +85,7 @@ const Blog = () => {
   const faqItems = [
     {
       question: 'How often do you publish new blog posts?',
-      answer: 'We publish new blog posts regularly with helpful tips, guides, and insights for Varanasi businesses. Check back often for the latest content!'
+      answer: 'We publish new blog posts regularly with helpful tips, guides, and insights for Noida businesses. Check back often for the latest content!'
     },
     {
       question: 'Can I suggest a blog topic?',
@@ -93,16 +93,16 @@ const Blog = () => {
     },
     {
       question: 'Are the blog posts free to read?',
-      answer: 'Yes! All our blog content is completely free to read. We want to help Varanasi businesses succeed online.'
+      answer: 'Yes! All our blog content is completely free to read. We want to help Noida businesses succeed online.'
     }
   ];
 
   return (
     <>
       <SEOHead
-        title="Blog - VaranasiHub | Tips, Guides & Insights for Varanasi Businesses"
-        description="Read helpful guides, tips, and insights for Varanasi businesses. Learn how to create websites, grow your online presence, and reach more customers."
-        keywords="Varanasi business blog, website tips, business guides, digital marketing Varanasi, online presence tips"
+        title="Blog - NoidaHub | Tips, Guides & Insights for Noida Businesses"
+        description="Read helpful guides, tips, and insights for Noida businesses. Learn how to create websites, grow your online presence, and reach more customers."
+        keywords="Noida business blog, website tips, business guides, digital marketing Noida, online presence tips"
         url={`${getOrigin()}/blog`}
         faqItems={faqItems}
         breadcrumbs={[
@@ -123,10 +123,10 @@ const Blog = () => {
               className="text-center mb-12"
             >
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-4">
-                VaranasiHub <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Blog</span>
+                NoidaHub <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Blog</span>
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                Tips, guides, and insights to help your Varanasi business succeed online
+                Tips, guides, and insights to help your Noida business succeed online
               </p>
             </motion.div>
 

@@ -112,10 +112,10 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <div className="mb-6">
               <h3 className="text-3xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent tracking-tight mb-4">
-                VaranasiHub
+                NoidaHub
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                Empowering Varanasi businesses with stunning websites. Create your online presence in minutes.
+                Empowering Noida businesses with stunning websites. Create your online presence in minutes.
               </p>
             </div>
 
@@ -187,13 +187,13 @@ const Footer = () => {
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600">
                 <Mail className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                <a href="mailto:varanasihub.com@gmail.com" className="hover:text-blue-600 transition-colors break-all">
-                  varanasihub.com@gmail.com
+                <a href="mailto:info.noidahub@gmail.com" className="hover:text-blue-600 transition-colors break-all">
+                  info.noidahub@gmail.com
                 </a>
               </li>
               <li className="flex items-start gap-3 text-sm text-gray-600">
                 <MapPin className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                <span>Varanasi, Uttar Pradesh, India</span>
+                <span>Noida, Uttar Pradesh, India</span>
               </li>
             </ul>
           </div>
@@ -230,10 +230,10 @@ const Footer = () => {
         <div className="border-t border-gray-200 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-gray-500 text-sm">
-              © {currentYear} <span className="font-semibold text-gray-700">VaranasiHub</span>. All rights reserved.
+              © {currentYear} <span className="font-semibold text-gray-700">NoidaHub</span>. All rights reserved.
             </p>
             <p className="text-gray-500 text-sm">
-              Made with ❤️ for Varanasi businesses
+              Made with ❤️ for Noida businesses
             </p>
           </div>
         </div>

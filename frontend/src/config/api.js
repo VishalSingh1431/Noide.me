@@ -87,7 +87,7 @@ export const apiCall = async (endpoint, options = {}) => {
     console.error('API Error:', error);
     // If it's a network error, provide helpful message
     if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-      const networkError = new Error('Cannot connect to server. Make sure the backend server is running on port 5000.');
+      const networkError = new Error('Cannot connect to server. Make sure the backend server is running on port 50002.');
       networkError.help = 'Start the backend server with: cd backend && npm run dev';
       throw networkError;
     }

@@ -69,6 +69,6 @@ const mockBusiness = {
     ecommerceEnabled: true
 };
 
-const html = generateBusinessHTML(mockBusiness, "http://localhost:5000/api");
+const html = generateBusinessHTML(mockBusiness, "http://localhost:50002/api");
 fs.writeFileSync('demo_website.html', html);
 console.log("Demo website generated: demo_website.html");

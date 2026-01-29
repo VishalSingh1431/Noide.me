@@ -260,7 +260,7 @@ const Login = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-12">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-blue-600 mb-2">VaranasiHub</h1>
+          <h1 className="text-3xl font-bold text-blue-600 mb-2">NoidaHub</h1>
           <h2 className="text-2xl font-semibold text-gray-800">Welcome Back</h2>
           <p className="text-gray-600 mt-2">Login to your account</p>
         </div>

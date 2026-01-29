@@ -21,7 +21,7 @@ const WhatsAppWidget = () => {
 
   if (isBusinessPage()) return null;
 
-  // WhatsApp number for VaranasiHub support
+  // WhatsApp number for NoidaHub support
   const whatsappNumber = '919305715031'; // Remove + and spaces for wa.me link
 
   return (

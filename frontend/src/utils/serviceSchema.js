@@ -27,7 +27,7 @@ export const generateServiceSchema = (service, businessName, businessUrl) => {
     },
     areaServed: {
       '@type': 'City',
-      name: 'Varanasi',
+      name: 'Noida',
       '@id': 'https://www.wikidata.org/wiki/Q79980'
     }
   };

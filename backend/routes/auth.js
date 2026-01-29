@@ -77,7 +77,7 @@ router.post('/send-otp', async (req, res) => {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VaranasiHub - OTP Verification</title>
+    <title>NoidaHub - OTP Verification</title>
 </head>
 <body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6;">
     <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #f3f4f6; padding: 20px;">
@@ -87,7 +87,7 @@ router.post('/send-otp', async (req, res) => {
                     <!-- Header -->
                     <tr>
                         <td style="padding: 40px 40px 20px; text-align: center; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); border-radius: 8px 8px 0 0;">
-                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">VaranasiHub</h1>
+                            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">NoidaHub</h1>
                         </td>
                     </tr>
                     
@@ -96,7 +96,7 @@ router.post('/send-otp', async (req, res) => {
                         <td style="padding: 40px;">
                             <h2 style="margin: 0 0 20px; color: #111827; font-size: 24px; font-weight: 600;">Verify Your Email</h2>
                             <p style="margin: 0 0 30px; color: #6b7280; font-size: 16px; line-height: 1.6;">
-                                Thank you for using VaranasiHub! Please use the following One-Time Password (OTP) to complete your verification:
+                                Thank you for using NoidaHub! Please use the following One-Time Password (OTP) to complete your verification:
                             </p>
                             
                             <!-- OTP Box -->
@@ -114,7 +114,7 @@ router.post('/send-otp', async (req, res) => {
                             
                             <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #e5e7eb;">
                                 <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.5;">
-                                    For security reasons, never share this code with anyone. VaranasiHub will never ask for your OTP.
+                                    For security reasons, never share this code with anyone. NoidaHub will never ask for your OTP.
                                 </p>
                             </div>
                         </td>
@@ -124,10 +124,10 @@ router.post('/send-otp', async (req, res) => {
                     <tr>
                         <td style="padding: 30px 40px; background-color: #f9fafb; border-radius: 0 0 8px 8px; text-align: center;">
                             <p style="margin: 0 0 10px; color: #6b7280; font-size: 14px;">
-                                <strong style="color: #111827;">VaranasiHub</strong> - Your Gateway to Varanasi
+                                <strong style="color: #111827;">NoidaHub</strong> - Your Gateway to Noida
                             </p>
                             <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                                © ${new Date().getFullYear()} VaranasiHub. All rights reserved.
+                                © ${new Date().getFullYear()} NoidaHub. All rights reserved.
                             </p>
                         </td>
                     </tr>
@@ -140,11 +140,11 @@ router.post('/send-otp', async (req, res) => {
     `;
 
     const mailOptions = {
-      from: `"VaranasiHub" <${process.env.EMAIL_USER || process.env.SMTP_USER || 'noreply@varanasihub.com'}>`,
+      from: `"NoidaHub" <${process.env.EMAIL_USER || process.env.SMTP_USER || 'noreply@noida.me'}>`,
       to: email,
-      subject: 'VaranasiHub - Your Verification Code',
+      subject: 'NoidaHub - Your Verification Code',
       html: emailHtml,
-      text: `Your VaranasiHub verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`,
+      text: `Your NoidaHub verification code is: ${otp}\n\nThis code will expire in 10 minutes.\n\nIf you didn't request this code, please ignore this email.`,
     };
 
     // Try to send email

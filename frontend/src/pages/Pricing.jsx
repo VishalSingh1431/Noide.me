@@ -102,11 +102,11 @@ const Pricing = () => {
   return (
     <>
       <SEOHead
-        title="Pricing Plans - Affordable Website Builder for Varanasi Businesses | VaranasiHub"
-        description="Choose the perfect plan for your Varanasi business. Starting at ₹1,000/year. All plans include domain, hosting, database, and 14-day free trial. Mobile-responsive design, SEO optimization, and WhatsApp integration included. Transparent pricing, no hidden fees."
+        title="Pricing Plans - Affordable Website Builder for Noida Businesses | NoidaHub"
+        description="Choose the perfect plan for your Noida business. Starting at ₹1,000/year. All plans include domain, hosting, database, and 14-day free trial. Mobile-responsive design, SEO optimization, and WhatsApp integration included. Transparent pricing, no hidden fees."
         image="/og-image.jpg"
         url={`${getOrigin()}/pricing`}
-        keywords="Varanasi website pricing, business website cost, affordable website builder Varanasi, website plans, pricing plans Varanasi, cheap website builder"
+        keywords="Noida website pricing, business website cost, affordable website builder Noida, website plans, pricing plans Noida, cheap website builder"
         breadcrumbs={[
           { name: 'Home', path: '/', url: '/' },
           { name: 'Pricing', path: '/pricing', url: '/pricing' }

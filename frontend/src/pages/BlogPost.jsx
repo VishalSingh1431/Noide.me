@@ -9,11 +9,11 @@ import { getOrigin } from '../utils/urlHelper';
 // Placeholder blog post data
 // In production, this would come from an API based on slug
 const blogPostData = {
-  'how-to-create-website-for-varanasi-business': {
-    title: 'How to Create a Website for Your Varanasi Business in 2024',
-    excerpt: 'Step-by-step guide to creating a professional website for your Varanasi business.',
+  'how-to-create-website-for-noida-business': {
+    title: 'How to Create a Website for Your Noida Business in 2024',
+    excerpt: 'Step-by-step guide to creating a professional website for your Noida business.',
     content: `
-      <p>Creating a website for your Varanasi business has never been easier. In this comprehensive guide, we'll walk you through the entire process step by step.</p>
+      <p>Creating a website for your Noida business has never been easier. In this comprehensive guide, we'll walk you through the entire process step by step.</p>
       
       <h2>Why Your Business Needs a Website</h2>
       <p>In today's digital age, having an online presence is crucial for any business. A website helps you:</p>
@@ -24,8 +24,8 @@ const blogPostData = {
         <li>Make it easy for customers to contact you</li>
       </ul>
 
-      <h2>Getting Started with VaranasiHub</h2>
-      <p>Creating your website with VaranasiHub is simple and takes just minutes:</p>
+      <h2>Getting Started with NoidaHub</h2>
+      <p>Creating your website with NoidaHub is simple and takes just minutes:</p>
       <ol>
         <li>Sign up for a free account</li>
         <li>Fill in your business details</li>
@@ -53,24 +53,24 @@ const blogPostData = {
       </ul>
 
       <h2>Conclusion</h2>
-      <p>Creating a website for your Varanasi business is now easier than ever. With VaranasiHub, you can have a professional website online in minutes, helping you reach more customers and grow your business.</p>
+      <p>Creating a website for your Noida business is now easier than ever. With NoidaHub, you can have a professional website online in minutes, helping you reach more customers and grow your business.</p>
     `,
-    author: 'VaranasiHub Team',
+    author: 'NoidaHub Team',
     date: '2024-01-15',
     readTime: '5 min read',
     category: 'Guide',
-    image: '/images/Home page Silder 1.jpg'
+    image: '/images/Slider1.avif'
   }
 };
 
 const BlogPost = () => {
   const { slug } = useParams();
-  const post = blogPostData[slug] || blogPostData['how-to-create-website-for-varanasi-business'];
+  const post = blogPostData[slug] || blogPostData['how-to-create-website-for-noida-business'];
 
   const faqItems = [
     {
       question: 'How long does it take to create a website?',
-      answer: 'With VaranasiHub, you can create your website in just minutes. Simply fill in your business details and your website goes live instantly.'
+      answer: 'With NoidaHub, you can create your website in just minutes. Simply fill in your business details and your website goes live instantly.'
     },
     {
       question: 'Do I need technical skills?',
@@ -94,7 +94,7 @@ const BlogPost = () => {
   return (
     <>
       <SEOHead
-        title={`${post.title} | VaranasiHub Blog`}
+        title={`${post.title} | NoidaHub Blog`}
         description={post.excerpt}
         image={post.image}
         url={`${getOrigin()}/blog/${slug}`}

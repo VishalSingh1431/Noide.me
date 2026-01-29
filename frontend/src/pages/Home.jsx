@@ -4,16 +4,16 @@ import Footer from '../components/Footer';
 import { SEOHead } from '../components/SEOHead';
 import HeroSection from '../components/home/HeroSection';
 import TrustStrip from '../components/home/TrustStrip';
-import ApnaBanarasSection from '../components/home/ApnaBanarasSection';
+import ApnaNoidaSection from '../components/home/ApnaNoidaSection';
 import HowItWorks from '../components/home/HowItWorks';
 import KeyFeatures from '../components/home/KeyFeatures';
 import WhatYouGetSection from '../components/home/WhatYouGetSection';
 import WhyChooseSection from '../components/home/WhyChooseSection';
-import FamousVaranasiSection from '../components/home/FamousVaranasiSection';
-import ApnaBanarasDetailed from '../components/home/ApnaBanarasDetailed';
-import LivingVaranasiStories from '../components/home/LivingVaranasiStories';
+import FamousNoidaSection from '../components/home/FamousNoidaSection';
+import ApnaNoidaDetailed from '../components/home/ApnaNoidaDetailed';
+import LivingNoidaStories from '../components/home/LivingNoidaStories';
 import ReadyToGoLiveCTA from '../components/home/ReadyToGoLiveCTA';
-import { varanasiHighlights as highlightData } from '../data/varanasiHighlights';
+import { noidaHighlights as highlightData } from '../data/noidaHighlights';
 import { businessAPI } from '../config/api';
 import { getOrigin } from '../utils/urlHelper';
 
@@ -27,8 +27,10 @@ const Home = () => {
   const [statsLoading, setStatsLoading] = useState(true);
 
   const heroImages = [
-    '/images/Home page Silder 1.jpg',
-    '/images/Home page Silder 2.jpg',
+    '/images/Slider1.avif',
+    '/images/slider2.jpg',
+    '/images/Slider3.webp',
+    '/images/slider4.webp',
   ];
 
   // Fetch public statistics
@@ -62,15 +64,15 @@ const Home = () => {
   return (
     <>
       <SEOHead
-        title="VaranasiHub - Create Your Business Website in Minutes | Affordable Website Builder for Varanasi"
-        description="Help your Varanasi business go online. Create a professional website in minutes with zero coding skills. Get domain, hosting, database, and all features starting at ₹1,000/year. 14-day free trial included!"
+        title="NoidaHub - Create Your Business Website in Minutes | Affordable Website Builder for Noida"
+        description="Help your Noida business go online. Create a professional website in minutes with zero coding skills. Get domain, hosting, database, and all features starting at ₹1,000/year. 14-day free trial included!"
         image="/og-image.jpg"
         url={getOrigin()}
-        keywords="Varanasi business website, create website Varanasi, affordable website builder, business website maker, Varanasi online presence, local business website, website for shop Varanasi, clinic website, hotel website Varanasi"
+        keywords="Noida business website, create website Noida, affordable website builder, business website maker, Noida online presence, local business website, website for shop Noida, clinic website, hotel website Noida"
         breadcrumbs={[{ name: 'Home', path: '/', url: '/' }]}
         faqItems={[
           {
-            question: 'How do I create a website for my Varanasi business?',
+            question: 'How do I create a website for my Noida business?',
             answer: 'Simply sign up with Google or Email OTP, add your business details (name, category, address, photos), and your website will be live instantly on your domain. All plans include 14-day free trial.'
           },
           {
@@ -95,8 +97,8 @@ const Home = () => {
       {/* 2. Trust Strip */}
       <TrustStrip stats={stats} loading={statsLoading} />
 
-      {/* 2.5. Apna Banaras Section */}
-      <ApnaBanarasSection />
+      {/* 2.5. Apna Noida Section */}
+      <ApnaNoidaSection />
 
       {/* 3. How It Works */}
       <HowItWorks />
@@ -107,17 +109,17 @@ const Home = () => {
       {/* 4.5. What You Get Section */}
       <WhatYouGetSection />
 
-      {/* 6. Why Choose VaranasiHub */}
+      {/* 6. Why Choose NoidaHub */}
       <WhyChooseSection />
 
-      {/* 7. Famous Varanasi */}
-      <FamousVaranasiSection />
+      {/* 7. Famous Noida */}
+      <FamousNoidaSection />
 
-      {/* 8. Apna Banaras Detailed */}
-      <ApnaBanarasDetailed />
+      {/* 8. Apna Noida Detailed */}
+      <ApnaNoidaDetailed />
 
-      {/* 9. Living Varanasi Stories */}
-      <LivingVaranasiStories highlights={featuredHighlights} />
+      {/* 9. Living Noida Stories */}
+      <LivingNoidaStories highlights={featuredHighlights} />
 
       {/* 10. Ready to Go Live CTA */}
       <ReadyToGoLiveCTA />

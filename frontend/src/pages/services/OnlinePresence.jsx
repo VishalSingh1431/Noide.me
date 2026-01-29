@@ -55,7 +55,7 @@ const OnlinePresence = () => {
     },
     {
       question: 'How long does it take to establish an online presence?',
-      answer: 'With VaranasiHub, you can have your website online in just minutes! Simply fill in your business details and your professional website goes live instantly. No waiting, no delays.'
+      answer: 'With NoidaHub, you can have your website online in just minutes! Simply fill in your business details and your professional website goes live instantly. No waiting, no delays.'
     },
     {
       question: 'Will customers actually find my website?',
@@ -66,17 +66,17 @@ const OnlinePresence = () => {
   return (
     <>
       <SEOHead
-        title="Build Your Online Presence in Varanasi | Get Found Online | VaranasiHub"
-        description="Establish a strong online presence for your Varanasi business. Get found on Google, reach more customers, and grow your business. Starting at ₹1,000/year."
-        keywords="online presence Varanasi, get found online, business online presence, digital presence, online visibility Varanasi"
-        url={`${getOrigin()}/services/online-presence-varanasi`}
+        title="Build Your Online Presence in Noida | Get Found Online | NoidaHub"
+        description="Establish a strong online presence for your Noida business. Get found on Google, reach more customers, and grow your business. Starting at ₹1,000/year."
+        keywords="online presence Noida, get found online, business online presence, digital presence, online visibility Noida"
+        url={`${getOrigin()}/services/online-presence-noida`}
         serviceType="Online Presence"
-        serviceArea="Varanasi"
+        serviceArea="Noida"
         faqItems={faqItems}
         breadcrumbs={[
           { name: 'Home', path: '/' },
           { name: 'Services', path: '/services' },
-          { name: 'Online Presence', path: '/services/online-presence-varanasi' }
+          { name: 'Online Presence', path: '/services/online-presence-noida' }
         ]}
       />
       <Navbar />
@@ -92,7 +92,7 @@ const OnlinePresence = () => {
               className="text-center mb-12"
             >
               <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-4">
-                Build Your <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Online Presence</span> in Varanasi
+                Build Your <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Online Presence</span> in Noida
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
                 Get found online, reach more customers, and grow your business with a professional website. Be where your customers are searching.
@@ -222,7 +222,7 @@ const OnlinePresence = () => {
                 Ready to Build Your Online Presence?
               </h2>
               <p className="text-xl mb-8 opacity-90">
-                Join hundreds of Varanasi businesses already online. Get found, get customers, grow your business!
+                Join hundreds of Noida businesses already online. Get found, get customers, grow your business!
               </p>
               <Link
                 to="/create-website"

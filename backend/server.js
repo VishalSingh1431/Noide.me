@@ -27,7 +27,7 @@ dotenv.config({ path: join(__dirname, '.env') });
 validateEnv();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 50002;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Trust proxy - Required when behind Nginx reverse proxy
@@ -52,9 +52,9 @@ const corsOptions = {
     ? (origin, callback) => {
       // Allow main domain and all subdomains
       const allowedDomains = [
-        'https://varanasihub.com',
-        'https://www.varanasihub.com',
-        /^https:\/\/[\w-]+\.varanasihub\.com$/  // Any subdomain
+        'https://noida.me',
+        'https://www.noida.me',
+        /^https:\/\/[\w-]+\.noida\.me$/  // Any subdomain
       ];
 
       if (!origin || allowedDomains.some(domain =>
@@ -117,13 +117,13 @@ app.get('/api/health', async (req, res) => {
     await pool.query('SELECT 1');
     res.json({
       status: 'OK',
-      message: 'VaranasiHub API is running',
+      message: 'NoidaHub API is running',
       database: 'connected',
     });
   } catch (error) {
     res.json({
       status: 'OK',
-      message: 'VaranasiHub API is running',
+      message: 'NoidaHub API is running',
       database: 'disconnected',
       error: process.env.NODE_ENV === 'development' ? {
         code: error.code,
@@ -147,7 +147,7 @@ app.use('/api/google-places', googlePlacesRoutes);
 app.use('/', sitemapRoutes);
 
 // Subdomain routing handler (for business websites)
-// This will be called when accessing: business-slug.varanasihub.com
+// This will be called when accessing: business-slug.noida.me
 app.use(async (req, res, next) => {
   const subdomain = req.subdomain;
 
@@ -168,7 +168,7 @@ app.use(async (req, res, next) => {
 });
 
 // Subdirectory routing handler (for business websites)
-// This will be called when accessing: varanasihub.com/business-slug
+// This will be called when accessing: noida.me/business-slug
 app.get('/:slug', async (req, res, next) => {
   const { slug } = req.params;
 
@@ -203,7 +203,7 @@ app.get('/:slug', async (req, res, next) => {
     console.log(`[Subdirectory Route] Business found: ${business.businessName}, redirecting to subdomain...`);
 
     // Construct subdomain URL dynamically to ensure it matches current environment
-    const baseDomain = process.env.BASE_DOMAIN || 'varanasihub.com';
+    const baseDomain = process.env.BASE_DOMAIN || 'noida.me';
     const subdomainUrl = NODE_ENV === 'production'
       ? `https://${business.slug}.${baseDomain}`
       : `http://${business.slug}.localhost:${PORT}`;
@@ -266,7 +266,7 @@ app.listen(PORT, () => {
   console.log(`📝 Environment: ${NODE_ENV}`);
   console.log(`📝 Database: PostgreSQL (Aiven)`);
   const apiUrl = NODE_ENV === 'production'
-    ? `https://${process.env.BASE_DOMAIN || 'varanasihub.com'}/api`
+    ? `https://${process.env.BASE_DOMAIN || 'noida.me'}/api`
     : `http://localhost:${PORT}/api`;
   console.log(`🌐 API Base URL: ${apiUrl}`);
   if (NODE_ENV === 'production') {

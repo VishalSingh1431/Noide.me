@@ -12,8 +12,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     // Determine API base URL from current window location if available (client-side)
     // or fall back to environment variables (server-side rendering)
     const isDevelopment = process.env.NODE_ENV === 'development';
-    const baseDomain = process.env.BASE_DOMAIN || 'varanasihub.com';
-    const port = process.env.PORT || 5000;
+    const baseDomain = process.env.BASE_DOMAIN || 'noida.me';
+    const port = process.env.PORT || 50002;
 
     apiUrl = isDevelopment
       ? `http://localhost:${port}/api`
@@ -95,8 +95,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
   // Extract location details from address
   const addressParts = business.address ? business.address.split(',') : [];
-  const area = addressParts[0]?.trim() || 'Varanasi';
-  const city = 'Varanasi';
+  const area = addressParts[0]?.trim() || 'Noida';
+  const city = 'Noida';
   const state = 'Uttar Pradesh';
   const country = 'India';
 
@@ -112,8 +112,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     `${business.category} ${city}`,
     `${business.category} near me`,
     `${business.businessName} ${area}`,
-    'Varanasi business',
-    'Varanasi services',
+    'Noida business',
+    'Noida services',
     'online business',
     'local business',
     'best ' + business.category + ' in ' + city
@@ -279,13 +279,13 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://varanasihub.com"
+        "item": "https://noida.me"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": business.category || 'Services',
-        "item": `https://varanasihub.com/category/${(business.category || 'Services').toLowerCase().replace(/\s+/g, '-')}`
+        "item": `https://noida.me/category/${(business.category || 'Services').toLowerCase().replace(/\s+/g, '-')}`
       },
       {
         "@type": "ListItem",
@@ -380,8 +380,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <!-- Primary Meta Tags -->
-  <title>${escapeHtml(business.businessName)} - ${escapeHtml(business.category)} in ${city} | VaranasiHub</title>
-  <meta name="title" content="${escapeHtml(business.businessName)} - ${escapeHtml(business.category)} in ${city} | VaranasiHub">
+  <title>${escapeHtml(business.businessName)} - ${escapeHtml(business.category)} in ${city} | Noida</title>
+  <meta name="title" content="${escapeHtml(business.businessName)} - ${escapeHtml(business.category)} in ${city} | Noida">
   <meta name="description" content="${escapeHtml(metaDescription)}">
   <meta name="keywords" content="${escapeHtml(keywords)}">
   <meta name="author" content="${escapeHtml(business.ownerName || business.businessName)}">
@@ -426,7 +426,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="${escapeHtml(business.businessName)} - ${escapeHtml(business.category)}">
-  <meta property="og:site_name" content="VaranasiHub">
+  <meta property="og:site_name" content="Noida">
   <meta property="og:locale" content="en_IN">
   <meta property="og:locale:alternate" content="hi_IN">
   ${business.address ? `<meta property="og:street_address" content="${escapeHtml(business.address)}">` : ''}
@@ -443,19 +443,19 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   <meta name="twitter:description" content="${escapeHtml(metaDescription)}">
   <meta name="twitter:image" content="${escapeHtml(business.logoUrl || (business.imagesUrl && business.imagesUrl[0]) || '')}">
   <meta name="twitter:image:alt" content="${escapeHtml(business.businessName)} - ${escapeHtml(business.category)}">
-  <meta name="twitter:site" content="@VaranasiHub">
-  <meta name="twitter:creator" content="@VaranasiHub">
+  <meta name="twitter:site" content="@Noida">
+  <meta name="twitter:creator" content="@Noida">
   
   <!-- Additional SEO Meta Tags -->
   <meta name="geo.region" content="IN-UP">
   <meta name="geo.placename" content="${city}">
-  <meta name="geo.position" content="25.3176;82.9739">
-  <meta name="ICBM" content="25.3176, 82.9739">
+  <meta name="geo.position" content="28.5355;77.3910">
+  <meta name="ICBM" content="28.5355, 77.3910">
   ${business.address ? `<meta name="DC.title" content="${escapeHtml(business.businessName)}">` : ''}
   <meta name="DC.creator" content="${escapeHtml(business.ownerName || business.businessName)}">
   <meta name="DC.subject" content="${escapeHtml(business.category)}">
   <meta name="DC.description" content="${escapeHtml(metaDescription)}">
-  <meta name="DC.publisher" content="VaranasiHub">
+  <meta name="DC.publisher" content="Noida">
   <meta name="DC.contributor" content="${escapeHtml(business.ownerName || business.businessName)}">
   <meta name="DC.date" content="${new Date().toISOString()}">
   <meta name="DC.type" content="Text">
@@ -1297,10 +1297,10 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
                 </div>
                 <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight">
                   <span class="block">${escapeHtml(business.businessName)}</span>
-                  <span class="opacity-90">Varanasi's Finest</span>
+                  <span class="opacity-90">Noida's Finest</span>
                 </h1>
                 <p class="text-lg md:text-xl text-blue-50 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                  ${escapeHtml(business.navbarTagline || 'Experience excellence in every detail. Your trusted partner in Varanasi for premium services.')}
+                  ${escapeHtml(business.navbarTagline || 'Experience excellence in every detail. Your trusted partner in Noida for premium services.')}
                 </p>
               </div>
 
@@ -1345,7 +1345,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
                       </div>
                       <span class="text-xs font-black text-gray-400 uppercase tracking-widest">Location</span>
                     </div>
-                    <p class="text-sm font-bold text-gray-900 truncate">${escapeHtml(business.address || 'Varanasi, UP')}</p>
+                    <p class="text-sm font-bold text-gray-900 truncate">${escapeHtml(business.address || 'Noida, UP')}</p>
                   </div>
                 </div>
               </div>
@@ -1359,7 +1359,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
       <!-- Amenities & Features Section -->
       ${(business.amenities?.length || business.paymentMethods?.length || business.parkingInfo?.length) ? `
-      <section class="py-12 md:py-16 bg-white border-t border-gray-100">
+      <section class="py-6 md:py-8 bg-white border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-8 md:mb-12 text-center">
             Amenities & <span class="bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent">Features</span>
@@ -1430,7 +1430,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
       <!-- Gallery -->
       ${business.imagesUrl && business.imagesUrl.length > 0 ? `
-      <section id="gallery" class="py-12 bg-white border-y border-gray-50">
+      <section id="gallery" class="py-6 bg-white border-y border-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12">
             <div class="inline-block px-4 py-2 rounded-full ${theme.accent.replace('text-', 'bg-')}/10 ${theme.accent} text-sm font-bold mb-4">
@@ -1463,7 +1463,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
       <!-- Enhanced Services Section -->
       ${business.services && business.services.length > 0 ? `
-      <section id="services" class="py-12 md:py-20 bg-white">
+      <section id="services" class="py-6 md:py-8 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12 md:mb-16">
             <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">
@@ -1519,7 +1519,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
 
   ${business.specialOffers && business.specialOffers.length > 0 ? `
-      <section id="offers" class="py-12 md:py-20 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 relative overflow-hidden">
+      <section id="offers" class="py-6 md:py-8 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 relative overflow-hidden">
         <div class="absolute inset-0 opacity-5">
           <div class="absolute top-0 left-0 w-64 h-64 bg-red-500 rounded-full blur-[100px]"></div>
           <div class="absolute bottom-0 right-0 w-64 h-64 bg-yellow-500 rounded-full blur-[100px]"></div>
@@ -1589,7 +1589,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
 
   ${youtubeVideos.length > 0 ? `
-      <section id="video" class="py-8 sm:py-12 md:py-20 bg-white px-4 sm:px-6 lg:px-8">
+      <section id="video" class="py-4 sm:py-6 md:py-8 bg-white px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto">
           <div class="text-center mb-8 sm:mb-12 md:mb-16">
             <div class="inline-block px-3 sm:px-4 py-1.5 sm:py-2 rounded-full ${theme.accent.replace('text-', 'bg-')}/10 ${theme.accent} text-xs sm:text-sm font-bold mb-3 sm:mb-4">
@@ -1623,12 +1623,9 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       ` : ''}
 
 
-      <section id="reviews" class="py-12 md:py-20 bg-gray-50 border-y border-gray-100/50">
+      <section id="reviews" class="py-6 md:py-8 bg-gray-50 border-y border-gray-100/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12 md:mb-16">
-            <div class="inline-block px-4 py-2 rounded-full ${theme.accent.replace('text-', 'bg-')}/10 ${theme.accent} text-sm font-bold mb-4">
-              Testimonials
-            </div>
             <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-6">
               What Our <span class="bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent">Clients Say</span>
             </h2>
@@ -1703,7 +1700,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
 
   ${business.appointmentSettings && business.appointmentSettings.enabled ? `
-      <section id="appointments" class="py-12 bg-white">
+      <section id="appointments" class="py-6 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-20 items-center">
             <div class="space-y-8">
@@ -1714,7 +1711,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
                 <div class="w-24 h-2 bg-gradient-to-r ${theme.primary} rounded-full"></div>
               </div>
               <p class="text-lg text-gray-600 leading-relaxed">
-                Book your personalized session today. Our experts are ready to provide you with the best service in Varanasi. Quick, easy, and guaranteed satisfaction.
+                Book your personalized session today. Our experts are ready to provide you with the best service in Noida. Quick, easy, and guaranteed satisfaction.
               </p>
               <div class="space-y-4">
                 <div class="flex items-center gap-4 p-4 bg-blue-50 rounded-2xl border border-blue-100">
@@ -1790,7 +1787,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
     }
 
   ${business.faqs && business.faqs.length > 0 ? `
-      <section id="faq" class="py-12 bg-gray-50 px-4 sm:px-6 lg:px-8">
+      <section id="faq" class="py-6 bg-gray-50 px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto">
           <div class="text-center mb-12">
             <h2 class="text-3xl sm:text-4xl font-black text-gray-900 mb-4 text-center">Common Questions</h2>
@@ -1826,7 +1823,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           <span class="text-sm font-black text-gray-900">Refreshing...</span>
         </div>
       </div>
-      <footer id="contact" class="relative pt-20 pb-12 overflow-hidden bg-blue-600">
+      <footer id="contact" class="relative pt-10 pb-6 overflow-hidden bg-blue-600">
         <div class="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-600"></div>
         <div class="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-white/10 to-transparent skew-x-12 translate-x-1/4"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -1909,7 +1906,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-blue-100 font-medium">
             <p>© ${new Date().getFullYear()} ${escapeHtml(business.businessName)}. All rights reserved.</p>
             <div class="flex items-center gap-1">
-              Crafted with <svg class="w-3 h-3 text-red-400 fill-current" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"></path></svg> by <a href="https://varanasihub.com" target="_blank" class="text-white hover:underline font-bold">VaranasiHub</a>
+              Crafted with <svg class="w-3 h-3 text-red-400 fill-current" viewBox="0 0 20 20"><path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"></path></svg> by <a href="https://noida.me" target="_blank" class="text-white hover:underline font-bold">Noida</a>
             </div>
           </div>
         </div>
@@ -2145,7 +2142,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
         async function shareBusiness() {
           const shareData = {
             title: '${escapeHtml(business.businessName)}',
-            text: 'Check out ${escapeHtml(business.businessName)} on VaranasiHub!',
+            text: 'Check out ${escapeHtml(business.businessName)} on Noida!',
             url: window.location.href
           };
 

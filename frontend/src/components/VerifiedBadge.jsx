@@ -2,7 +2,7 @@ import { BadgeCheck, Info } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
-export const VerifiedBadge = ({ size = 'md', className = '', showTooltip = true, explanation = 'This business has been verified by VaranasiHub. All information is authentic and verified.' }) => {
+export const VerifiedBadge = ({ size = 'md', className = '', showTooltip = true, explanation = 'This business has been verified by NoidaHub. All information is authentic and verified.' }) => {
   const [showTooltipState, setShowTooltipState] = useState(false);
   
   const sizes = {

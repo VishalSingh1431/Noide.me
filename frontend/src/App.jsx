@@ -17,7 +17,7 @@ import Businesses from './pages/Businesses'
 import EditWebsite from './pages/EditWebsite'
 import Analytics from './pages/Analytics'
 import QRCodeGenerator from './pages/QRCodeGenerator'
-import VaranasiHighlight from './pages/VaranasiHighlight'
+import NoidaHighlight from './pages/NoidaHighlight'
 import WebsiteDesign from './pages/services/WebsiteDesign'
 import WebsiteHosting from './pages/services/WebsiteHosting'
 import OnlinePresence from './pages/services/OnlinePresence'
@@ -98,10 +98,10 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
-            <Route path="/varanasi/:slug" element={<VaranasiHighlight />} />
-            <Route path="/services/website-design-varanasi" element={<WebsiteDesign />} />
-            <Route path="/services/website-hosting-varanasi" element={<WebsiteHosting />} />
-            <Route path="/services/online-presence-varanasi" element={<OnlinePresence />} />
+            <Route path="/noida/:slug" element={<NoidaHighlight />} />
+            <Route path="/services/website-design-noida" element={<WebsiteDesign />} />
+            <Route path="/services/website-hosting-noida" element={<WebsiteHosting />} />
+            <Route path="/services/online-presence-noida" element={<OnlinePresence />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
           </Routes >

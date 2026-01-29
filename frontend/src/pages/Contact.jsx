@@ -92,8 +92,8 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email Us',
-      content: 'varanasihub.com@gmail.com',
-      link: 'mailto:varanasihub.com@gmail.com',
+      content: 'info.noidahub@gmail.com',
+      link: 'mailto:info.noidahub@gmail.com',
       gradient: 'from-blue-500 to-cyan-500'
     },
     {
@@ -106,7 +106,7 @@ const Contact = () => {
     {
       icon: MapPin,
       title: 'Visit Us',
-      content: 'Varanasi, Uttar Pradesh, India',
+      content: 'Noida, Uttar Pradesh, India',
       link: null,
       gradient: 'from-green-500 to-emerald-500'
     },
@@ -144,11 +144,11 @@ const Contact = () => {
   return (
     <>
       <SEOHead
-        title="Contact Us - VaranasiHub | Get Support & Business Inquiries"
-        description="Contact VaranasiHub for support, questions, or business inquiries. Email: varanasihub.com@gmail.com | Phone: +91 9305715031 | Located in Varanasi, Uttar Pradesh. We're here 24/7 to help you create your online presence."
+        title="Contact Us - NoidaHub | Get Support & Business Inquiries"
+        description="Contact NoidaHub for support, questions, or business inquiries. Email: info.noidahub@gmail.com | Phone: +91 9305715031 | Located in Noida, Uttar Pradesh. We're here 24/7 to help you create your online presence."
         image="/og-image.jpg"
         url={`${getOrigin()}/contact`}
-        keywords="contact VaranasiHub, VaranasiHub support, business inquiry Varanasi, website help Varanasi, customer support"
+        keywords="contact NoidaHub, NoidaHub support, business inquiry Noida, website help Noida, customer support"
         breadcrumbs={[
           { name: 'Home', path: '/', url: '/' },
           { name: 'Contact', path: '/contact', url: '/contact' }
@@ -164,11 +164,11 @@ const Contact = () => {
           },
           {
             question: 'Do you offer in-person consultations?',
-            answer: 'Yes, we offer in-person consultations for businesses in Varanasi. Contact us to schedule a meeting at your location or our office.'
+            answer: 'Yes, we offer in-person consultations for businesses in Noida. Contact us to schedule a meeting at your location or our office.'
           },
           {
             question: 'Can I visit your office?',
-            answer: 'Yes, you can visit our office in Varanasi. Please contact us in advance to schedule an appointment.'
+            answer: 'Yes, you can visit our office in Noida. Please contact us in advance to schedule an appointment.'
           }
         ]}
       />
@@ -385,17 +385,27 @@ const Contact = () => {
             >
               <div className="bg-white rounded-lg md:rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 p-4 sm:p-6 md:p-8 shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.15)]">
                 <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-black text-gray-900 mb-3 sm:mb-4 md:mb-6 tracking-tight">Find Us</h2>
-                <div className="bg-gradient-to-br from-gray-200 to-gray-300 rounded-xl h-64 flex items-center justify-center mb-6">
-                  <MapPin className="w-16 h-16 text-gray-400" />
+                <div className="relative rounded-xl overflow-hidden h-64 sm:h-80 md:h-96 mb-6 border-2 border-gray-200">
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d56048.22645523411!2d77.315783525!3d28.5355161!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce5a43173357b%3A0x37ffce30c87cc03f!2sNoida%2C%20Uttar%20Pradesh!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="w-full h-full"
+                    title="Noida Location Map"
+                  ></iframe>
                 </div>
                 <div className="space-y-4 text-gray-600">
                   <p className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
-                    <span className="font-medium">Varanasi, Uttar Pradesh, India</span>
+                    <span className="font-medium">Noida, Uttar Pradesh, India</span>
                   </p>
                   <p className="flex items-start gap-3">
                     <Mail className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
-                    <span className="font-medium">varanasihub.com@gmail.com</span>
+                    <span className="font-medium">info.noidahub@gmail.com</span>
                   </p>
                   <p className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-blue-600 mt-1 flex-shrink-0" />
@@ -411,7 +421,7 @@ const Contact = () => {
                     Our support team is available during business hours to help you with any questions or concerns.
                   </p>
                   <a
-                    href="mailto:varanasihub.com@gmail.com"
+                    href="mailto:info.noidahub@gmail.com"
                     className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-lg md:rounded-xl font-bold text-sm sm:text-base hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
                     <Mail className="w-5 h-5" />

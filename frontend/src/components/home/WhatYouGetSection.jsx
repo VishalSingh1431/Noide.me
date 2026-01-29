@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, Server, Database, Smartphone, Shield, Zap, Cloud, Lock, BarChart3, MessageCircle, MapPin, Video, Palette, ChevronDown } from 'lucide-react';
 
 const WhatYouGetSection = () => {
@@ -10,7 +10,7 @@ const WhatYouGetSection = () => {
     {
       icon: Globe,
       title: 'Domain',
-      description: 'Get your own domain instantly (yourbusiness.varanasihub.com)',
+      description: 'Get your own domain instantly (yourbusiness.noida.me)',
       gradient: 'from-blue-500 to-cyan-500',
       bgGradient: 'from-blue-50 to-cyan-50'
     },
@@ -161,50 +161,45 @@ const WhatYouGetSection = () => {
         </motion.div>
 
         {/* Features Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6"
-        >
-          {(showAll ? features : features.slice(0, initialItems)).map((feature, index) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
+          <AnimatePresence mode="popLayout">
+            {(showAll ? features : features.slice(0, initialItems)).map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: index * 0.05 }}
+                  whileHover={{ scale: 1.05, y: -8 }}
+                  className="group relative bg-white rounded-lg md:rounded-xl lg:rounded-2xl p-3 sm:p-4 md:p-5 lg:p-6 border-2 border-gray-100 hover:border-blue-300 transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden"
+                >
+                  {/* Background Gradient */}
+                  <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
 
-            const Icon = feature.icon;
-            return (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                whileHover={{ scale: 1.05, y: -8 }}
-                className="group relative bg-white rounded-lg md:rounded-xl lg:rounded-2xl p-3 sm:p-4 md:p-5 lg:p-6 border-2 border-gray-100 hover:border-blue-300 transition-all duration-300 shadow-lg hover:shadow-2xl overflow-hidden"
+                  {/* Content */}
+                  <div className="relative z-10">
+                    {/* Icon */}
+                    <div className={`inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br ${feature.gradient} rounded-lg md:rounded-xl mb-2 sm:mb-3 md:mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
+                    </div>
 
-              >
-                {/* Background Gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
+                    {/* Title */}
+                    <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-1 sm:mb-2 group-hover:text-blue-600 transition-colors">
+                      {feature.title}
+                    </h3>
 
-                {/* Content */}
-                <div className="relative z-10">
-                  {/* Icon */}
-                  <div className={`inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 bg-gradient-to-br ${feature.gradient} rounded-lg md:rounded-xl mb-2 sm:mb-3 md:mb-4 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-white" />
+                    {/* Description */}
+                    <p className="text-gray-600 text-xs sm:text-xs md:text-sm leading-relaxed">
+                      {feature.description}
+                    </p>
                   </div>
-
-                  {/* Title */}
-                  <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold text-gray-900 mb-1 sm:mb-2 group-hover:text-blue-600 transition-colors">
-
-                    {feature.title}
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-gray-600 text-xs sm:text-xs md:text-sm leading-relaxed">
-
-                    {feature.description}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
 
         {/* View More Button */}
         {features.length > initialItems && (

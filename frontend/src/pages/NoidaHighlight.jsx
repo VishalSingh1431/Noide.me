@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { SEOHead } from '../components/SEOHead';
-import { getHighlightBySlug } from '../data/varanasiHighlights';
+import { getHighlightBySlug } from '../data/noidaHighlights';
 import { ArrowLeft, MapPin, Sparkles, Camera, PlayCircle, Globe, Info } from 'lucide-react';
 import { getOrigin } from '../utils/urlHelper';
 
@@ -12,7 +12,7 @@ const sectionVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
 
-const VaranasiHighlight = () => {
+const NoidaHighlight = () => {
   const { slug } = useParams();
   const highlight = getHighlightBySlug(slug);
 
@@ -26,7 +26,7 @@ const VaranasiHighlight = () => {
               <Info className="w-8 h-8" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-3">Story Not Found</h1>
-            <p className="text-gray-600 mb-8">The Varanasi highlight you tried to open doesn’t exist or has been moved.</p>
+            <p className="text-gray-600 mb-8">The Noida highlight you tried to open doesn't exist or has been moved.</p>
             <Link
               to="/"
               className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold shadow-lg hover:bg-blue-700 transition-all"
@@ -44,10 +44,10 @@ const VaranasiHighlight = () => {
   return (
     <>
       <SEOHead
-        title={`${highlight.title} | Varanasi Experiences`}
+        title={`${highlight.title} | Noida Experiences`}
         description={highlight.description}
         image={highlight.heroImage}
-        url={`${getOrigin()}/varanasi/${highlight.slug}`}
+        url={`${getOrigin()}/noida/${highlight.slug}`}
         type="article"
       />
       <Navbar />
@@ -78,7 +78,7 @@ const VaranasiHighlight = () => {
               </Link>
               <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/15 rounded-full text-white/80 text-sm font-semibold mb-6">
                 <Sparkles className="w-4 h-4" />
-                Varanasi Experiences
+                Noida Experiences
               </span>
               <h1 className="text-4xl md:text-6xl font-black text-white leading-tight mb-4">
                 {highlight.title}
@@ -196,5 +196,5 @@ const VaranasiHighlight = () => {
   );
 };
 
-export default VaranasiHighlight;
+export default NoidaHighlight;
 
