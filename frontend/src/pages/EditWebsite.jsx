@@ -123,9 +123,9 @@ const EditWebsite = () => {
             saturday: { open: true, start: '09:00', end: '18:00' },
             sunday: { open: true, start: '09:00', end: '18:00' },
           },
-          appointmentSettings: business.appointmentSettings || {
-            contactMethod: 'whatsapp',
-            availableSlots: [],
+          appointmentSettings: {
+            contactMethod: business.appointmentSettings?.contactMethod || 'whatsapp',
+            availableSlots: business.appointmentSettings?.availableSlots || [],
           },
           theme: business.theme || 'modern',
           preferredSlug: business.slug || '',
@@ -1503,7 +1503,7 @@ const EditWebsite = () => {
                       Available Time Slots (Optional)
                     </label>
                     <div className="space-y-3">
-                      {formData.appointmentSettings.availableSlots.map((slot, index) => (
+                      {formData.appointmentSettings.availableSlots?.map((slot, index) => (
                         <div key={index} className="flex gap-3">
                           <input
                             type="time"

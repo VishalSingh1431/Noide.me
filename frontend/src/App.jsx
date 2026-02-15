@@ -24,6 +24,7 @@ import OnlinePresence from './pages/services/OnlinePresence'
 import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import BusinessWebsite from './pages/BusinessWebsite'
+import BulkImport from './pages/BulkImport'
 import WhatsAppWidget from './components/WhatsAppWidget'
 import { initGoogleAnalytics, trackPageView } from './utils/analytics'
 import './App.css'
@@ -49,14 +50,16 @@ function App() {
     const hostname = window.location.hostname;
     const parts = hostname.split('.');
 
-    // Handle localhost (e.g. business.localhost)
-    if (hostname.includes('localhost')) {
-      return parts.length > 1 && parts[0] !== 'www';
+    // Handle production: ONLY redirect for *.noida.me
+    if (hostname.endsWith('noida.me')) {
+      const parts = hostname.split('.');
+      // valid: sub.noida.me (3 parts)
+      // invalid: noida.me (2 parts), www.noida.me, api.noida.me
+      return parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'api';
     }
 
-    // Handle production (e.g. business.domain.com)
-    // Assuming 3 parts for production: subdomain.domain.com
-    return parts.length > 2 && parts[0] !== 'www' && parts[0] !== 'api';
+    // Block all other domains (no generic fallback)
+    return false;
   };
 
   // If on a subdomain, render the BusinessWebsite component directly
@@ -88,11 +91,12 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-website" element={<CreateWebsite />} />
+            <Route path="/admin/bulk-import" element={<BulkImport />} />
             <Route path="/edit-website/:id" element={<EditWebsite />} />
             <Route path="/analytics/:businessId" element={<Analytics />} />
             <Route path="/qrcode/:id" element={<QRCodeGenerator />} />
             <Route path="/businesses" element={<Businesses />} />
-            <Route path="/b/:slug" element={<BusinessWebsite />} />
+
             <Route path="/contact" element={<Contact />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/about" element={<About />} />

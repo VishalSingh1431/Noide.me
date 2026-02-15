@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Phone, Mail, MapPin, Instagram, Facebook, Globe, Youtube, Clock, Calendar, Gift, ShoppingBag, Map, MessageCircle, Star, ChevronLeft, ChevronRight, Copy, Check, ArrowUp, Share2, Menu, ChevronDown, ChevronUp } from 'lucide-react';
+import { Phone, Mail, MapPin, Instagram, Facebook, Globe, Youtube, Clock, Calendar, Gift, ShoppingBag, Map, MessageCircle, Star, ChevronLeft, ChevronRight, Copy, Check, ArrowUp, Share2, Menu, ChevronDown, ChevronUp, CreditCard, Car, Wifi, Utensils, Music, Beer, Wine, Accessibility } from 'lucide-react';
 import { API_BASE_URL } from '../config/constants';
 
 const BusinessWebsite = () => {
@@ -13,11 +13,6 @@ const BusinessWebsite = () => {
     const getSlugFromSubdomain = () => {
         const hostname = window.location.hostname;
         const parts = hostname.split('.');
-
-        // Handle localhost (e.g. business.localhost)
-        if (hostname.includes('localhost')) {
-            return parts.length > 1 && parts[0] !== 'www' ? parts[0] : null;
-        }
 
         // Handle production (e.g. business.domain.com)
         if (parts.length > 2) {
@@ -65,7 +60,7 @@ const BusinessWebsite = () => {
                 // Check if response is JSON before parsing
                 const contentType = response.headers.get('content-type');
                 let data;
-                
+
                 if (contentType && contentType.includes('application/json')) {
                     try {
                         data = await response.json();
@@ -77,7 +72,7 @@ const BusinessWebsite = () => {
                     const text = await response.text();
                     throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
                 }
-                
+
                 const business = data.business;
 
                 // Map API data to component state structure
@@ -100,6 +95,7 @@ const BusinessWebsite = () => {
                     facebook: business.socialLinks?.facebook || '',
                     website: business.socialLinks?.website || '',
                 };
+
 
                 setFormData(mappedBusiness);
 
@@ -200,11 +196,11 @@ const BusinessWebsite = () => {
     };
 
     // Handle both array and string for backward compatibility
-    const youtubeVideos = formData 
-      ? (Array.isArray(formData.youtubeVideo) 
-          ? formData.youtubeVideo.filter(v => v && typeof v === 'string' && v.trim().length > 0)
-          : (formData.youtubeVideo ? [formData.youtubeVideo] : []))
-      : [];
+    const youtubeVideos = formData
+        ? (Array.isArray(formData.youtubeVideo)
+            ? formData.youtubeVideo.filter(v => v && typeof v === 'string' && v.trim().length > 0)
+            : (formData.youtubeVideo ? [formData.youtubeVideo] : []))
+        : [];
 
     const formatHours = (day) => {
         const hours = formData?.businessHours?.[day];
@@ -445,6 +441,36 @@ const BusinessWebsite = () => {
                                     </span>
                                     {formData.category || 'Premium Service'}
                                 </div>
+                                {(formData.googlePlacesData?.rating || formData.rating) && (() => {
+                                    const googleReviewUrl = formData.googlePlacesData?.googleMapsUri
+                                        || `https://www.google.com/search?q=${encodeURIComponent(formData.businessName + ' ' + (formData.address || 'Noida'))}+reviews`;
+                                    return (
+                                        <a
+                                            href={googleReviewUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 text-yellow-300 border border-yellow-400/30 backdrop-blur-sm animate-fade-in animation-delay-200 hover:bg-yellow-400/30 hover:scale-105 transition-all duration-300 cursor-pointer group"
+                                            title="View all reviews on Google"
+                                        >
+                                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+                                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                            </svg>
+                                            <div className="flex items-center gap-1">
+                                                {[1, 2, 3, 4, 5].map(s => (
+                                                    <Star key={s} className={`w-4 h-4 ${s <= Math.round(formData.googlePlacesData?.rating || formData.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-yellow-200/40'}`} />
+                                                ))}
+                                            </div>
+                                            <span className="font-bold text-lg">{formData.googlePlacesData?.rating || formData.rating}</span>
+                                            <span className="text-yellow-200/80 text-sm">
+                                                ({formData.googlePlacesData?.totalRatings || formData.googlePlacesData?.userRatingCount || formData.totalRatings || 0} reviews)
+                                            </span>
+                                            <svg className="w-4 h-4 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                        </a>
+                                    );
+                                })()}
                                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight">
                                     <span className="block">{formData.businessName}</span>
                                     <span className="opacity-90">Noida's Finest</span>
@@ -507,6 +533,34 @@ const BusinessWebsite = () => {
                 (formData.businessHours || formData.address) && (
                     <section className="py-4 md:py-6 bg-gradient-to-br from-gray-50 to-white border-b border-gray-200">
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            {/* Google Rating Banner */}
+                            {(formData.googlePlacesData?.rating || formData.rating) && (
+                                <a
+                                    href={formData.googlePlacesData?.googleMapsUri || `https://www.google.com/search?q=${encodeURIComponent(formData.businessName + ' ' + (formData.address || 'Noida'))}+reviews`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="block mb-6 bg-white rounded-2xl p-5 border-2 border-yellow-200 shadow-lg hover:shadow-xl hover:border-yellow-300 transition-all duration-300 cursor-pointer group"
+                                >
+                                    <div className="flex items-center justify-center gap-4 flex-wrap">
+                                        <svg className="w-7 h-7" viewBox="0 0 24 24">
+                                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+                                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                        </svg>
+                                        <div className="flex items-center gap-1">
+                                            {[1, 2, 3, 4, 5].map(s => (
+                                                <Star key={s} className={`w-5 h-5 ${s <= Math.round(formData.googlePlacesData?.rating || formData.rating || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`} />
+                                            ))}
+                                        </div>
+                                        <span className="text-2xl font-black text-gray-900">{formData.googlePlacesData?.rating || formData.rating}</span>
+                                        <span className="text-gray-500 font-semibold">
+                                            ({formData.googlePlacesData?.totalRatings || formData.googlePlacesData?.userRatingCount || formData.totalRatings || 0} Google Reviews)
+                                        </span>
+                                        <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                    </div>
+                                </a>
+                            )}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                                 {formData.businessHours && Object.keys(formData.businessHours).length > 0 && (
                                     <div className="bg-white rounded-xl p-6 border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
@@ -852,30 +906,96 @@ const BusinessWebsite = () => {
                 )
             }
 
-            {/* Business Attributes */}
+            {/* Business Attributes & Amenities */}
             {
                 (hasAttributes() || hasPaymentOptions() || hasParkingOptions()) && (
-                    <section className="py-6 md:py-8 bg-white">
-                        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                            {hasAttributes() && (
-                                <>
-                                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 md:mb-8 text-center">Amenities & Features</h2>
-                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-12">
-                                        {/* Manually handled attributes rendering to save lines - skipping exhaustive list for now but logic works */}
-                                        {Object.entries(formData.googlePlacesData.attributes).map(([key, value]) => (
-                                            value && (
-                                                <div key={key} className="bg-white border border-gray-100 rounded-2xl p-4 flex items-center gap-3 shadow-sm group hover:shadow-md transition-shadow">
-                                                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500">
-                                                        <Check className="w-4 h-4" />
+                    <section className="py-12 bg-white">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="text-center mb-12">
+                                <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">
+                                    Amenities & <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Features</span>
+                                </h2>
+                                <div className="h-1 w-20 bg-blue-600 mx-auto rounded-full"></div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+                                {/* Dining & Atmosphere */}
+                                {hasAttributes() && (
+                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                            <Utensils className="w-5 h-5 text-orange-500" />
+                                            Experience
+                                        </h3>
+                                        <div className="space-y-3">
+                                            {Object.entries(formData.googlePlacesData.attributes).map(([key, value]) => {
+                                                if (!value) return null;
+                                                // Map logic to icons
+                                                let Icon = Check;
+                                                let label = key.replace(/([A-Z])/g, ' $1').trim();
+
+                                                if (key.includes('Seating')) Icon = Utensils;
+                                                if (key.includes('Music')) Icon = Music;
+                                                if (key.includes('Wheelchair')) Icon = Accessibility;
+                                                if (key.includes('Beer') || key.includes('Wine') || key.includes('Cocktail')) Icon = Wine;
+
+                                                return (
+                                                    <div key={key} className="flex items-center gap-3 text-gray-700">
+                                                        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-blue-600 shadow-sm flex-shrink-0">
+                                                            <Icon className="w-3 h-3" />
+                                                        </div>
+                                                        <span className="text-sm font-medium capitalize">{label}</span>
                                                     </div>
-                                                    <span className="text-xs font-black text-gray-700 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                                                </div>
-                                            )
-                                        ))}
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                </>
-                            )}
-                            {/* Payment and Parking skipped for brevity in this initial pass but logic exists */}
+                                )}
+
+                                {/* Payment Options */}
+                                {hasPaymentOptions() && (
+                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                            <CreditCard className="w-5 h-5 text-green-500" />
+                                            Payment Methods
+                                        </h3>
+                                        <div className="space-y-3">
+                                            {Object.entries(formData.googlePlacesData.paymentOptions).map(([key, value]) => (
+                                                value && (
+                                                    <div key={key} className="flex items-center gap-3 text-gray-700">
+                                                        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-green-600 shadow-sm flex-shrink-0">
+                                                            <CreditCard className="w-3 h-3" />
+                                                        </div>
+                                                        <span className="text-sm font-medium capitalize">{key.replace('accepts', '').replace(/([A-Z])/g, ' $1').trim()}</span>
+                                                    </div>
+                                                )
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Parking & Assessment */}
+                                {hasParkingOptions() && (
+                                    <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
+                                        <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                            <Car className="w-5 h-5 text-blue-500" />
+                                            Parking & Access
+                                        </h3>
+                                        <div className="space-y-3">
+                                            {Object.entries(formData.googlePlacesData.parkingOptions).map(([key, value]) => (
+                                                value && (
+                                                    <div key={key} className="flex items-center gap-3 text-gray-700">
+                                                        <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center text-blue-600 shadow-sm flex-shrink-0">
+                                                            <Car className="w-3 h-3" />
+                                                        </div>
+                                                        <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                                                    </div>
+                                                )
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </section>
                 )
@@ -944,28 +1064,49 @@ const BusinessWebsite = () => {
 
             {/* Reviews Section */}
             {formData.googlePlacesData?.reviews && formData.googlePlacesData.reviews.length > 0 && (
-                <section id="reviews" className="py-6 md:py-8 bg-gray-50 border-y border-gray-100 italic">
+                <section id="reviews" className="py-6 md:py-8 bg-gray-50 border-y border-gray-100">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="text-center mb-12">
+                            <div className="flex items-center justify-center gap-2 mb-3">
+                                <svg className="w-6 h-6" viewBox="0 0 24 24">
+                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                </svg>
+                                <span className="text-sm font-bold text-gray-500 uppercase tracking-wider">Google Reviews</span>
+                            </div>
                             <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
                                 Customer <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Reviews</span>
                             </h2>
                             <div className="flex items-center justify-center gap-1 mt-4">
                                 {[...Array(5)].map((_, i) => (
-                                    <Star key={i} className="w-5 h-5 text-yellow-500 fill-yellow-500" />
+                                    <Star key={i} className={`w-5 h-5 ${i < Math.round(formData.googlePlacesData.rating || 5) ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`} />
                                 ))}
-                                <span className="ml-2 font-bold text-gray-700">5.0 average rating</span>
+                                <span className="ml-2 font-bold text-gray-700">{formData.googlePlacesData.rating || '5.0'} average rating</span>
+                                <span className="text-gray-400 text-sm ml-1">({formData.googlePlacesData.totalRatings || formData.googlePlacesData.userRatingCount || 0} reviews)</span>
                             </div>
                         </div>
                         <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide">
+                            {/* Summary Card from Preview */}
+                            <div className="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 flex flex-col items-center text-center relative overflow-hidden group flex-shrink-0 w-full max-w-sm">
+                                <div className="text-6xl font-black text-gray-900 mb-2">{formData.googlePlacesData.rating || 5.0}</div>
+                                <div className="flex gap-1 mb-4">
+                                    {[1, 2, 3, 4, 5].map((i) => (
+                                        <Star key={i} className={`w-5 h-5 ${i <= Math.round(formData.googlePlacesData.rating || 5) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                                    ))}
+                                </div>
+                                <p className="text-gray-500 font-bold uppercase tracking-wider text-[10px]">Verified Customer Satisfaction</p>
+                            </div>
+
                             {formData.googlePlacesData.reviews.map((review, idx) => (
                                 <div key={idx} className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all flex-shrink-0 w-full max-w-sm">
                                     <div className="flex items-center gap-4 mb-4">
                                         <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                                            {review.author?.charAt(0) || 'G'}
+                                            {(review.authorName || review.author || review.author_name || 'G').charAt(0)}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-gray-900">{review.author}</p>
+                                            <p className="font-bold text-gray-900">{review.authorName || review.author || review.author_name || 'Google User'}</p>
                                             <div className="flex text-yellow-500">
                                                 {[...Array(5)].map((_, i) => (
                                                     <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-yellow-500' : ''}`} />
@@ -976,6 +1117,24 @@ const BusinessWebsite = () => {
                                     <p className="text-gray-600 text-sm leading-relaxed">&quot;{review.text}&quot;</p>
                                 </div>
                             ))}
+                        </div>
+                        {/* View All Reviews on Google Button */}
+                        <div className="text-center mt-8">
+                            <a
+                                href={formData.googlePlacesData?.googleMapsUri || `https://www.google.com/search?q=${encodeURIComponent(formData.businessName + ' ' + (formData.address || 'Noida'))}+reviews`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-3 px-8 py-4 bg-white border-2 border-gray-200 rounded-2xl font-bold text-gray-800 hover:border-blue-400 hover:shadow-lg transition-all duration-300 group"
+                            >
+                                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                </svg>
+                                View All {formData.googlePlacesData?.totalRatings || formData.googlePlacesData?.userRatingCount || ''} Reviews on Google
+                                <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                            </a>
                         </div>
                     </div>
                 </section>

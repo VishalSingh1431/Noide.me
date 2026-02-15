@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import { Menu, X, ChevronDown, ChevronLeft, ChevronRight, User, Shield } from 'lucide-react';
 
 // Move categories array outside component to prevent recreation on every render
 const CATEGORIES = [
@@ -139,7 +139,7 @@ const Navbar = () => {
     if (scrollTimeoutRef.current) {
       return; // Skip if already scheduled
     }
-    
+
     scrollTimeoutRef.current = requestAnimationFrame(() => {
       if (categorySliderRef.current) {
         const { scrollTop, scrollHeight, clientHeight } = categorySliderRef.current;
@@ -216,8 +216,8 @@ const Navbar = () => {
               <Link
                 to="/"
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/')
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
               >
                 Home
@@ -225,8 +225,8 @@ const Navbar = () => {
               <Link
                 to="/businesses"
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/businesses')
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
               >
                 Businesses
@@ -234,8 +234,8 @@ const Navbar = () => {
               <Link
                 to="/about"
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/about')
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
               >
                 About
@@ -312,8 +312,8 @@ const Navbar = () => {
               <Link
                 to="/pricing"
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/pricing')
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
               >
                 Pricing
@@ -321,8 +321,8 @@ const Navbar = () => {
               <Link
                 to="/contact"
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/contact')
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
                   }`}
               >
                 Contact
@@ -333,6 +333,15 @@ const Navbar = () => {
             <div className="hidden md:flex md:items-center md:gap-2">
               {isLoggedIn ? (
                 <>
+                  {user?.role === 'main_admin' && (
+                    <Link
+                      to="/profile"
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-300"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Admin</span>
+                    </Link>
+                  )}
                   <Link
                     to="/profile"
                     className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-black hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-300"
@@ -404,8 +413,8 @@ const Navbar = () => {
                 <Link
                   to="/"
                   className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/')
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -414,8 +423,8 @@ const Navbar = () => {
                 <Link
                   to="/businesses"
                   className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/businesses')
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -424,8 +433,8 @@ const Navbar = () => {
                 <Link
                   to="/about"
                   className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/about')
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -498,8 +507,8 @@ const Navbar = () => {
                 <Link
                   to="/pricing"
                   className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/pricing')
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -508,8 +517,8 @@ const Navbar = () => {
                 <Link
                   to="/contact"
                   className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/contact')
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
                     }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -520,6 +529,16 @@ const Navbar = () => {
                 {isLoggedIn ? (
                   <>
                     <div className="pt-2 border-t-2 border-black mt-2">
+                      {user?.role === 'main_admin' && (
+                        <Link
+                          to="/profile"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all duration-200"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <Shield className="w-4 h-4" />
+                          <span className="font-medium">Admin</span>
+                        </Link>
+                      )}
                       <Link
                         to="/profile"
                         className="flex items-center gap-2 px-4 py-2 text-sm text-black hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"

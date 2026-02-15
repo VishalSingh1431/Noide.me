@@ -10,7 +10,7 @@ export const apiCall = async (endpoint, options = {}) => {
   } catch (storageError) {
     console.warn('localStorage not available:', storageError);
   }
-  
+
   const defaultHeaders = {
     'Content-Type': 'application/json',
   };
@@ -29,11 +29,11 @@ export const apiCall = async (endpoint, options = {}) => {
 
   try {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
-    
+
     // Check if response is JSON before parsing
     const contentType = response.headers.get('content-type');
     let data;
-    
+
     if (contentType && contentType.includes('application/json')) {
       try {
         data = await response.json();
@@ -71,9 +71,9 @@ export const apiCall = async (endpoint, options = {}) => {
         expiredError.isTokenExpired = true;
         throw expiredError;
       }
-      
+
       // If there's a help message, include it in the error
-      const errorMessage = data.help 
+      const errorMessage = data.help
         ? `${data.error}\n\n${data.help}`
         : data.error || 'Request failed';
       const error = new Error(errorMessage);
@@ -153,6 +153,44 @@ export const businessAPI = {
     return apiCall('/business/stats', {
       method: 'GET',
     });
+  },
+
+  create: async (formData) => {
+    let token = null;
+    try {
+      token = localStorage.getItem('token');
+    } catch (storageError) {
+      console.warn('localStorage not available:', storageError);
+    }
+
+    const response = await fetch(`${API_BASE_URL}/business/create`, {
+      method: 'POST',
+      headers: {
+        'Authorization': token ? `Bearer ${token}` : '',
+      },
+      body: formData,
+    });
+
+    const contentType = response.headers.get('content-type');
+    let data;
+
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        const text = await response.text();
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+      }
+    } else {
+      const text = await response.text();
+      throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to create business');
+    }
+
+    return data;
   },
 
   getUserBusinesses: async () => {
@@ -275,7 +313,7 @@ export const businessAPI = {
     } catch (storageError) {
       console.warn('localStorage not available:', storageError);
     }
-    
+
     const response = await fetch(`${API_BASE_URL}/admin/businesses/${id}`, {
       method: 'PUT',
       headers: {
@@ -287,7 +325,7 @@ export const businessAPI = {
     // Check if response is JSON before parsing
     const contentType = response.headers.get('content-type');
     let data;
-    
+
     if (contentType && contentType.includes('application/json')) {
       try {
         data = await response.json();
@@ -299,7 +337,7 @@ export const businessAPI = {
       const text = await response.text();
       throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
     }
-    
+
     if (!response.ok) {
       throw new Error(data.error || 'Failed to update business');
     }
@@ -357,7 +395,7 @@ export const businessAPI = {
     } catch (storageError) {
       console.warn('localStorage not available:', storageError);
     }
-    
+
     const response = await fetch(`${API_BASE_URL}/business/edit/${id}`, {
       method: 'PUT',
       headers: {
@@ -369,7 +407,7 @@ export const businessAPI = {
     // Check if response is JSON before parsing
     const contentType = response.headers.get('content-type');
     let data;
-    
+
     if (contentType && contentType.includes('application/json')) {
       try {
         data = await response.json();
@@ -381,7 +419,7 @@ export const businessAPI = {
       const text = await response.text();
       throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
     }
-    
+
     if (!response.ok) {
       throw new Error(data.error || 'Failed to update business');
     }

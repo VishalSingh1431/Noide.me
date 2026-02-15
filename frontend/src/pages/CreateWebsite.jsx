@@ -1308,6 +1308,7 @@ const CreateWebsite = () => {
                             businessStatus: businessData.businessStatus,
                             plusCode: businessData.plusCode,
                             currentOpeningHours: businessData.currentOpeningHours,
+                            googleMapsUri: businessData.googleMapLink || '',
                           },
                         }));
 

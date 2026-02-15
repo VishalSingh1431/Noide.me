@@ -5,6 +5,20 @@ import pool from '../config/database.js';
  */
 class Business {
   /**
+   * Helper to safely parse JSON
+   */
+  static safeParseJSON(data, fallback) {
+    if (!data) return fallback;
+    if (typeof data === 'object') return data; // Already an object/array
+    try {
+      return JSON.parse(data);
+    } catch (error) {
+      console.error('Error parsing JSON:', error);
+      return fallback;
+    }
+  }
+
+  /**
    * Create a new business
    */
   static async create(data) {
@@ -69,8 +83,8 @@ class Business {
       INSERT INTO businesses (
         business_name, owner_name, category, mobile, email, address,
         map_link, whatsapp, description, logo_url, images_url,
-        youtube_video, navbar_tagline, footer_description, services, special_offers, business_hours, appointment_settings, theme, social_links, slug, subdomain_url, subdirectory_url, status, user_id, is_premium
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26)
+        youtube_video, navbar_tagline, footer_description, services, special_offers, business_hours, appointment_settings, theme, social_links, slug, subdomain_url, subdirectory_url, status, user_id, is_premium, google_places_data
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27)
       RETURNING *
     `;
 
@@ -108,6 +122,7 @@ class Business {
       data.status || 'pending',
       data.userId || null,
       data.isPremium || false,
+      JSON.stringify(data.googlePlacesData || null)
     ];
 
     const result = await pool.query(query, values);
@@ -292,56 +307,80 @@ class Business {
   }
 
   /**
+   * Check if businesses exist by name (for bulk import duplicate detection)
+   * Returns a Set of existing business names (lowercase)
+   */
+  static async checkExistingBusinesses(names) {
+    if (!names || names.length === 0) return new Set();
+
+    // Create placeholders for the IN clause ($1, $2, etc.)
+    const placeholders = names.map((_, i) => `$${i + 1}`).join(',');
+
+    // Case-insensitive check
+    const query = `
+      SELECT LOWER(business_name) as name 
+      FROM businesses 
+      WHERE LOWER(business_name) IN (${placeholders})
+    `;
+
+    const result = await pool.query(query, names.map(n => n.toLowerCase()));
+
+    // Return set of lowercased names that exist
+    return new Set(result.rows.map(row => row.name));
+  }
+
+  /**
    * Map database row to business object
    */
   static mapRowToBusiness(row) {
     if (!row) return null;
 
-    return {
-      _id: row.id,
-      id: row.id,
-      businessName: row.business_name,
-      ownerName: row.owner_name,
-      category: row.category,
-      mobile: row.mobile,
-      mobileNumber: row.mobile,
-      email: row.email,
-      address: row.address,
-      mapLink: row.map_link,
-      whatsapp: row.whatsapp,
-      description: row.description,
-      logoUrl: row.logo_url,
-      imagesUrl: Array.isArray(row.images_url) ? row.images_url : JSON.parse(row.images_url || '[]'),
-      youtubeVideo: row.youtube_video 
-        ? (Array.isArray(row.youtube_video) 
-          ? row.youtube_video 
-          : (typeof row.youtube_video === 'string' && row.youtube_video.startsWith('[')
-            ? JSON.parse(row.youtube_video)
-            : [row.youtube_video]))
-        : [],
-      navbarTagline: row.navbar_tagline || '',
-      footerDescription: row.footer_description || '',
-      services: typeof row.services === 'object' && row.services !== null ? row.services : JSON.parse(row.services || '[]'),
-      specialOffers: typeof row.special_offers === 'object' && row.special_offers !== null ? row.special_offers : JSON.parse(row.special_offers || '[]'),
-      businessHours: typeof row.business_hours === 'object' && row.business_hours !== null ? row.business_hours : JSON.parse(row.business_hours || '{}'),
-      appointmentSettings: typeof row.appointment_settings === 'object' && row.appointment_settings !== null ? row.appointment_settings : JSON.parse(row.appointment_settings || '{}'),
-      theme: row.theme || 'modern',
-      socialLinks: typeof row.social_links === 'object' ? row.social_links : JSON.parse(row.social_links || '{}'),
-      slug: row.slug,
-      subdomainUrl: row.subdomain_url,
-      subdirectoryUrl: row.subdirectory_url,
-      status: row.status,
-      editApprovalStatus: row.edit_approval_status || 'none',
-      isPremium: row.is_premium || false,
-      userId: row.user_id,
-      ecommerceEnabled: row.ecommerce_enabled || false,
-      abTestEnabled: row.ab_test_enabled || false,
-      currentVariant: row.current_variant || 'default',
-      products: typeof row.products === 'object' && row.products !== null ? row.products : JSON.parse(row.products || '[]'),
-      verified: row.verified || false,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-    };
+    try {
+      return {
+        _id: row.id,
+        id: row.id,
+        businessName: row.business_name,
+        ownerName: row.owner_name,
+        category: row.category,
+        mobile: row.mobile,
+        mobileNumber: row.mobile,
+        email: row.email,
+        address: row.address,
+        mapLink: row.map_link,
+        whatsapp: row.whatsapp,
+        description: row.description,
+        logoUrl: row.logo_url,
+        imagesUrl: Business.safeParseJSON(row.images_url, []),
+        youtubeVideo: Business.safeParseJSON(row.youtube_video, []),
+        navbarTagline: row.navbar_tagline || '',
+        footerDescription: row.footer_description || '',
+        services: Business.safeParseJSON(row.services, []),
+        specialOffers: Business.safeParseJSON(row.special_offers, []),
+        businessHours: Business.safeParseJSON(row.business_hours, {}),
+        appointmentSettings: Business.safeParseJSON(row.appointment_settings, { contactMethod: 'whatsapp', availableSlots: [] }),
+        theme: row.theme || 'modern',
+        socialLinks: Business.safeParseJSON(row.social_links, { instagram: '', facebook: '', website: '' }),
+        slug: row.slug,
+        subdomainUrl: row.subdomain_url,
+        subdirectoryUrl: row.subdirectory_url,
+        status: row.status,
+        editApprovalStatus: row.edit_approval_status || 'none',
+        isPremium: row.is_premium || false,
+        userId: row.user_id,
+        ecommerceEnabled: row.ecommerce_enabled || false,
+        abTestEnabled: row.ab_test_enabled || false,
+        currentVariant: row.current_variant || 'default',
+        products: Business.safeParseJSON(row.products, []),
+        verified: row.verified || false,
+        googlePlacesData: Business.safeParseJSON(row.google_places_data),
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+      };
+    } catch (error) {
+      console.error('Error mapping business row:', error);
+      console.error('Row data:', row);
+      return null;
+    }
   }
 }
 

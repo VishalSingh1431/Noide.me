@@ -344,21 +344,31 @@ export const getAllBusinesses = async (req, res) => {
     // Get owner info for each business
     const businessesWithOwners = await Promise.all(
       businesses.map(async (business) => {
-        if (business.userId) {
-          const owner = await User.findById(business.userId);
+        try {
+          if (business.userId) {
+            const owner = await User.findById(business.userId);
+            return {
+              ...business,
+              ownerName: owner?.name || 'Unknown',
+              ownerEmail: owner?.email || 'Unknown',
+            };
+          }
+          return business;
+        } catch (err) {
+          console.error(`Error fetching owner for business ${business.id}:`, err);
           return {
             ...business,
-            ownerName: owner?.name || 'Unknown',
-            ownerEmail: owner?.email || 'Unknown',
+            ownerName: 'Error',
+            ownerEmail: 'Error'
           };
         }
-        return business;
       })
     );
 
     res.json({ businesses: businessesWithOwners });
   } catch (error) {
-    console.error('Error fetching all businesses:', error);
+    console.error('Error fetching all businesses (OUTER):', error);
+    console.error(error.stack);
     res.status(500).json({ error: 'Failed to fetch businesses' });
   }
 };

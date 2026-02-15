@@ -32,10 +32,7 @@ export const getFullUrl = (path = '') => {
  */
 export const getBusinessUrl = (slug) => {
   if (!slug) return '';
-  if (import.meta.env.PROD) {
-    return `https://${slug}.noida.me`;
-  }
-  return `http://${slug}.localhost:50002`;
+  return `http://${slug}.noida.me`;
 };
 
 /**
@@ -46,11 +43,13 @@ export const getBusinessUrl = (slug) => {
  */
 export const getBusinessPageUrl = (business) => {
   if (!business?.slug) return '';
-  const origin = getOrigin();
-  const isLocalhost = typeof window !== 'undefined' && origin.includes('localhost');
-  if (isLocalhost) {
-    return `${origin}/b/${business.slug}`;
+
+  // Ignore stored localhost URLs from DB
+  if (business.subdomainUrl && business.subdomainUrl.includes('localhost')) {
+    return `http://${business.slug}.noida.me`;
   }
-  return business.subdomainUrl || getBusinessUrl(business.slug);
+
+  // Always use subdomain (even on localhost)
+  return business.subdomainUrl || `http://${business.slug}.noida.me`;
 };
 

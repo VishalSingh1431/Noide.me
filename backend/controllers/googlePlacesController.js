@@ -34,9 +34,9 @@ const parseOpeningHours = (weekdayDescriptions) => {
 
   weekdayDescriptions.forEach((description) => {
     if (!description) return;
-    
+
     const lowerDesc = description.toLowerCase();
-    
+
     // Find the day
     let matchedDay = null;
     for (const [dayName, dayKey] of Object.entries(dayMap)) {
@@ -45,35 +45,35 @@ const parseOpeningHours = (weekdayDescriptions) => {
         break;
       }
     }
-    
+
     if (!matchedDay) return;
-    
+
     // Check if closed
     if (lowerDesc.includes('closed')) {
       businessHours[matchedDay].open = false;
       return;
     }
-    
+
     // Parse time range (e.g., "9:00 AM – 6:00 PM" or "9:00 AM - 6:00 PM")
     const timeMatch = description.match(/(\d{1,2}):(\d{2})\s*(AM|PM)\s*[–-]\s*(\d{1,2}):(\d{2})\s*(AM|PM)/i);
-    
+
     if (timeMatch) {
       const [, startHour, startMin, startPeriod, endHour, endMin, endPeriod] = timeMatch;
-      
+
       // Convert to 24-hour format
       const convertTo24Hour = (hour, min, period) => {
         let h = parseInt(hour);
         const m = parseInt(min);
-        
+
         if (period.toUpperCase() === 'PM' && h !== 12) {
           h += 12;
         } else if (period.toUpperCase() === 'AM' && h === 12) {
           h = 0;
         }
-        
+
         return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
       };
-      
+
       businessHours[matchedDay] = {
         open: true,
         start: convertTo24Hour(startHour, startMin, startPeriod),
@@ -94,14 +94,14 @@ export const getAutocompleteSuggestions = async (req, res) => {
     const { input, location } = req.body;
 
     if (!input || input.trim().length < 2) {
-      return res.status(400).json({ 
-        error: 'Input must be at least 2 characters long' 
+      return res.status(400).json({
+        error: 'Input must be at least 2 characters long'
       });
     }
 
     if (!GOOGLE_PLACES_API_KEY) {
       console.error('GOOGLE_PLACES_API_KEY is not set in environment variables');
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Google Places API key is not configured. Please add GOOGLE_PLACES_API_KEY to your backend .env file.',
         help: 'Add GOOGLE_PLACES_API_KEY=your_api_key_here to backend/.env and restart the server'
       });
@@ -133,7 +133,7 @@ export const getAutocompleteSuggestions = async (req, res) => {
 
     const response = await fetch(
       'https://places.googleapis.com/v1/places:autocomplete',
-      { 
+      {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -173,8 +173,8 @@ export const getAutocompleteSuggestions = async (req, res) => {
         const placePrediction = suggestion.placePrediction;
         return {
           place_id: placePrediction.placeId,
-          description: typeof placePrediction.text === 'string' 
-            ? placePrediction.text 
+          description: typeof placePrediction.text === 'string'
+            ? placePrediction.text
             : placePrediction.text?.text || '',
           structured_formatting: {
             main_text: typeof placePrediction.structuredFormat?.mainText === 'string'
@@ -200,7 +200,7 @@ export const getAutocompleteSuggestions = async (req, res) => {
 
       // Extract detailed error message from Google
       const googleErrorMsg = errorData?.message || errorData?.error_message || JSON.stringify(errorData);
-      
+
       if (response.status === 403) {
         errorMessage = 'Google Places API request denied (403 Forbidden)';
         helpMessage = `Google says: ${googleErrorMsg}\n\nPossible fixes:\n1. Enable "Places API (New)" in Google Cloud Console (NOT the old "Places API")\n2. Check API key restrictions - make sure "Places API (New)" is allowed\n3. Verify billing is enabled (even for free tier)\n4. Check if API key has correct permissions`;
@@ -224,7 +224,7 @@ export const getAutocompleteSuggestions = async (req, res) => {
       console.error('  API Key starts with:', GOOGLE_PLACES_API_KEY?.substring(0, 10) || 'N/A');
       console.error('  Request URL:', 'https://places.googleapis.com/v1/places:autocomplete');
       console.error('  Request Body:', JSON.stringify(requestBody, null, 2));
-      
+
       return res.status(response.status).json({
         error: errorMessage,
         status: response.status,
@@ -263,14 +263,14 @@ export const getPlaceDetails = async (req, res) => {
     const { placeId } = req.body;
 
     if (!placeId) {
-      return res.status(400).json({ 
-        error: 'Place ID is required' 
+      return res.status(400).json({
+        error: 'Place ID is required'
       });
     }
 
     if (!GOOGLE_PLACES_API_KEY) {
       console.error('GOOGLE_PLACES_API_KEY is not set in environment variables');
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'Google Places API key is not configured. Please add GOOGLE_PLACES_API_KEY to your backend .env file.',
         help: 'Add GOOGLE_PLACES_API_KEY=your_api_key_here to backend/.env and restart the server'
       });
@@ -300,6 +300,29 @@ export const getPlaceDetails = async (req, res) => {
       'reviews',
       'addressComponents',
       'editorialSummary', // Business description from Google
+      'paymentOptions',
+      'parkingOptions',
+      'accessibilityOptions',
+      'servesBreakfast',
+      'servesLunch',
+      'servesDinner',
+      'servesBrunch',
+      'servesBeer',
+      'servesWine',
+      'servesVegetarianFood',
+      'servesCocktails',
+      'servesDessert',
+      'servesCoffee',
+      'liveMusic',
+      'menuForChildren',
+      'takeout',
+      'delivery',
+      'dineIn',
+      'outdoorSeating',
+      'reservable',
+      'priceLevel',
+      'utcOffsetMinutes',
+      'currentOpeningHours',
     ].join(',');
 
     // Create AbortController for timeout
@@ -310,10 +333,10 @@ export const getPlaceDetails = async (req, res) => {
     console.log('🔍 Requesting place details:');
     console.log('  Place Name:', placeName);
     console.log('  Field Mask:', fieldMask);
-    
+
     const response = await fetch(
       `https://places.googleapis.com/v1/${placeName}`,
-      { 
+      {
         method: 'GET',
         headers: {
           'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
@@ -322,7 +345,7 @@ export const getPlaceDetails = async (req, res) => {
         signal: controller.signal,
       }
     ).finally(() => clearTimeout(timeoutId));
-    
+
     console.log('📥 Response Status:', response.status);
 
     let place;
@@ -352,8 +375,8 @@ export const getPlaceDetails = async (req, res) => {
 
       // Extract business data from NEW Places API format
       // Handle displayName which can be string or object with text property
-      const businessName = typeof place.displayName === 'string' 
-        ? place.displayName 
+      const businessName = typeof place.displayName === 'string'
+        ? place.displayName
         : place.displayName?.text || '';
 
       // Handle editorialSummary which can be string or object
@@ -369,15 +392,15 @@ export const getPlaceDetails = async (req, res) => {
       // Extract reviews
       const reviews = place.reviews && Array.isArray(place.reviews)
         ? place.reviews.map((review) => ({
-            authorName: review.authorAttribution?.displayName || 'Anonymous',
-            authorPhoto: review.authorAttribution?.photoUri || null,
-            rating: review.rating || 0,
-            text: typeof review.text === 'string' 
-              ? review.text 
-              : review.text?.text || '',
-            time: review.publishTime || review.relativePublishTimeDescription || null,
-            originalText: review.originalText || null,
-          }))
+          authorName: review.authorAttribution?.displayName || 'Anonymous',
+          authorPhoto: review.authorAttribution?.photoUri || null,
+          rating: review.rating || 0,
+          text: typeof review.text === 'string'
+            ? review.text
+            : review.text?.text || '',
+          time: review.publishTime || review.relativePublishTimeDescription || null,
+          originalText: review.originalText || null,
+        }))
         : [];
 
       // Extract business attributes (only fields we requested)
@@ -388,10 +411,13 @@ export const getPlaceDetails = async (req, res) => {
         dineIn: place.dineIn || false,
         outdoorSeating: place.outdoorSeating || false,
         reservable: place.reservable || false,
-        
+
         // Accessibility
-        wheelchairAccessibleEntrance: place.wheelchairAccessibleEntrance || false,
-        
+        wheelchairAccessibleEntrance: place.accessibilityOptions?.wheelchairAccessibleEntrance || false,
+        wheelchairAccessibleParking: place.accessibilityOptions?.wheelchairAccessibleParking || false,
+        wheelchairAccessibleRestroom: place.accessibilityOptions?.wheelchairAccessibleRestroom || false,
+        wheelchairAccessibleSeating: place.accessibilityOptions?.wheelchairAccessibleSeating || false,
+
         // Additional attributes if available (not in field mask but might be in response)
         servesBreakfast: place.servesBreakfast || false,
         servesLunch: place.servesLunch || false,
@@ -410,27 +436,27 @@ export const getPlaceDetails = async (req, res) => {
       // Extract payment options
       const paymentOptions = place.paymentOptions
         ? {
-            acceptsCreditCards: place.paymentOptions.acceptsCreditCards || false,
-            acceptsDebitCards: place.paymentOptions.acceptsDebitCards || false,
-            acceptsCashOnly: place.paymentOptions.acceptsCashOnly || false,
-            acceptsNfc: place.paymentOptions.acceptsNfc || false,
-          }
+          acceptsCreditCards: place.paymentOptions.acceptsCreditCards || false,
+          acceptsDebitCards: place.paymentOptions.acceptsDebitCards || false,
+          acceptsCashOnly: place.paymentOptions.acceptsCashOnly || false,
+          acceptsNfc: place.paymentOptions.acceptsNfc || false,
+        }
         : null;
 
       // Extract parking options
       const parkingOptions = place.parkingOptions
         ? {
-            parkingLot: place.parkingOptions.parkingLot || false,
-            streetParking: place.parkingOptions.streetParking || false,
-            valetParking: place.parkingOptions.valetParking || false,
-            garageParking: place.parkingOptions.garageParking || false,
-            freeGarageParking: place.parkingOptions.freeGarageParking || false,
-            freeParkingLot: place.parkingOptions.freeParkingLot || false,
-            paidParkingLot: place.parkingOptions.paidParkingLot || false,
-            paidStreetParking: place.parkingOptions.paidStreetParking || false,
-            valetFreeParking: place.parkingOptions.valetFreeParking || false,
-            valetPaidParking: place.parkingOptions.valetPaidParking || false,
-          }
+          parkingLot: place.parkingOptions.parkingLot || false,
+          streetParking: place.parkingOptions.streetParking || false,
+          valetParking: place.parkingOptions.valetParking || false,
+          garageParking: place.parkingOptions.garageParking || false,
+          freeGarageParking: place.parkingOptions.freeGarageParking || false,
+          freeParkingLot: place.parkingOptions.freeParkingLot || false,
+          paidParkingLot: place.parkingOptions.paidParkingLot || false,
+          paidStreetParking: place.parkingOptions.paidStreetParking || false,
+          valetFreeParking: place.parkingOptions.valetFreeParking || false,
+          valetPaidParking: place.parkingOptions.valetPaidParking || false,
+        }
         : null;
 
       const businessData = {
@@ -456,16 +482,16 @@ export const getPlaceDetails = async (req, res) => {
         // Get multiple photos (up to 5) for better coverage
         photos: place.photos && place.photos.length > 0
           ? place.photos.slice(0, 5).map((photo, index) => {
-              if (photo.name) {
-                return {
-                  url: `https://places.googleapis.com/v1/${photo.name}/media?maxHeightPx=800&maxWidthPx=1200&key=${GOOGLE_PLACES_API_KEY}`,
-                  name: photo.name,
-                  widthPx: photo.widthPx || 1200,
-                  heightPx: photo.heightPx || 800,
-                };
-              }
-              return null;
-            }).filter(Boolean)
+            if (photo.name) {
+              return {
+                url: `https://places.googleapis.com/v1/${photo.name}/media?maxHeightPx=800&maxWidthPx=1200&key=${GOOGLE_PLACES_API_KEY}`,
+                name: photo.name,
+                widthPx: photo.widthPx || 1200,
+                heightPx: photo.heightPx || 800,
+              };
+            }
+            return null;
+          }).filter(Boolean)
           : [],
         // Keep photoUrl for backward compatibility (first photo)
         photoUrl: place.photos && place.photos.length > 0 && place.photos[0].name
@@ -495,12 +521,12 @@ export const getPlaceDetails = async (req, res) => {
       if (place.addressComponents && Array.isArray(place.addressComponents)) {
         place.addressComponents.forEach((component) => {
           if (!component || !component.types || !Array.isArray(component.types)) return;
-          
+
           // Handle longText which can be string or object
           const longText = typeof component.longText === 'string'
             ? component.longText
             : component.longText?.text || component.longText || '';
-          
+
           if (component.types.includes('postal_code')) {
             businessData.postalCode = longText;
           }
@@ -545,7 +571,7 @@ export const getPlaceDetails = async (req, res) => {
       } else if (response.status === 400) {
         errorMessage = 'Invalid request to Google Places API';
         helpMessage = `The request parameters are invalid. ${errorData?.message || 'Please check the place ID and field mask.'}`;
-        
+
         // Log the actual error for debugging
         console.error('400 Error Details:', JSON.stringify(errorData, null, 2));
       } else if (response.status === 404) {
@@ -562,7 +588,7 @@ export const getPlaceDetails = async (req, res) => {
       console.error('  Error:', JSON.stringify(errorData, null, 2));
       console.error('  API Key present:', !!GOOGLE_PLACES_API_KEY);
       console.error('  API Key length:', GOOGLE_PLACES_API_KEY?.length || 0);
-      
+
       return res.status(response.status).json({
         error: errorMessage,
         status: response.status,
@@ -583,3 +609,138 @@ export const getPlaceDetails = async (req, res) => {
   }
 };
 
+
+/**
+ * Search places by text query (New Places API)
+ * POST /api/google-places/text-search
+ */
+export const textSearch = async (req, res) => {
+  try {
+    const { query, location } = req.body;
+
+    if (!query || query.trim().length < 2) {
+      return res.status(400).json({
+        error: 'Query must be at least 2 characters long'
+      });
+    }
+
+    if (!GOOGLE_PLACES_API_KEY) {
+      console.error('GOOGLE_PLACES_API_KEY is not set in environment variables');
+      return res.status(500).json({
+        error: 'Google Places API key is not configured'
+      });
+    }
+
+    // Request fields: only essentials for the list view
+    // id, displayName, formattedAddress are essential
+    // photos are useful for thumbnails
+    const fieldMask = [
+      'places.id',
+      'places.displayName',
+      'places.formattedAddress',
+      'places.photos',
+      'places.types',
+      'places.rating',
+      'places.userRatingCount',
+      'places.businessStatus'
+    ].join(',');
+
+    const requestBody = {
+      textQuery: query,
+      languageCode: 'en',
+    };
+
+    // Add location bias if provided
+    if (location && location.lat && location.lng) {
+      requestBody.locationBias = {
+        circle: {
+          center: {
+            latitude: location.lat,
+            longitude: location.lng,
+          },
+          radius: 10000.0, // 10km bias
+        },
+      };
+    }
+
+    const response = await fetch(
+      'https://places.googleapis.com/v1/places:searchText',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': GOOGLE_PLACES_API_KEY,
+          'X-Goog-FieldMask': fieldMask,
+        },
+        body: JSON.stringify(requestBody),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Google Places Text Search Error:', data);
+      return res.status(response.status).json({
+        error: 'Failed to search places',
+        details: data.error?.message || data.error || 'Unknown error'
+      });
+    }
+
+    // Transform results
+    const places = (data.places || []).map(place => {
+      // Extract business name
+      const businessName = typeof place.displayName === 'string'
+        ? place.displayName
+        : place.displayName?.text || '';
+
+      // Get first photo if available
+      const photoUrl = place.photos && place.photos.length > 0 && place.photos[0].name
+        ? `https://places.googleapis.com/v1/${place.photos[0].name}/media?maxHeightPx=400&maxWidthPx=400&key=${GOOGLE_PLACES_API_KEY}`
+        : null;
+
+      return {
+        id: place.id, // placeId
+        name: businessName,
+        address: place.formattedAddress,
+        rating: place.rating,
+        userRatingCount: place.userRatingCount,
+        businessStatus: place.businessStatus,
+        photoUrl: photoUrl,
+        types: place.types || []
+      };
+    });
+
+    // Check for duplicates in our database
+    try {
+      // Import Business model dynamically to avoid circular dependencies if any
+      const { default: Business } = await import('../models/Business.js');
+
+      const namesToCheck = places.map(p => p.name).filter(Boolean);
+      const existingNames = await Business.checkExistingBusinesses(namesToCheck);
+
+      // Mark duplicates
+      places.forEach(place => {
+        if (place.name && existingNames.has(place.name.toLowerCase())) {
+          place.exists = true;
+        } else {
+          place.exists = false;
+        }
+      });
+    } catch (dbError) {
+      console.error('Error checking for duplicates:', dbError);
+      // Continue without duplicate info rather than failing
+    }
+
+    return res.json({
+      success: true,
+      places: places
+    });
+
+  } catch (error) {
+    console.error('Error in text search:', error);
+    return res.status(500).json({
+      error: 'Internal server error during search',
+      message: error.message
+    });
+  }
+};

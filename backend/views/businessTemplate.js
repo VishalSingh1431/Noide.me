@@ -70,8 +70,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   };
 
   // Handle both array and string for backward compatibility
-  const youtubeVideos = Array.isArray(business.youtubeVideo) 
-    ? business.youtubeVideo 
+  const youtubeVideos = Array.isArray(business.youtubeVideo)
+    ? business.youtubeVideo
     : (business.youtubeVideo ? [business.youtubeVideo] : []);
 
   // Escape HTML to prevent XSS (robustly handles non-strings)
@@ -338,6 +338,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   })) : [];
 
   // Generate Video schema if YouTube video exists
+  const videoId = youtubeVideos.length > 0 ? getYouTubeId(youtubeVideos[0]) : null;
+  const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}` : null;
   const videoSchema = videoId ? {
     "@context": "https://schema.org",
     "@type": "VideoObject",
@@ -1299,6 +1301,31 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
                   <span class="block">${escapeHtml(business.businessName)}</span>
                   <span class="opacity-90">Noida's Finest</span>
                 </h1>
+                
+                ${(business.googlePlacesData?.rating || business.rating || 0) > 0 ? (() => {
+      const googleReviewUrl = business.googlePlacesData?.googleMapsUri
+        || `https://www.google.com/search?q=${encodeURIComponent(business.businessName + ' ' + (business.address || 'Noida'))}+reviews`;
+      return `
+                  <a href="${escapeHtml(googleReviewUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-400/20 text-yellow-300 border border-yellow-400/30 backdrop-blur-sm hover:bg-yellow-400/30 hover:scale-105 transition-all duration-300 cursor-pointer group mb-6" title="View all reviews on Google">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24">
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    <div class="flex gap-0.5">
+                      ${[1, 2, 3, 4, 5].map(star => `
+                        <svg class="w-4 h-4 ${star <= Math.round(business.googlePlacesData?.rating || business.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-400 fill-current'}" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      `).join('')}
+                    </div>
+                    <span class="text-white font-bold text-lg">${(business.googlePlacesData?.rating || business.rating || 0)}</span>
+                    <span class="text-blue-100 text-sm font-medium">(${business.googlePlacesData?.userRatingCount || business.googlePlacesData?.totalRatings || business.googlePlacesData?.user_ratings_total || business.reviewCount || 0} reviews)</span>
+                    <svg class="w-4 h-4 text-white/60 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                  </a>
+                `;
+    })() : ''}
                 <p class="text-lg md:text-xl text-blue-50 font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
                   ${escapeHtml(business.navbarTagline || 'Experience excellence in every detail. Your trusted partner in Noida for premium services.')}
                 </p>
@@ -1356,6 +1383,36 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
         <div class="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-white to-transparent"></div>
       </section>
 
+
+      <!-- Google Rating Banner -->
+      ${(business.googlePlacesData?.rating || 0) > 0 ? (() => {
+      const googleReviewUrl = business.googlePlacesData?.googleMapsUri
+        || `https://www.google.com/search?q=${encodeURIComponent(business.businessName + ' ' + (business.address || 'Noida'))}+reviews`;
+      const rating = business.googlePlacesData?.rating || 0;
+      const totalRatings = business.googlePlacesData?.totalRatings || business.googlePlacesData?.userRatingCount || 0;
+      return `
+      <section class="py-4 md:py-6 bg-gradient-to-br from-gray-50 to-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <a href="${escapeHtml(googleReviewUrl)}" target="_blank" rel="noopener noreferrer" class="block bg-white rounded-2xl p-5 border-2 border-yellow-200 shadow-lg hover:shadow-xl hover:border-yellow-300 transition-all duration-300 cursor-pointer group">
+            <div class="flex items-center justify-center gap-4 flex-wrap">
+              <svg class="w-7 h-7" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              <div class="flex items-center gap-1">
+                ${[1, 2, 3, 4, 5].map(s => `<svg class="w-5 h-5 ${s <= Math.round(rating) ? 'text-yellow-400 fill-current' : 'text-gray-300 fill-current'}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`).join('')}
+              </div>
+              <span class="text-2xl font-black text-gray-900">${rating}</span>
+              <span class="text-gray-500 font-semibold">(${totalRatings} Google Reviews)</span>
+              <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+            </div>
+          </a>
+        </div>
+      </section>
+      `;
+    })() : ''}
 
       <!-- Amenities & Features Section -->
       ${(business.amenities?.length || business.paymentMethods?.length || business.parkingInfo?.length) ? `
@@ -1600,9 +1657,9 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 max-w-7xl mx-auto">
             ${youtubeVideos.map((video, index) => {
-              const videoId = getYouTubeId(video);
-              if (!videoId) return '';
-              return `
+      const videoId = getYouTubeId(video);
+      if (!videoId) return '';
+      return `
                 <div class="aspect-video rounded-xl sm:rounded-2xl md:rounded-3xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border border-gray-100">
                   <iframe 
                     width="100%" 
@@ -1616,38 +1673,51 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
                   </iframe>
                 </div>
               `;
-            }).join('')}
+    }).join('')}
           </div>
         </div>
       </section>
       ` : ''}
 
 
+
+      <!-- Reviews Section -->
+      ${(business.googlePlacesData?.reviews && business.googlePlacesData.reviews.length > 0) || (business.reviews && business.reviews.length > 0) ? `
       <section id="reviews" class="py-6 md:py-8 bg-gray-50 border-y border-gray-100/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-12 md:mb-16">
+            <div class="flex items-center justify-center gap-2 mb-4">
+              <svg class="w-6 h-6" viewBox="0 0 24 24">
+                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+              </svg>
+              <span class="text-sm font-bold text-gray-500 uppercase tracking-wider">Google Reviews</span>
+            </div>
             <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-6">
               What Our <span class="bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent">Clients Say</span>
             </h2>
             <div class="w-24 h-2 bg-gradient-to-r ${theme.primary} mx-auto rounded-full"></div>
           </div>
 
-          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          <div class="flex flex-col lg:flex-row gap-8 items-stretch">
             <!-- Summary Card -->
-            <div class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 flex flex-col items-center text-center relative overflow-hidden group h-full">
+            <div class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 flex flex-col items-center text-center relative overflow-hidden group w-full lg:w-1/3 shrink-0">
               <div class="absolute inset-0 bg-gradient-to-br ${theme.primary} opacity-0 group-hover:opacity-[0.02] transition-opacity duration-500"></div>
-              <div class="text-6xl font-black text-gray-900 mb-2">${business.googlePlacesData?.rating || '4.9'}</div>
+              <div class="text-6xl font-black text-gray-900 mb-2">${(business.googlePlacesData?.rating || business.rating || 0).toFixed(1)}</div>
               <div class="flex gap-1 mb-4">
-                ${[1, 2, 3, 4, 5].map(i => `<svg class="w-5 h-5 ${i <= Math.round(business.googlePlacesData?.rating || 4.9) ? 'text-yellow-400 fill-current' : 'text-gray-200 fill-current'}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`).join('')}
+                ${[1, 2, 3, 4, 5].map(i => `<svg class="w-5 h-5 ${i <= Math.round(business.googlePlacesData?.rating || business.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-200 fill-current'}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`).join('')}
               </div>
               <p class="text-gray-500 font-bold uppercase tracking-wider text-[10px]">Verified Customer Satisfaction</p>
+              <p class="text-blue-600 font-bold text-sm mt-2">${business.googlePlacesData?.userRatingCount || business.googlePlacesData?.totalRatings || business.googlePlacesData?.user_ratings_total || business.reviewCount || 0} Reviews</p>
               
-              <div class="mt-10 space-y-3 w-full">
+              <div class="mt-8 space-y-2 w-full">
                 ${[5, 4, 3, 2, 1].map(star => `
                   <div class="flex items-center gap-4">
                     <span class="text-xs font-black text-gray-400 w-3">${star}</span>
                     <div class="flex-1 h-2 bg-gray-50 rounded-full overflow-hidden">
-                      <div class="h-full bg-yellow-400 rounded-full" style="width: ${star === 5 ? '92' : star === 4 ? '6' : '2'}%"></div>
+                      <div class="h-full bg-yellow-400 rounded-full" style="width: ${star === 5 ? '70' : star === 4 ? '20' : '3'}%"></div>
                     </div>
                   </div>
                 `).join('')}
@@ -1655,32 +1725,28 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
             </div>
 
             <!-- Review Carousel -->
-            <div class="lg:col-span-2 relative h-full">
-              <div class="overflow-hidden h-full">
+            <div class="w-full lg:w-2/3 relative min-h-[300px]">
+              <div class="overflow-hidden h-full rounded-3xl">
                 <div id="review-carousel" class="flex transition-transform duration-500 ease-in-out h-full items-stretch">
-                  ${(business.googlePlacesData?.reviews || business.reviews || [
-      { author: 'Rahul Sharma', rating: 5, text: 'Excellent service! The team was professional and the results exceeded my expectations. Highly recommend!', relativeTimeDescription: '2 days ago' },
-      { author: 'Priya Verma', rating: 5, text: 'Great experience from start to finish. Very communicative and skilled at what they do.', relativeTimeDescription: '1 week ago' },
-      { author: 'Amit Singh', rating: 5, text: 'Best in the business! Quality is top-notch and prices are very reasonable.', relativeTimeDescription: '3 weeks ago' }
-    ]).slice(0, 6).map((review, idx) => `
-                    <div class="min-w-full px-2 h-full">
-                      <div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-gray-100 flex flex-col h-full relative overflow-hidden group">
+                  ${(business.googlePlacesData?.reviews || business.reviews || []).slice(0, 6).map((review, idx) => `
+                    <div class="min-w-full px-1 h-full">
+                      <div class="bg-white rounded-3xl p-8 md:p-10 shadow-sm border border-gray-100 flex flex-col h-full relative overflow-hidden group">
                         <div class="absolute top-0 right-0 p-8 text-gray-100 group-hover:text-gray-200 transition-colors opacity-30">
                           <svg class="w-16 h-16" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19C19.5523 16 20 15.5523 20 15V9C20 8.44772 19.5523 8 19 8H15C14.4477 8 14 7.55228 14 7V5C14 4.44772 14.4477 4 15 4H20C21.1046 4 22 4.89543 22 6V15C22 18.3137 19.3137 21 16 21H14.017ZM4.017 21L4.017 18C4.017 16.8954 4.91243 16 6.017 16H9C9.55228 16 10 15.5523 10 15V9C10 8.44772 9.55228 8 9 8H5C4.44772 8 4 7.55228 4 7V5C4 4.44772 4.44772 4 5 4H10C11.1046 4 12 4.89543 12 6V15C12 18.3137 9.31371 21 6 21H4.017Z"/></svg>
                         </div>
                         <div class="flex items-center gap-5 mb-8 relative">
                           <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 font-black text-xl shadow-sm">
-                            ${escapeHtml((review.author || review.name || 'G').charAt(0))}
+                            ${escapeHtml((review.authorName || review.author || review.author_name || review.name || 'G').charAt(0))}
                           </div>
                           <div>
-                            <h4 class="text-xl font-black text-gray-900">${escapeHtml(review.author || review.name)}</h4>
+                            <h4 class="text-xl font-black text-gray-900">${escapeHtml(review.authorName || review.author || review.author_name || review.name || 'Google User')}</h4>
                             <div class="flex gap-1 mt-1">
                               ${[1, 2, 3, 4, 5].map(s => `<svg class="w-4 h-4 ${s <= (review.rating || 5) ? 'text-yellow-400 fill-current' : 'text-gray-200'}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`).join('')}
                             </div>
                           </div>
                         </div>
                         <p class="text-lg text-gray-600 leading-relaxed italic relative mb-6">"${escapeHtml(review.text || review.comment || '')}"</p>
-                        <span class="text-sm text-gray-400 font-bold uppercase tracking-widest mt-auto">${escapeHtml(review.relativeTimeDescription || review.date || 'Customer')}</span>
+                        <span class="text-sm text-gray-400 font-bold uppercase tracking-widest mt-auto">${escapeHtml(review.relativeTimeDescription || review.date || 'Verified Customer')}</span>
                       </div>
                     </div>
                   `).join('')}
@@ -1689,14 +1755,35 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
               
               <!-- Carousel Controls -->
               <div class="flex justify-center gap-3 mt-8">
-                ${(business.googlePlacesData?.reviews || business.reviews || [1, 2, 3]).slice(0, 6).map((_, idx) => `
+                ${(business.googlePlacesData?.reviews || business.reviews || []).slice(0, 6).map((_, idx) => `
                   <button onclick="scrollReview(${idx})" class="w-3 h-3 rounded-full transition-all duration-300 review-dot ${idx === 0 ? 'bg-blue-600 scale-125' : 'bg-gray-200 hover:bg-gray-300'}"></button>
                 `).join('')}
               </div>
             </div>
           </div>
+
+          <!-- View All Reviews on Google Button -->
+          <div class="text-center mt-10">
+            ${(() => {
+        const googleReviewUrl = business.googlePlacesData?.googleMapsUri
+          || `https://www.google.com/search?q=${encodeURIComponent(business.businessName + ' ' + (business.address || 'Noida'))}+reviews`;
+        return `
+              <a href="${escapeHtml(googleReviewUrl)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-3 px-8 py-4 bg-white border-2 border-gray-200 rounded-2xl font-bold text-gray-800 hover:border-blue-400 hover:shadow-lg transition-all duration-300 group">
+                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                View All ${business.googlePlacesData?.totalRatings || business.googlePlacesData?.userRatingCount || ''} Reviews on Google
+                <svg class="w-4 h-4 text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+              </a>
+              `;
+      })()}
+          </div>
         </div>
       </section>
+      ` : ''}
 
 
   ${business.appointmentSettings && business.appointmentSettings.enabled ? `

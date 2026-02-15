@@ -89,7 +89,7 @@ export const testCreateCollege = async (req, res) => {
       services: [],
       specialOffers: [],
       businessHours: {},
-      appointmentSettings: {},
+      appointmentSettings: { contactMethod: 'whatsapp', availableSlots: [] },
       theme: 'modern',
       socialLinks: {
         instagram: '',
@@ -97,8 +97,8 @@ export const testCreateCollege = async (req, res) => {
         website: '',
       },
       slug: `test-college-${Date.now()}`,
-      subdomainUrl: `https://test-college-${Date.now()}.noida.me`,
-      subdirectoryUrl: null,
+      subdomainUrl: `https://${testBusinessData.slug}.noida.me`,
+      subdirectoryUrl: `https://noida.me/${testBusinessData.slug}`,
       status: 'pending',
       userId: null,
     };
@@ -213,6 +213,8 @@ export const createBusiness = async (req, res) => {
   // Declare variables outside try block for better error logging
   let safeCategory = 'Services';
   let finalCategory = 'Services';
+  let subdomainUrl = '';
+  let subdirectoryUrl = '';
 
   try {
     const {
@@ -499,6 +501,9 @@ export const createBusiness = async (req, res) => {
     } catch (error) {
       appointmentSettingsData = {};
     }
+    // Ensure default structure
+    if (!appointmentSettingsData.availableSlots) appointmentSettingsData.availableSlots = [];
+    if (!appointmentSettingsData.contactMethod) appointmentSettingsData.contactMethod = 'whatsapp';
 
     // Parse YouTube videos
     let youtubeVideoData = [];
@@ -510,24 +515,10 @@ export const createBusiness = async (req, res) => {
       youtubeVideoData = [];
     }
 
-    // Generate subdomain URL only
-    // Default to production unless explicitly in development mode
-    const isDevelopment = process.env.NODE_ENV === 'development';
+    // Always use production domain (noida.me)
     const baseDomain = process.env.BASE_DOMAIN || 'noida.me';
-
-    let subdomainUrl;
-    let subdirectoryUrl;
-
-    if (isDevelopment) {
-      // For localhost: use http://subdomain.localhost:PORT
-      const port = process.env.PORT || 50002;
-      subdomainUrl = `http://${slug}.localhost:${port}`;
-      subdirectoryUrl = `http://localhost:${port}/${slug}`;
-    } else {
-      // For production: use https://subdomain.domain.com
-      subdomainUrl = `https://${slug}.${baseDomain}`;
-      subdirectoryUrl = `https://${baseDomain}/${slug}`;
-    }
+    subdomainUrl = `https://${slug}.${baseDomain}`;
+    subdirectoryUrl = `https://${baseDomain}/${slug}`;
 
     // FINAL SAFETY CHECK - ensure category is ALWAYS valid before database
     // validCategories already defined above at line 256, reuse it
@@ -569,7 +560,7 @@ export const createBusiness = async (req, res) => {
       whatsapp: whatsappNumber || '',
       description,
       logoUrl,
-      imagesUrl,
+      imagesUrl: req.body.imagesUrl ? (Array.isArray(req.body.imagesUrl) ? req.body.imagesUrl : [req.body.imagesUrl]) : imagesUrl,
       youtubeVideo: youtubeVideoData,
       navbarTagline: navbarTagline || '',
       footerDescription: footerDescription || '',
@@ -588,6 +579,7 @@ export const createBusiness = async (req, res) => {
       subdirectoryUrl,
       status: 'pending', // Require admin approval
       userId,
+      googlePlacesData: req.body.googlePlacesData ? JSON.parse(req.body.googlePlacesData) : null,
     });
 
     // Initialize analytics for the new business
@@ -859,6 +851,9 @@ export const updateBusiness = async (req, res) => {
     } catch (error) {
       appointmentSettingsData = existingBusiness.appointmentSettings || {};
     }
+    // Ensure default structure
+    if (!appointmentSettingsData.availableSlots) appointmentSettingsData.availableSlots = [];
+    if (!appointmentSettingsData.contactMethod) appointmentSettingsData.contactMethod = 'whatsapp';
 
     // Parse YouTube videos
     let youtubeVideoData = existingBusiness.youtubeVideo || [];
@@ -1028,6 +1023,12 @@ export const getBusinessBySlug = async (req, res) => {
     const apiBaseUrl = NODE_ENV === 'production'
       ? `https://${process.env.BASE_DOMAIN || 'noida.me'}/api`
       : `http://localhost:${PORT}/api`;
+
+    console.log(`[getBusinessBySlug] Generating HTML for ${slug}`);
+    console.log(`[getBusinessBySlug] googlePlacesData:`, business.googlePlacesData ? 'Present' : 'Missing');
+    if (business.googlePlacesData) {
+      console.log(`[getBusinessBySlug] Rating:`, business.googlePlacesData.rating);
+    }
 
     const html = generateBusinessHTML(business, apiBaseUrl);
     res.setHeader('Content-Type', 'text/html');

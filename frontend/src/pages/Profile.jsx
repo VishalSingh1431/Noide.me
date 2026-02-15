@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Calendar, Edit2, Save, X, Building2, ExternalLink, Plus, Shield, CheckCircle, XCircle, Clock, Users, FileText, Settings, BarChart3, AlertCircle, Trash2, Eye, BadgeCheck, Sparkles, QrCode } from 'lucide-react';
+import { User, Mail, Calendar, Edit2, Save, X, Building2, ExternalLink, Plus, Shield, CheckCircle, XCircle, Clock, Users, FileText, Settings, BarChart3, AlertCircle, Trash2, Eye, BadgeCheck, Sparkles, QrCode, RefreshCw, Upload } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { authAPI, businessAPI } from '../config/api';
 
@@ -14,6 +14,7 @@ const Profile = () => {
   const [userRole, setUserRole] = useState('normal');
   const [adminStats, setAdminStats] = useState(null);
   const [pendingApprovals, setPendingApprovals] = useState([]);
+  const [selectedApprovals, setSelectedApprovals] = useState([]);
   const [pendingEditApprovals, setPendingEditApprovals] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [loadingAdmin, setLoadingAdmin] = useState(false);
@@ -28,6 +29,31 @@ const Profile = () => {
     phone: '',
     bio: '',
   });
+  const [refreshing, setRefreshing] = useState(false);
+
+  const refetchUserData = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      const response = await authAPI.getCurrentUser();
+      const userData = response.user;
+      setUser(userData);
+      setUserRole(userData.role || 'normal');
+      setFormData({
+        name: userData.name || '',
+        email: userData.email || '',
+        phone: userData.phone || '',
+        bio: userData.bio || '',
+      });
+      try {
+        localStorage.setItem('user', JSON.stringify(userData));
+        window.dispatchEvent(new Event('authChange'));
+      } catch (e) { }
+    } catch (error) {
+      console.error('Error refreshing user:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
     // Check if user is logged in
@@ -60,21 +86,23 @@ const Profile = () => {
           bio: userData.bio || '',
         });
 
-        // Update localStorage with fresh data
+        // Update localStorage with fresh data so Navbar and other components see latest role
         try {
           localStorage.setItem('user', JSON.stringify(userData));
+          window.dispatchEvent(new Event('authChange'));
         } catch (storageError) {
           console.warn('Failed to save user to localStorage:', storageError);
           // Continue anyway - user data is still in state
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        // Fallback to localStorage if API fails
+        // Fallback to localStorage if API fails (e.g. on prod after role was updated in DB)
         const userData = localStorage.getItem('user');
         if (userData) {
           try {
             const userObj = JSON.parse(userData);
             setUser(userObj);
+            setUserRole(userObj.role || 'normal');
             setFormData({
               name: userObj.name || '',
               email: userObj.email || '',
@@ -283,7 +311,16 @@ const Profile = () => {
                     )}
                   </div>
                 </div>
-                <div className="flex-shrink-0 w-full md:w-auto">
+                <div className="flex-shrink-0 w-full md:w-auto flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={refetchUserData}
+                    disabled={refreshing}
+                    className="p-2 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-all disabled:opacity-50"
+                    title="Refresh profile (get latest role from server)"
+                  >
+                    <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+                  </button>
                   {isEditing ? (
                     <div className="flex gap-2 w-full md:w-auto">
                       <button
@@ -417,170 +454,9 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* My Businesses Section */}
-          <div className="mt-8 bg-white rounded-2xl shadow-xl overflow-hidden">
-            <div className="px-6 md:px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <Building2 className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900">My Websites</h2>
-                    <p className="text-sm text-gray-600 mt-0.5">Manage and edit your business websites</p>
-                  </div>
-                </div>
-                <Link
-                  to="/create-website"
-                  className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl"
-                >
-                  <Plus className="w-5 h-5" />
-                  Create New
-                </Link>
-              </div>
-              {businesses.length > 0 && (
-                <div className="bg-blue-100 border border-blue-300 rounded-lg p-4 flex items-start gap-3">
-                  <Edit2 className="w-5 h-5 text-blue-700 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-blue-900">Quick Edit:</p>
-                    <p className="text-sm text-blue-800 mt-1">Click the <strong>"✏️ Edit Website"</strong> button on any business card below to edit your website details, change theme, update services, and more!</p>
-                  </div>
-                </div>
-              )}
-              {!loadingBusinesses && businesses.length === 0 && (
-                <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 flex items-start gap-3">
-                  <Building2 className="w-5 h-5 text-yellow-700 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-semibold text-yellow-900">No Websites Found</p>
-                    <p className="text-sm text-yellow-800 mt-1">If you've created websites before, they might not be linked to your account. Please create a new website or contact support.</p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="p-6 md:p-8">
-              {loadingBusinesses ? (
-                <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Loading your websites...</p>
-                </div>
-              ) : businesses.length === 0 ? (
-                <div className="text-center py-12">
-                  <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600 text-lg mb-4">You haven't created any websites yet.</p>
-                  <Link
-                    to="/create-website"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg"
-                  >
-                    <Plus className="w-5 h-5" />
-                    Create Your First Website
-                  </Link>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  {businesses.map((business) => (
-                    <div key={business.id} className="border-2 border-blue-200 rounded-xl p-5 md:p-6 hover:border-blue-400 hover:shadow-xl transition-all bg-white flex flex-col">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 truncate">{business.businessName}</h3>
-                          <p className="text-sm text-gray-500 truncate">{business.category}</p>
-                        </div>
-                        {business.logoUrl && (
-                          <img src={business.logoUrl} alt={business.businessName} className="w-12 h-12 md:w-14 md:h-14 rounded-lg object-cover border-2 border-gray-200 flex-shrink-0 ml-2" />
-                        )}
-                      </div>
-                      <div className="space-y-2 mb-4 flex-1">
-                        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
-                          <span className="font-medium">Status:</span>
-                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${business.status === 'approved' ? 'bg-green-100 text-green-700' :
-                              business.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-red-100 text-red-700'
-                            }`}>
-                            {business.status}
-                          </span>
-                          {business.editApprovalStatus === 'pending' && (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
-                              Edit Pending
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                          <span className="font-medium">Theme:</span>
-                          <span className="capitalize px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">{business.theme || 'modern'}</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-3 mt-auto">
-                        <div className="flex flex-col sm:flex-row gap-2 w-full">
-                          <Link
-                            to={`/edit-website/${business.id}`}
-                            className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-2 font-bold text-sm md:text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-                            title="Edit this website - Change theme, update details, modify services"
-                          >
-                            <Edit2 className="w-5 h-5 md:w-6 md:h-6" />
-                            <span>✏️ Edit Website</span>
-                          </Link>
-                          <Link
-                            to={`/analytics/${business.id}`}
-                            className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 font-bold text-sm md:text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-                            title="View analytics - Visitors, clicks, and engagement metrics"
-                          >
-                            <BarChart3 className="w-5 h-5 md:w-6 md:h-6" />
-                            <span>📊 Analytics</span>
-                          </Link>
-                        </div>
-                        <div className="flex gap-2">
-                          <a
-                            href={business.subdomainUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1 px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-all duration-200 flex items-center justify-center gap-2 font-medium text-xs md:text-sm border border-indigo-300"
-                            title="View your website via subdomain"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                            View Website
-                          </a>
-                        </div>
-                        <Link
-                          to={`/qrcode/${business.id}`}
-                          className="w-full px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 flex items-center justify-center gap-2 font-medium text-xs md:text-sm shadow-md hover:shadow-lg mt-2"
-                          title="Generate QR code for your website"
-                        >
-                          <QrCode className="w-4 h-4" />
-                          QR Code
-                        </Link>
-                        {!business.isPremium && business.status === 'approved' && (
-                          <button
-                            onClick={async () => {
-                              if (window.confirm('Upgrade to Premium?\n\nBenefits:\n✓ Blue verified badge\n✓ Higher ranking in directory\n✓ Increased visibility\n\nProceed with upgrade?')) {
-                                try {
-                                  await businessAPI.upgradeToPremium(business.id);
-                                  // Refresh businesses list
-                                  const res = await businessAPI.getUserBusinesses();
-                                  setBusinesses(res.businesses || []);
-                                  alert('🎉 Congratulations! Your business is now Premium with a verified badge!');
-                                } catch (error) {
-                                  alert('Error: ' + error.message);
-                                }
-                              }
-                            }}
-                            className="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 text-white rounded-xl hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 transition-all duration-200 flex items-center justify-center gap-2 font-bold text-sm md:text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02] mt-2"
-                            title="Upgrade to Premium - Get verified badge and higher ranking"
-                          >
-                            <Sparkles className="w-5 h-5 md:w-6 md:h-6" />
-                            <span>⭐ Upgrade to Premium</span>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
           {/* Admin Panel Section (Only for main_admin) */}
           {userRole === 'main_admin' && (
-            <div className="mt-8 bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="mb-8 bg-white rounded-2xl shadow-xl overflow-hidden">
               <div className="px-6 md:px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-purple-50 via-pink-50 to-rose-50">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
@@ -597,8 +473,8 @@ const Profile = () => {
                   <button
                     onClick={() => setActiveTab('websites')}
                     className={`px-4 md:px-6 py-3 font-semibold transition-all whitespace-nowrap ${activeTab === 'websites'
-                        ? 'text-purple-600 border-b-2 border-purple-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                      ? 'text-purple-600 border-b-2 border-purple-600'
+                      : 'text-gray-500 hover:text-gray-700'
                       }`}
                   >
                     My Websites
@@ -606,8 +482,8 @@ const Profile = () => {
                   <button
                     onClick={() => setActiveTab('admin')}
                     className={`px-4 md:px-6 py-3 font-semibold transition-all relative whitespace-nowrap ${activeTab === 'admin'
-                        ? 'text-purple-600 border-b-2 border-purple-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                      ? 'text-purple-600 border-b-2 border-purple-600'
+                      : 'text-gray-500 hover:text-gray-700'
                       }`}
                   >
                     Admin Dashboard
@@ -634,8 +510,8 @@ const Profile = () => {
                       }
                     }}
                     className={`px-4 md:px-6 py-3 font-semibold transition-all whitespace-nowrap ${activeTab === 'all-businesses'
-                        ? 'text-purple-600 border-b-2 border-purple-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                      ? 'text-purple-600 border-b-2 border-purple-600'
+                      : 'text-gray-500 hover:text-gray-700'
                       }`}
                   >
                     All Websites
@@ -657,8 +533,8 @@ const Profile = () => {
                       }
                     }}
                     className={`px-4 md:px-6 py-3 font-semibold transition-all whitespace-nowrap ${activeTab === 'analytics'
-                        ? 'text-purple-600 border-b-2 border-purple-600'
-                        : 'text-gray-500 hover:text-gray-700'
+                      ? 'text-purple-600 border-b-2 border-purple-600'
+                      : 'text-gray-500 hover:text-gray-700'
                       }`}
                   >
                     📊 All Analytics
@@ -675,6 +551,25 @@ const Profile = () => {
                     </div>
                   ) : (
                     <div className="space-y-6 md:space-y-8">
+                      {/* Bulk Import Action */}
+                      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl p-6 text-white shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div>
+                          <h3 className="text-xl font-bold flex items-center gap-2">
+                            <Upload className="w-6 h-6" />
+                            Bulk Business Import
+                          </h3>
+                          <p className="text-blue-100 mt-1">
+                            Search Google Maps and import multiple businesses at once to populate the directory.
+                          </p>
+                        </div>
+                        <Link
+                          to="/admin/bulk-import"
+                          className="px-6 py-3 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-all shadow-md whitespace-nowrap"
+                        >
+                          Go to Bulk Import
+                        </Link>
+                      </div>
+
                       {/* Admin Stats */}
                       {adminStats && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
@@ -730,61 +625,147 @@ const Profile = () => {
                             <Clock className="w-6 h-6 text-yellow-700 flex-shrink-0" />
                             <h3 className="text-lg md:text-xl font-bold text-gray-900">Pending Website Approvals</h3>
                             {pendingApprovals.length > 0 && (
-                              <span className="px-3 py-1 bg-yellow-600 text-white rounded-full text-sm font-bold">
-                                {pendingApprovals.length}
-                              </span>
+                              <label className="flex items-center gap-2 ml-4 cursor-pointer select-none bg-white px-3 py-1 rounded-full border border-yellow-300">
+                                <input
+                                  type="checkbox"
+                                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                  checked={selectedApprovals.length === pendingApprovals.length && pendingApprovals.length > 0}
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setSelectedApprovals(pendingApprovals.map(b => b.id));
+                                    } else {
+                                      setSelectedApprovals([]);
+                                    }
+                                  }}
+                                />
+                                <span className="text-sm font-bold text-yellow-800">Select All ({pendingApprovals.length})</span>
+                              </label>
                             )}
                           </div>
+
+                          {/* Bulk Action Buttons */}
+                          {selectedApprovals.length > 0 && (
+                            <div className="flex gap-2 animate-fade-in w-full sm:w-auto mt-2 sm:mt-0">
+                              <button
+                                onClick={async () => {
+                                  if (!window.confirm(`Approve ${selectedApprovals.length} websites?`)) return;
+                                  try {
+                                    // Optimistic UI update
+                                    const approvedIds = [...selectedApprovals];
+                                    setPendingApprovals(pendingApprovals.filter(b => !approvedIds.includes(b.id)));
+                                    setSelectedApprovals([]);
+
+                                    // Process in parallel
+                                    await Promise.all(approvedIds.map(id => businessAPI.approveWebsite(id)));
+
+                                    // Refresh stats
+                                    const statsRes = await businessAPI.getAdminStats();
+                                    setAdminStats(statsRes.stats);
+                                    alert('Selected websites approved!');
+                                  } catch (error) {
+                                    alert('Error during bulk approval: ' + error.message);
+                                    const approvalsRes = await businessAPI.getPendingApprovals();
+                                    setPendingApprovals(approvalsRes.businesses || []);
+                                  }
+                                }}
+                                className="flex-1 sm:flex-none px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all flex items-center justify-center gap-2 font-bold text-sm shadow-md whitespace-nowrap"
+                              >
+                                <CheckCircle className="w-4 h-4" />
+                                Approve ({selectedApprovals.length})
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  const reason = prompt(`Enter rejection reason for ${selectedApprovals.length} websites (optional):`);
+                                  if (reason === null) return;
+
+                                  try {
+                                    const rejectedIds = [...selectedApprovals];
+                                    setPendingApprovals(pendingApprovals.filter(b => !rejectedIds.includes(b.id)));
+                                    setSelectedApprovals([]);
+
+                                    await Promise.all(rejectedIds.map(id => businessAPI.rejectWebsite(id, reason)));
+
+                                    const statsRes = await businessAPI.getAdminStats();
+                                    setAdminStats(statsRes.stats);
+                                    alert('Selected websites rejected.');
+                                  } catch (error) {
+                                    alert('Error during bulk rejection: ' + error.message);
+                                    const approvalsRes = await businessAPI.getPendingApprovals();
+                                    setPendingApprovals(approvalsRes.businesses || []);
+                                  }
+                                }}
+                                className="flex-1 sm:flex-none px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all flex items-center justify-center gap-2 font-bold text-sm shadow-md whitespace-nowrap"
+                              >
+                                <XCircle className="w-4 h-4" />
+                                Reject ({selectedApprovals.length})
+                              </button>
+                            </div>
+                          )}
                         </div>
                         {pendingApprovals.length === 0 ? (
                           <p className="text-gray-600 text-center py-4">No pending website approvals</p>
                         ) : (
                           <div className="space-y-4">
                             {pendingApprovals.map((business) => (
-                              <div key={business.id} className="bg-white rounded-lg p-4 md:p-5 border-2 border-yellow-300">
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                  <div className="flex-1 min-w-0">
-                                    <h4 className="font-bold text-gray-900 mb-1 truncate">{business.businessName}</h4>
-                                    <p className="text-sm text-gray-600 mb-2 truncate">{business.category} • {business.email}</p>
-                                    <p className="text-xs text-gray-500">Created: {new Date(business.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                              <div key={business.id} className={`bg-white rounded-lg p-4 md:p-5 border-2 transition-colors ${selectedApprovals.includes(business.id) ? 'border-blue-500 bg-blue-50' : 'border-yellow-300'}`}>
+                                <div className="flex gap-4">
+                                  <div className="pt-1">
+                                    <input
+                                      type="checkbox"
+                                      className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                      checked={selectedApprovals.includes(business.id)}
+                                      onChange={(e) => {
+                                        if (e.target.checked) {
+                                          setSelectedApprovals([...selectedApprovals, business.id]);
+                                        } else {
+                                          setSelectedApprovals(selectedApprovals.filter(id => id !== business.id));
+                                        }
+                                      }}
+                                    />
                                   </div>
-                                  <div className="flex gap-2 w-full sm:w-auto flex-shrink-0">
-                                    <button
-                                      onClick={async () => {
-                                        try {
-                                          await businessAPI.approveWebsite(business.id);
-                                          setPendingApprovals(pendingApprovals.filter(b => b.id !== business.id));
-                                          // Refresh stats
-                                          const statsRes = await businessAPI.getAdminStats();
-                                          setAdminStats(statsRes.stats);
-                                          alert('Website approved! User has been promoted to Content Admin.');
-                                        } catch (error) {
-                                          alert('Error: ' + error.message);
-                                        }
-                                      }}
-                                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all flex items-center gap-2 font-medium text-sm"
-                                    >
-                                      <CheckCircle className="w-4 h-4" />
-                                      Approve
-                                    </button>
-                                    <button
-                                      onClick={async () => {
-                                        const reason = prompt('Enter rejection reason (optional):');
-                                        try {
-                                          await businessAPI.rejectWebsite(business.id, reason);
-                                          setPendingApprovals(pendingApprovals.filter(b => b.id !== business.id));
-                                          const statsRes = await businessAPI.getAdminStats();
-                                          setAdminStats(statsRes.stats);
-                                          alert('Website rejected.');
-                                        } catch (error) {
-                                          alert('Error: ' + error.message);
-                                        }
-                                      }}
-                                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all flex items-center gap-2 font-medium text-sm"
-                                    >
-                                      <XCircle className="w-4 h-4" />
-                                      Reject
-                                    </button>
+                                  <div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <div className="flex-1 min-w-0">
+                                      <h4 className="font-bold text-gray-900 mb-1 truncate">{business.businessName}</h4>
+                                      <p className="text-sm text-gray-600 mb-2 truncate">{business.category} • {business.email}</p>
+                                      <p className="text-xs text-gray-500">Created: {new Date(business.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                                    </div>
+                                    <div className="flex gap-2 w-full sm:w-auto flex-shrink-0">
+                                      <button
+                                        onClick={async () => {
+                                          try {
+                                            await businessAPI.approveWebsite(business.id);
+                                            setPendingApprovals(pendingApprovals.filter(b => b.id !== business.id));
+                                            const statsRes = await businessAPI.getAdminStats();
+                                            setAdminStats(statsRes.stats);
+                                            alert('Website approved! User has been promoted to Content Admin.');
+                                          } catch (error) {
+                                            alert('Error: ' + error.message);
+                                          }
+                                        }}
+                                        className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all flex items-center gap-2 font-medium text-sm"
+                                      >
+                                        <CheckCircle className="w-4 h-4" />
+                                        Approve
+                                      </button>
+                                      <button
+                                        onClick={async () => {
+                                          const reason = prompt('Enter rejection reason (optional):');
+                                          try {
+                                            await businessAPI.rejectWebsite(business.id, reason);
+                                            setPendingApprovals(pendingApprovals.filter(b => b.id !== business.id));
+                                            const statsRes = await businessAPI.getAdminStats();
+                                            setAdminStats(statsRes.stats);
+                                            alert('Website rejected.');
+                                          } catch (error) {
+                                            alert('Error: ' + error.message);
+                                          }
+                                        }}
+                                        className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all flex items-center gap-2 font-medium text-sm"
+                                      >
+                                        <XCircle className="w-4 h-4" />
+                                        Reject
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -898,8 +879,8 @@ const Profile = () => {
                                       <td className="px-3 md:px-4 py-3 whitespace-nowrap text-sm text-gray-600 truncate max-w-xs">{u.email}</td>
                                       <td className="px-3 md:px-4 py-3 whitespace-nowrap">
                                         <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${u.role === 'main_admin' ? 'bg-purple-100 text-purple-700' :
-                                            u.role === 'content_admin' ? 'bg-blue-100 text-blue-700' :
-                                              'bg-gray-100 text-gray-700'
+                                          u.role === 'content_admin' ? 'bg-blue-100 text-blue-700' :
+                                            'bg-gray-100 text-gray-700'
                                           }`}>
                                           {u.role || 'normal'}
                                         </span>
@@ -938,7 +919,6 @@ const Profile = () => {
                   )}
                 </div>
               )}
-
               {/* All Businesses Tab */}
               {activeTab === 'all-businesses' && (
                 <div className="p-6 md:p-8">
@@ -966,8 +946,8 @@ const Profile = () => {
                                   <p className="text-xs text-gray-500 mb-2">{business.ownerEmail || 'N/A'}</p>
                                   <div className="flex flex-wrap gap-2 mb-3">
                                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${business.status === 'approved' ? 'bg-green-100 text-green-700' :
-                                        business.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                          'bg-red-100 text-red-700'
+                                      business.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                        'bg-red-100 text-red-700'
                                       }`}>
                                       {business.status}
                                     </span>
@@ -1148,6 +1128,169 @@ const Profile = () => {
               )}
             </div>
           )}
+
+          {/* My Businesses Section */}
+          <div className="mt-8 bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div className="px-6 md:px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <Building2 className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900">My Websites</h2>
+                    <p className="text-sm text-gray-600 mt-0.5">Manage and edit your business websites</p>
+                  </div>
+                </div>
+                <Link
+                  to="/create-website"
+                  className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2 font-medium shadow-lg hover:shadow-xl"
+                >
+                  <Plus className="w-5 h-5" />
+                  Create New
+                </Link>
+              </div>
+              {businesses.length > 0 && (
+                <div className="bg-blue-100 border border-blue-300 rounded-lg p-4 flex items-start gap-3">
+                  <Edit2 className="w-5 h-5 text-blue-700 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-blue-900">Quick Edit:</p>
+                    <p className="text-sm text-blue-800 mt-1">Click the <strong>"✏️ Edit Website"</strong> button on any business card below to edit your website details, change theme, update services, and more!</p>
+                  </div>
+                </div>
+              )}
+              {!loadingBusinesses && businesses.length === 0 && (
+                <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 flex items-start gap-3">
+                  <Building2 className="w-5 h-5 text-yellow-700 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-yellow-900">No Websites Found</p>
+                    <p className="text-sm text-yellow-800 mt-1">If you've created websites before, they might not be linked to your account. Please create a new website or contact support.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="p-6 md:p-8">
+              {loadingBusinesses ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                  <p className="mt-4 text-gray-600">Loading your websites...</p>
+                </div>
+              ) : businesses.length === 0 ? (
+                <div className="text-center py-12">
+                  <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600 text-lg mb-4">You haven't created any websites yet.</p>
+                  <Link
+                    to="/create-website"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg"
+                  >
+                    <Plus className="w-5 h-5" />
+                    Create Your First Website
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                  {businesses.map((business) => (
+                    <div key={business.id} className="border-2 border-blue-200 rounded-xl p-5 md:p-6 hover:border-blue-400 hover:shadow-xl transition-all bg-white flex flex-col">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 truncate">{business.businessName}</h3>
+                          <p className="text-sm text-gray-500 truncate">{business.category}</p>
+                        </div>
+                        {business.logoUrl && (
+                          <img src={business.logoUrl} alt={business.businessName} className="w-12 h-12 md:w-14 md:h-14 rounded-lg object-cover border-2 border-gray-200 flex-shrink-0 ml-2" />
+                        )}
+                      </div>
+                      <div className="space-y-2 mb-4 flex-1">
+                        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+                          <span className="font-medium">Status:</span>
+                          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${business.status === 'approved' ? 'bg-green-100 text-green-700' :
+                            business.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>
+                            {business.status}
+                          </span>
+                          {business.editApprovalStatus === 'pending' && (
+                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+                              Edit Pending
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <span className="font-medium">Theme:</span>
+                          <span className="capitalize px-2.5 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">{business.theme || 'modern'}</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-3 mt-auto">
+                        <div className="flex flex-col sm:flex-row gap-2 w-full">
+                          <Link
+                            to={`/edit-website/${business.id}`}
+                            className="flex-1 px-4 py-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 transition-all duration-200 flex items-center justify-center gap-2 font-bold text-sm md:text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                            title="Edit this website - Change theme, update details, modify services"
+                          >
+                            <Edit2 className="w-5 h-5 md:w-6 md:h-6" />
+                            <span>✏️ Edit Website</span>
+                          </Link>
+                          <Link
+                            to={`/analytics/${business.id}`}
+                            className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 flex items-center justify-center gap-2 font-bold text-sm md:text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                            title="View analytics - Visitors, clicks, and engagement metrics"
+                          >
+                            <BarChart3 className="w-5 h-5 md:w-6 md:h-6" />
+                            <span>📊 Analytics</span>
+                          </Link>
+                        </div>
+                        <div className="flex gap-2">
+                          <a
+                            href={business.subdomainUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex-1 px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-all duration-200 flex items-center justify-center gap-2 font-medium text-xs md:text-sm border border-indigo-300"
+                            title="View your website via subdomain"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                            View Website
+                          </a>
+                        </div>
+                        <Link
+                          to={`/qrcode/${business.id}`}
+                          className="w-full px-3 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-200 flex items-center justify-center gap-2 font-medium text-xs md:text-sm shadow-md hover:shadow-lg mt-2"
+                          title="Generate QR code for your website"
+                        >
+                          <QrCode className="w-4 h-4" />
+                          QR Code
+                        </Link>
+                        {!business.isPremium && business.status === 'approved' && (
+                          <button
+                            onClick={async () => {
+                              if (window.confirm('Upgrade to Premium?\n\nBenefits:\n✓ Blue verified badge\n✓ Higher ranking in directory\n✓ Increased visibility\n\nProceed with upgrade?')) {
+                                try {
+                                  await businessAPI.upgradeToPremium(business.id);
+                                  // Refresh businesses list
+                                  const res = await businessAPI.getUserBusinesses();
+                                  setBusinesses(res.businesses || []);
+                                  alert('🎉 Congratulations! Your business is now Premium with a verified badge!');
+                                } catch (error) {
+                                  alert('Error: ' + error.message);
+                                }
+                              }
+                            }}
+                            className="w-full px-4 py-3 bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 text-white rounded-xl hover:from-yellow-600 hover:via-orange-600 hover:to-red-600 transition-all duration-200 flex items-center justify-center gap-2 font-bold text-sm md:text-base shadow-lg hover:shadow-xl transform hover:scale-[1.02] mt-2"
+                            title="Upgrade to Premium - Get verified badge and higher ranking"
+                          >
+                            <Sparkles className="w-5 h-5 md:w-6 md:h-6" />
+                            <span>⭐ Upgrade to Premium</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+
         </div>
       </div>
     </>

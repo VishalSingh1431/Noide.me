@@ -24,7 +24,7 @@ export const getAutocompleteSuggestions = async (input, location = null) => {
     // Check if response is JSON before parsing
     const contentType = response.headers.get('content-type');
     let data;
-    
+
     if (contentType && contentType.includes('application/json')) {
       try {
         data = await response.json();
@@ -68,7 +68,7 @@ export const getPlaceDetails = async (placeId) => {
     // Check if response is JSON before parsing
     const contentType = response.headers.get('content-type');
     let data;
-    
+
     if (contentType && contentType.includes('application/json')) {
       try {
         data = await response.json();
@@ -142,25 +142,68 @@ export const extractBusinessData = (place) => {
  */
 export const formatPhoneNumber = (phoneNumber) => {
   if (!phoneNumber) return '';
-  
+
   // Remove all non-digit characters
   const digits = phoneNumber.replace(/\D/g, '');
-  
+
   // If it's an Indian number starting with +91 or 91, remove country code
   if (digits.startsWith('91') && digits.length === 12) {
     return digits.substring(2);
   }
-  
+
   // If it starts with 0, remove it
   if (digits.startsWith('0') && digits.length === 11) {
     return digits.substring(1);
   }
-  
+
   // Return last 10 digits if longer
   if (digits.length > 10) {
     return digits.substring(digits.length - 10);
   }
-  
+
   return digits;
 };
 
+
+/**
+ * Search places by text query
+ * @param {string} query - Text query (e.g. "Library in Noida")
+ * @param {Object} location - Optional location bias {lat, lng}
+ * @returns {Promise<Array>} Array of places
+ */
+export const textSearch = async (query, location = null) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/google-places/text-search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, location }),
+    });
+
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    let data;
+
+    if (contentType && contentType.includes('application/json')) {
+      try {
+        data = await response.json();
+      } catch (jsonError) {
+        const text = await response.text();
+        throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
+      }
+    } else {
+      const text = await response.text();
+      throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to search places');
+    }
+
+    return data.places || [];
+  } catch (error) {
+    console.error('Error searching places:', error);
+    throw error;
+  }
+};
