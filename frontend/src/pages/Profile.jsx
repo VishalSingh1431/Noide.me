@@ -1190,7 +1190,7 @@ const Profile = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  {businesses.map((business) => (
+                  {businesses.slice(0, 5).map((business) => (
                     <div key={business.id} className="border-2 border-blue-200 rounded-xl p-5 md:p-6 hover:border-blue-400 hover:shadow-xl transition-all bg-white flex flex-col">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1 min-w-0">
