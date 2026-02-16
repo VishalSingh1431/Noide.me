@@ -277,24 +277,74 @@ class Business {
     const result = await pool.query(query, values);
     return result.rows.length > 0 ? Business.mapRowToBusiness(result.rows[0]) : null;
   }
+  /**
+   * Find all businesses (ultra-lightweight for directory listing)
+   */
+  static async findAll(statusFilter = null, limit = 12, offset = 0) {
+    // Only select columns needed for directory cards - NO heavy JSONB blobs
+    const lightColumns = `id, business_name, owner_name, category, mobile, email, address,
+      whatsapp, description, logo_url, slug, subdomain_url, subdirectory_url, 
+      status, is_premium, verified, created_at,
+      google_places_data->>'rating' as gpd_rating,
+      google_places_data->>'totalRatings' as gpd_total_ratings`;
+
+    let query = `SELECT ${lightColumns} FROM businesses`;
+    const values = [];
+    let paramIdx = 1;
+
+    if (statusFilter) {
+      query += ` WHERE status = $${paramIdx}`;
+      values.push(statusFilter);
+      paramIdx++;
+    }
+
+    query += ' ORDER BY is_premium DESC, created_at DESC';
+    query += ` LIMIT $${paramIdx} OFFSET $${paramIdx + 1}`;
+    values.push(limit, offset);
+
+    const result = await pool.query(query, values);
+    return result.rows.map(row => {
+      const business = {
+        id: row.id,
+        businessName: row.business_name,
+        ownerName: row.owner_name,
+        category: row.category,
+        mobile: row.mobile,
+        email: row.email,
+        address: row.address,
+        whatsapp: row.whatsapp,
+        description: row.description,
+        logoUrl: row.logo_url,
+        slug: row.slug,
+        subdomainUrl: row.subdomain_url,
+        subdirectoryUrl: row.subdirectory_url,
+        status: row.status,
+        isPremium: row.is_premium,
+        verified: row.verified,
+        createdAt: row.created_at,
+      };
+      if (row.gpd_rating) {
+        business.googlePlacesData = {
+          rating: parseFloat(row.gpd_rating),
+          totalRatings: parseInt(row.gpd_total_ratings) || 0
+        };
+      }
+      return business;
+    });
+  }
 
   /**
-   * Find all businesses
+   * Count all businesses (for pagination)
    */
-  static async findAll(statusFilter = null) {
-    let query = 'SELECT * FROM businesses';
+  static async countAll(statusFilter = null) {
+    let query = 'SELECT COUNT(*) FROM businesses';
     const values = [];
-
     if (statusFilter) {
       query += ' WHERE status = $1';
       values.push(statusFilter);
     }
-
-    // Premium businesses first, then by creation date
-    query += ' ORDER BY is_premium DESC, created_at DESC';
-
     const result = await pool.query(query, values);
-    return result.rows.map(row => Business.mapRowToBusiness(row));
+    return parseInt(result.rows[0].count);
   }
 
   /**

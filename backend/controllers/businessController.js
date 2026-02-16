@@ -1077,18 +1077,25 @@ export const getBusinessBySubdomain = async (req, res) => {
  */
 export const getAllBusinesses = async (req, res) => {
   try {
-    const { status } = req.query;
+    console.time('getAllBusinesses_total');
+    const { status, limit = 12, page = 1 } = req.query;
+    const parsedLimit = Math.min(parseInt(limit) || 12, 100);
+    const parsedPage = Math.max(parseInt(page) || 1, 1);
+    const offset = (parsedPage - 1) * parsedLimit;
 
-    // If status filter is provided, use it; otherwise default to approved
-    let businesses;
-    if (status) {
-      businesses = await Business.findAll(status);
-    } else {
-      // Default to showing only approved businesses in directory
-      businesses = await Business.findAll('approved');
-    }
+    const statusFilter = status || 'approved';
 
-    res.json({ businesses });
+    console.time('db_query');
+    const [businesses, total] = await Promise.all([
+      Business.findAll(statusFilter, parsedLimit, offset),
+      Business.countAll(statusFilter)
+    ]);
+    console.timeEnd('db_query');
+
+    console.log(`Fetched ${businesses.length} businesses, total: ${total}, page: ${parsedPage}`);
+    console.timeEnd('getAllBusinesses_total');
+
+    res.json({ businesses, total, page: parsedPage, limit: parsedLimit });
   } catch (error) {
     console.error('Error fetching businesses:', error);
     res.status(500).json({ error: 'Failed to fetch businesses' });

@@ -3,6 +3,15 @@ import { useParams } from 'react-router-dom';
 import { Phone, Mail, MapPin, Instagram, Facebook, Globe, Youtube, Clock, Calendar, Gift, ShoppingBag, Map, MessageCircle, Star, ChevronLeft, ChevronRight, Copy, Check, ArrowUp, Share2, Menu, ChevronDown, ChevronUp, CreditCard, Car, Wifi, Utensils, Music, Beer, Wine, Accessibility } from 'lucide-react';
 import { API_BASE_URL } from '../config/constants';
 
+// Format number for WhatsApp (ensure +91 prefix for Indian numbers)
+const formatWhatsApp = (num) => {
+    if (!num) return '';
+    const digits = num.replace(/\D/g, '');
+    if (digits.length === 10) return '91' + digits;
+    if (digits.startsWith('91') && digits.length === 12) return digits;
+    return digits;
+};
+
 const BusinessWebsite = () => {
     const { slug: paramSlug } = useParams();
     const [formData, setFormData] = useState(null);
@@ -1012,7 +1021,7 @@ const BusinessWebsite = () => {
                                 <p className="text-lg text-gray-700 mb-6">Ready to get started? Book your appointment now!</p>
                                 {formData.appointmentSettings.contactMethod === 'whatsapp' && formData.whatsappNumber ? (
                                     <a
-                                        href={`https://wa.me/${formData.whatsappNumber.replace(/\D/g, '')}?text=Hello, I would like to book an appointment.`}
+                                        href={`https://wa.me/${formatWhatsApp(formData.whatsappNumber)}?text=Hello, I would like to book an appointment.`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="inline-block px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold text-lg transition-transform hover:scale-105"
@@ -1306,7 +1315,7 @@ const BusinessWebsite = () => {
             {(formData.whatsappNumber || formData.mobileNumber) && (
                 <div className="fixed bottom-6 right-6 z-[100] flex flex-col gap-3">
                     <a
-                        href={`https://wa.me/${(formData.whatsappNumber || formData.mobileNumber).replace(/\D/g, '')}`}
+                        href={`https://wa.me/${formatWhatsApp(formData.whatsappNumber || formData.mobileNumber)}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-14 h-14 bg-green-600 text-white rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.3)] flex items-center justify-center hover:bg-green-700 transition-all duration-300 hover:scale-110 animate-bounce"

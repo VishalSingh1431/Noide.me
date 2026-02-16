@@ -1,10 +1,80 @@
-import { useState } from 'react';
-import { Search, Loader2, CheckCircle2, XCircle, AlertCircle, RefreshCw, Upload, Building2 } from 'lucide-react';
+import { useState, useRef, useCallback } from 'react';
+import { Search, Loader2, CheckCircle2, XCircle, AlertCircle, RefreshCw, Upload, Building2, MapPin, Zap, StopCircle, Play } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { textSearch, getPlaceDetails, extractBusinessData } from '../services/googlePlaces';
 import { businessAPI } from '../config/api';
 
+// All Noida + Greater Noida sectors
+const NOIDA_SECTORS = [];
+for (let i = 1; i <= 168; i++) {
+    NOIDA_SECTORS.push(`Noida Sector ${i}`);
+}
+const GREATER_NOIDA_SECTORS = [
+    'Greater Noida Sector Alpha',
+    'Greater Noida Sector Beta',
+    'Greater Noida Sector Gamma',
+    'Greater Noida Sector Delta',
+    'Greater Noida Sector Zeta',
+    'Greater Noida Sector Mu',
+    'Greater Noida Sector Omicron',
+    'Greater Noida Sector Pi',
+    'Greater Noida Sector Chi',
+    'Greater Noida Sector Phi',
+    'Greater Noida Sector Eta',
+    'Greater Noida Sector Sigma',
+    'Greater Noida Knowledge Park 1',
+    'Greater Noida Knowledge Park 2',
+    'Greater Noida Knowledge Park 3',
+    'Greater Noida Knowledge Park 4',
+    'Greater Noida Knowledge Park 5',
+    'Greater Noida Pari Chowk',
+    'Greater Noida Tech Zone',
+    'Greater Noida Sector 1',
+    'Greater Noida Sector 2',
+    'Greater Noida Sector 3',
+    'Greater Noida Sector 4',
+    'Greater Noida Sector 5',
+    'Greater Noida Sector 6',
+    'Greater Noida Sector 7',
+    'Greater Noida Sector 8',
+    'Greater Noida Sector 9',
+    'Greater Noida Sector 10',
+    'Greater Noida Sector 11',
+    'Greater Noida Sector 12',
+    'Noida Extension Sector 1',
+    'Noida Extension Sector 2',
+    'Noida Extension Sector 3',
+    'Noida Extension Sector 4',
+    'Noida Extension Sector 5',
+    'Noida Extension Sector 6',
+    'Noida Extension Sector 7',
+    'Noida Extension Sector 8',
+    'Noida Extension Sector 10',
+    'Noida Extension Sector 12',
+    'Noida Extension Sector 16',
+];
+
+const ALL_SECTORS = [...NOIDA_SECTORS, ...GREATER_NOIDA_SECTORS];
+
+const CATEGORIES = [
+    'Gym', 'Restaurant', 'Salon', 'Hospital', 'School', 'College',
+    'Coaching Center', 'Pharmacy', 'Hotel', 'Cafe', 'Dentist',
+    'Physiotherapist', 'Yoga Center', 'Dance Academy', 'Spa',
+    'Pet Shop', 'Veterinary', 'Car Repair', 'Bike Repair',
+    'Electrician', 'Plumber', 'Grocery Store', 'Supermarket',
+    'Bakery', 'Sweet Shop', 'Clothing Store', 'Electronics Store',
+    'Mobile Shop', 'Jewellery Store', 'Optical Store', 'Book Store',
+    'Library', 'Stationery Shop', 'Furniture Store', 'Hardware Store',
+    'Paint Store', 'Nursery', 'Florist', 'Laundry', 'Dry Cleaner',
+    'Tailor', 'Photographer', 'Caterer', 'Event Planner',
+    'Travel Agency', 'Real Estate Agent', 'Lawyer', 'CA',
+    'Insurance Agent', 'Bank', 'ATM', 'Petrol Pump',
+    'Parking', 'Temple', 'Mosque', 'Church', 'Gurudwara',
+    'Park', 'Playground', 'Swimming Pool', 'Sports Complex',
+];
+
 const BulkImport = () => {
+    // Manual search mode states
     const [query, setQuery] = useState('');
     const [location, setLocation] = useState('Noida');
     const [results, setResults] = useState([]);
@@ -15,6 +85,32 @@ const BulkImport = () => {
     const [importLogs, setImportLogs] = useState([]);
     const [error, setError] = useState(null);
 
+    // Auto-import mode states
+    const [mode, setMode] = useState('manual'); // 'manual' or 'auto'
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [customCategory, setCustomCategory] = useState('');
+    const [autoRunning, setAutoRunning] = useState(false);
+    const [autoProgress, setAutoProgress] = useState({
+        currentSector: '',
+        sectorIndex: 0,
+        totalSectors: ALL_SECTORS.length,
+        totalFound: 0,
+        totalImported: 0,
+        totalSkipped: 0,
+        totalFailed: 0,
+    });
+    const [autoLogs, setAutoLogs] = useState([]);
+    const stopRef = useRef(false);
+    const logsEndRef = useRef(null);
+
+    // Scroll logs to bottom
+    const scrollLogsToBottom = useCallback(() => {
+        if (logsEndRef.current) {
+            logsEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, []);
+
+    // --- Manual Mode Functions ---
     const handleSearch = async (e) => {
         e.preventDefault();
         if (!query.trim()) return;
@@ -26,15 +122,10 @@ const BulkImport = () => {
         setImportLogs([]);
 
         try {
-            // Combine query and location
             const finalQuery = `${query} in ${location}`;
             const places = await textSearch(finalQuery);
-
             setResults(places);
-            setResults(places);
-            // Select all NOT existing by default
             setSelectedPlaces(new Set(places.filter(p => !p.exists).map(p => p.id)));
-
             if (places.length === 0) {
                 setError('No businesses found. Try a different query.');
             }
@@ -47,26 +138,24 @@ const BulkImport = () => {
     };
 
     const togglePlace = (id) => {
-        const newSelected = new Set(selectedPlaces);
-        if (newSelected.has(id)) {
-            newSelected.delete(id);
-        } else {
-            newSelected.add(id);
-        }
-        setSelectedPlaces(newSelected);
+        setSelectedPlaces(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
     };
 
     const toggleAll = () => {
-        const availablePlaces = results.filter(p => !p.exists);
-        if (selectedPlaces.size === availablePlaces.length) {
+        if (selectedPlaces.size === results.filter(p => !p.exists).length) {
             setSelectedPlaces(new Set());
         } else {
-            setSelectedPlaces(new Set(availablePlaces.map(p => p.id)));
+            setSelectedPlaces(new Set(results.filter(p => !p.exists).map(p => p.id)));
         }
     };
 
     const addLog = (message, status = 'info') => {
-        setImportLogs(prev => [{ message, status, time: new Date().toLocaleTimeString() }, ...prev]);
+        setImportLogs(prev => [...prev, { message, status, time: new Date().toLocaleTimeString() }]);
     };
 
     const handleImport = async () => {
@@ -83,82 +172,54 @@ const BulkImport = () => {
             addLog(`Processing ${place.name}...`, 'info');
 
             try {
-                // 1. Fetch details
-                addLog(`Fetching details for ${place.name}...`, 'info'); // Updated log
+                addLog(`Fetching details for ${place.name}...`, 'info');
                 const details = await getPlaceDetails(place.id);
                 const businessData = extractBusinessData(details);
 
-                // 2. Prepare form data matching CreateWebsite structure
                 const submitData = new FormData();
                 submitData.append('businessName', businessData.businessName);
                 submitData.append('address', businessData.address);
                 submitData.append('description', businessData.description || `${businessData.businessName} is a premier destination in ${location}.`);
-                submitData.append('category', query.split(' ')[0] || 'Other'); // Simple heuristic
-
-                // Mock required fields if missing from Google
+                submitData.append('category', query.split(' ')[0] || 'Other');
                 submitData.append('ownerName', 'Admin Import');
                 submitData.append('mobileNumber', businessData.phoneNumber ? businessData.phoneNumber.replace(/\D/g, '').slice(-10) : '9792894561');
                 submitData.append('email', 'vishalsingh05072003@gmail.com');
-
                 submitData.append('googlePlacesData', JSON.stringify({
                     rating: businessData.rating,
                     totalRatings: businessData.totalRatings,
                     reviews: businessData.reviews || [],
                     attributes: businessData.attributes,
-                    photos: businessData.photos // Keep here for reference
+                    photos: businessData.photos,
+                    googleMapsUri: businessData.googleMapsUri
                 }));
 
-                // Map attributes to services
                 const mappedServices = [];
                 const attrs = businessData.attributes || {};
-
                 if (attrs.outdoorSeating) mappedServices.push({ title: 'Outdoor Seating', description: 'Enjoy our comfortable outdoor seating area.', featured: false });
                 if (attrs.takeout) mappedServices.push({ title: 'Takeout Available', description: 'Quick and easy takeout service.', featured: false });
                 if (attrs.delivery) mappedServices.push({ title: 'Delivery Service', description: 'Get your order delivered to your doorstep.', featured: true });
                 if (attrs.dineIn) mappedServices.push({ title: 'Dine-In', description: 'Experience our warm hospitality.', featured: true });
-                if (attrs.wheelchairAccessibleEntrance) mappedServices.push({ title: 'Wheelchair Accessible', description: 'Easy access for everyone.', featured: false });
-                if (attrs.liveMusic) mappedServices.push({ title: 'Live Music', description: 'Enjoy live performances.', featured: true });
-                if (attrs.servesVegetarianFood) mappedServices.push({ title: 'Vegetarian Options', description: 'Delicious vegetarian dishes available.', featured: false });
-
                 submitData.append('services', JSON.stringify(mappedServices));
 
-                // Handle photos (pass URLs directly)
                 if (businessData.photos && businessData.photos.length > 0) {
                     businessData.photos.forEach(photo => {
                         const url = typeof photo === 'string' ? photo : (photo.url || photo);
-                        if (url) {
-                            submitData.append('imagesUrl', url);
-                        }
+                        if (url) submitData.append('imagesUrl', url);
                     });
                 }
-
-                // 3. Create
-                // Note: Using a special flag or endpoint for bulk import would be better to bypass validation
-                // For now, we try standard creation
-
-                // Quick fix to avoid validation errors:
                 if (!businessData.phoneNumber) submitData.set('mobileNumber', '9792894561');
-
-                // Append business hours if available
-                if (businessData.businessHours) {
-                    submitData.append('businessHours', JSON.stringify(businessData.businessHours));
-                }
-
-                // Explicitly set theme to modern
+                if (businessData.businessHours) submitData.append('businessHours', JSON.stringify(businessData.businessHours));
                 submitData.append('theme', 'modern');
 
-                await businessAPI.create(submitData); // Assuming businessAPI.create handles FormData
-
-                addLog(`Successfully imported ${place.name}`, 'success');
-                setImportProgress(prev => ({ ...prev, success: getPlaceDetails.success + 1 }));
-
+                await businessAPI.create(submitData);
+                addLog(`✅ Successfully imported ${place.name}`, 'success');
+                setImportProgress(prev => ({ ...prev, success: prev.success + 1 }));
             } catch (err) {
                 console.error(`Import failed for ${place.name}:`, err);
-                addLog(`Failed to import ${place.name}: ${err.message}`, 'error');
+                addLog(`❌ Failed to import ${place.name}: ${err.message}`, 'error');
                 setImportProgress(prev => ({ ...prev, failed: prev.failed + 1 }));
             }
 
-            // Artificial delay to be nice to the API rate limit
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
 
@@ -166,238 +227,493 @@ const BulkImport = () => {
         addLog('Import process completed!', 'success');
     };
 
+    // --- Auto-Import Mode Functions ---
+    const addAutoLog = useCallback((message, status = 'info') => {
+        setAutoLogs(prev => {
+            const newLogs = [...prev, { message, status, time: new Date().toLocaleTimeString() }];
+            // Keep max 500 logs to avoid memory issues
+            if (newLogs.length > 500) return newLogs.slice(-400);
+            return newLogs;
+        });
+        setTimeout(scrollLogsToBottom, 100);
+    }, [scrollLogsToBottom]);
+
+    const importSinglePlace = async (place, category) => {
+        try {
+            const details = await getPlaceDetails(place.id);
+            const businessData = extractBusinessData(details);
+
+            const submitData = new FormData();
+            submitData.append('businessName', businessData.businessName);
+            submitData.append('address', businessData.address);
+            submitData.append('description', businessData.description || `${businessData.businessName} is a premier ${category.toLowerCase()} in Noida.`);
+            submitData.append('category', category);
+            submitData.append('ownerName', 'Admin Import');
+            submitData.append('mobileNumber', businessData.phoneNumber ? businessData.phoneNumber.replace(/\D/g, '').slice(-10) : '9792894561');
+            submitData.append('email', 'vishalsingh05072003@gmail.com');
+            submitData.append('googlePlacesData', JSON.stringify({
+                rating: businessData.rating,
+                totalRatings: businessData.totalRatings,
+                reviews: businessData.reviews || [],
+                attributes: businessData.attributes,
+                photos: businessData.photos,
+                googleMapsUri: businessData.googleMapsUri
+            }));
+
+            const mappedServices = [];
+            const attrs = businessData.attributes || {};
+            if (attrs.outdoorSeating) mappedServices.push({ title: 'Outdoor Seating', description: 'Enjoy our comfortable outdoor seating area.', featured: false });
+            if (attrs.takeout) mappedServices.push({ title: 'Takeout Available', description: 'Quick and easy takeout service.', featured: false });
+            if (attrs.delivery) mappedServices.push({ title: 'Delivery Service', description: 'Get your order delivered to your doorstep.', featured: true });
+            if (attrs.dineIn) mappedServices.push({ title: 'Dine-In', description: 'Experience our warm hospitality.', featured: true });
+            submitData.append('services', JSON.stringify(mappedServices));
+
+            if (businessData.photos && businessData.photos.length > 0) {
+                businessData.photos.forEach(photo => {
+                    const url = typeof photo === 'string' ? photo : (photo.url || photo);
+                    if (url) submitData.append('imagesUrl', url);
+                });
+            }
+            if (!businessData.phoneNumber) submitData.set('mobileNumber', '9792894561');
+            if (businessData.businessHours) submitData.append('businessHours', JSON.stringify(businessData.businessHours));
+            submitData.append('theme', 'modern');
+
+            await businessAPI.create(submitData);
+            return { success: true };
+        } catch (err) {
+            return { success: false, error: err.message };
+        }
+    };
+
+    const handleAutoImport = async () => {
+        const category = selectedCategory === 'custom' ? customCategory : selectedCategory;
+        if (!category.trim()) return;
+
+        stopRef.current = false;
+        setAutoRunning(true);
+        setAutoLogs([]);
+        setAutoProgress({
+            currentSector: '',
+            sectorIndex: 0,
+            totalSectors: ALL_SECTORS.length,
+            totalFound: 0,
+            totalImported: 0,
+            totalSkipped: 0,
+            totalFailed: 0,
+        });
+
+        addAutoLog(`🚀 Starting auto-import: "${category}" across ${ALL_SECTORS.length} sectors`, 'success');
+
+        for (let i = 0; i < ALL_SECTORS.length; i++) {
+            if (stopRef.current) {
+                addAutoLog(`⛔ Stopped by user at sector ${i + 1}/${ALL_SECTORS.length}`, 'error');
+                break;
+            }
+
+            const sector = ALL_SECTORS[i];
+            const searchQuery = `${category} in ${sector}`;
+
+            setAutoProgress(prev => ({
+                ...prev,
+                currentSector: sector,
+                sectorIndex: i + 1,
+            }));
+
+            addAutoLog(`🔍 Searching: "${searchQuery}" (${i + 1}/${ALL_SECTORS.length})`, 'info');
+
+            try {
+                // Search Google Places for this sector
+                const places = await textSearch(searchQuery);
+
+                if (!places || places.length === 0) {
+                    addAutoLog(`   ↳ No results in ${sector}`, 'info');
+                    await new Promise(r => setTimeout(r, 500));
+                    continue;
+                }
+
+                // Filter out already existing ones
+                const newPlaces = places.filter(p => !p.exists);
+                const skipped = places.length - newPlaces.length;
+
+                addAutoLog(`   ↳ Found ${places.length} (${newPlaces.length} new, ${skipped} already exist)`, 'info');
+
+                setAutoProgress(prev => ({
+                    ...prev,
+                    totalFound: prev.totalFound + places.length,
+                    totalSkipped: prev.totalSkipped + skipped,
+                }));
+
+                // Import each new place
+                for (let j = 0; j < newPlaces.length; j++) {
+                    if (stopRef.current) break;
+
+                    const place = newPlaces[j];
+                    addAutoLog(`   📥 Importing: ${place.name}`, 'info');
+
+                    const result = await importSinglePlace(place, category);
+
+                    if (result.success) {
+                        addAutoLog(`   ✅ ${place.name}`, 'success');
+                        setAutoProgress(prev => ({ ...prev, totalImported: prev.totalImported + 1 }));
+                    } else {
+                        addAutoLog(`   ❌ ${place.name}: ${result.error}`, 'error');
+                        setAutoProgress(prev => ({ ...prev, totalFailed: prev.totalFailed + 1 }));
+                    }
+
+                    // Delay between imports (1.5s to respect API rate limits)
+                    await new Promise(r => setTimeout(r, 1500));
+                }
+
+            } catch (err) {
+                addAutoLog(`   ⚠️ Search failed for ${sector}: ${err.message}`, 'error');
+            }
+
+            // Delay between sector searches (1s)
+            await new Promise(r => setTimeout(r, 1000));
+        }
+
+        setAutoRunning(false);
+        addAutoLog(`\n🏁 Auto-import completed!`, 'success');
+    };
+
+    const handleStop = () => {
+        stopRef.current = true;
+        addAutoLog('⏳ Stopping after current operation...', 'info');
+    };
+
+    const percentComplete = autoProgress.totalSectors > 0
+        ? Math.round((autoProgress.sectorIndex / autoProgress.totalSectors) * 100)
+        : 0;
+
     return (
         <>
             <Navbar />
-            <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                        <div className="p-8 bg-gradient-to-r from-blue-600 to-indigo-600">
-                            <div className="flex items-center gap-4 text-white">
-                                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                                    <Upload className="w-8 h-8" />
-                                </div>
-                                <div>
-                                    <h1 className="text-3xl font-bold">Bulk Business Import</h1>
-                                    <p className="text-blue-100 mt-1">Search and import multiple businesses from Google Maps</p>
-                                </div>
+            <div className="min-h-screen bg-gray-50 pt-24 pb-12 px-4">
+                <div className="max-w-6xl mx-auto">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+                            <Upload className="w-8 h-8 inline-block mr-2 text-blue-600" />
+                            Bulk Import Businesses
+                        </h1>
+                        <p className="text-gray-600">Search Google Maps and import businesses to populate the directory</p>
+                    </div>
+
+                    {/* Mode Toggle */}
+                    <div className="flex justify-center gap-2 mb-8">
+                        <button
+                            onClick={() => setMode('manual')}
+                            className={`px-6 py-3 rounded-xl font-semibold transition-all ${mode === 'manual'
+                                ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+                                : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-blue-300'}`}
+                        >
+                            <Search className="w-4 h-4 inline mr-2" />
+                            Manual Search
+                        </button>
+                        <button
+                            onClick={() => setMode('auto')}
+                            className={`px-6 py-3 rounded-xl font-semibold transition-all ${mode === 'auto'
+                                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg shadow-purple-200'
+                                : 'bg-white text-gray-600 border-2 border-gray-200 hover:border-purple-300'}`}
+                        >
+                            <Zap className="w-4 h-4 inline mr-2" />
+                            Auto-Import (All Sectors)
+                        </button>
+                    </div>
+
+                    {/* ==================== MANUAL MODE ==================== */}
+                    {mode === 'manual' && (
+                        <div className="space-y-6">
+                            {/* Search Form */}
+                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                                <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
+                                    <div className="flex-1">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1">Category / Query</label>
+                                        <select
+                                            value={query}
+                                            onChange={(e) => setQuery(e.target.value)}
+                                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors bg-white"
+                                        >
+                                            <option value="">-- Select category --</option>
+                                            {CATEGORIES.map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                            <option value="__custom__">✏️ Custom query...</option>
+                                        </select>
+                                    </div>
+                                    {query === '__custom__' && (
+                                        <div className="flex-1">
+                                            <label className="block text-sm font-semibold text-gray-700 mb-1">Custom Query</label>
+                                            <input
+                                                type="text"
+                                                value={location === 'Noida' ? '' : ''}
+                                                onChange={(e) => setQuery(e.target.value)}
+                                                placeholder="e.g., Tuition Center, Yoga Studio..."
+                                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                                            />
+                                        </div>
+                                    )}
+                                    <div className="w-full md:w-48">
+                                        <label className="block text-sm font-semibold text-gray-700 mb-1">Location</label>
+                                        <input
+                                            type="text"
+                                            value={location}
+                                            onChange={(e) => setLocation(e.target.value)}
+                                            placeholder="Noida"
+                                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                                        />
+                                    </div>
+                                    <div className="flex items-end">
+                                        <button
+                                            type="submit"
+                                            disabled={loading || !query.trim()}
+                                            className="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                                        >
+                                            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
+                                            Search
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </div>
 
-                        <div className="p-8">
-                            {/* Search Section */}
-                            <form onSubmit={handleSearch} className="flex gap-4 mb-8">
-                                <div className="flex-1">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Category / Keyword</label>
-                                    <input
-                                        type="text"
-                                        value={query}
-                                        onChange={(e) => setQuery(e.target.value)}
-                                        placeholder="e.g. Gym, Library, Restaurant"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                        required
-                                    />
-                                </div>
-                                <div className="w-1/3">
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                                    <input
-                                        type="text"
-                                        value={location}
-                                        onChange={(e) => setLocation(e.target.value)}
-                                        placeholder="City or Area"
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                    />
-                                </div>
-                                <div className="flex items-end">
-                                    <button
-                                        type="submit"
-                                        disabled={loading || importing}
-                                        className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                                    >
-                                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-                                        Search
-                                    </button>
-                                </div>
-                            </form>
-
-                            {/* Error Message */}
                             {error && (
-                                <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-xl flex items-center gap-3">
-                                    <AlertCircle className="w-5 h-5" />
-                                    {error}
+                                <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-3">
+                                    <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
+                                    <p className="text-red-700">{error}</p>
                                 </div>
                             )}
 
-                            {/* Results & Import Section */}
-                            <div className="flex gap-8">
-                                {/* Left: Results List */}
-                                <div className="flex-1">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <h2 className="text-xl font-bold text-gray-900">
-                                            Results ({results.length})
-                                        </h2>
-                                        {results.length > 0 && (
-                                            <div className="flex gap-2">
-                                                <button
-                                                    type="button"
-                                                    onClick={toggleAll}
-                                                    className="text-sm text-blue-600 font-medium hover:underline"
-                                                >
-                                                    {selectedPlaces.size === results.length ? 'Deselect All' : 'Select All'}
-                                                </button>
-                                                <span className="text-gray-300">|</span>
-                                                <span className="text-sm text-gray-500">
-                                                    {selectedPlaces.size} selected
-                                                </span>
-                                            </div>
-                                        )}
+                            {/* Results */}
+                            {results.length > 0 && (
+                                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+                                    <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <Building2 className="w-5 h-5 text-blue-600" />
+                                            <h3 className="font-bold text-gray-900">Found {results.length} businesses</h3>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <button onClick={toggleAll} className="text-sm text-blue-600 hover:underline font-medium">
+                                                {selectedPlaces.size === results.filter(p => !p.exists).length ? 'Deselect All' : 'Select All'}
+                                            </button>
+                                            <button
+                                                onClick={handleImport}
+                                                disabled={importing || selectedPlaces.size === 0}
+                                                className="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm flex items-center gap-2"
+                                            >
+                                                {importing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                                                Import ({selectedPlaces.size})
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {loading && (
-                                            <div className="col-span-full text-center py-12 text-gray-500">
-                                                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2 text-blue-500" />
-                                                Searching Google Maps...
+                                    {importing && (
+                                        <div className="px-4 py-3 bg-blue-50 border-b border-blue-100">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <span className="text-sm font-medium text-blue-700">
+                                                    Importing {importProgress.current}/{importProgress.total}
+                                                </span>
+                                                <span className="text-sm text-blue-600">
+                                                    ✅ {importProgress.success} | ❌ {importProgress.failed}
+                                                </span>
                                             </div>
-                                        )}
-
-                                        {!loading && results.length === 0 && !error && (
-                                            <div className="col-span-full text-center py-12 text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">
-                                                Enter a category and location to start searching
+                                            <div className="w-full bg-blue-200 rounded-full h-2">
+                                                <div
+                                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                                    style={{ width: `${importProgress.total > 0 ? (importProgress.current / importProgress.total) * 100 : 0}%` }}
+                                                />
                                             </div>
-                                        )}
+                                        </div>
+                                    )}
 
+                                    <div className="max-h-[500px] overflow-y-auto divide-y divide-gray-50">
                                         {results.map((place) => (
                                             <div
                                                 key={place.id}
-                                                onClick={() => !place.exists && togglePlace(place.id)}
-                                                className={`
-                                                    relative flex flex-col p-4 rounded-xl border-2 transition-all cursor-pointer hover:shadow-md
-                                                    ${place.exists
-                                                        ? 'border-gray-200 bg-gray-50 opacity-70 cursor-not-allowed'
-                                                        : selectedPlaces.has(place.id)
-                                                            ? 'border-blue-500 bg-blue-50'
-                                                            : 'border-gray-100 bg-white hover:border-blue-300'
-                                                    }
-                                                `}
+                                                className={`p-4 flex items-center gap-4 hover:bg-gray-50 transition-colors ${place.exists ? 'opacity-50' : ''}`}
                                             >
-                                                <div className="flex items-start justify-between mb-3">
-                                                    <div className={`
-                                                        w-5 h-5 rounded border flex items-center justify-center flex-shrink-0
-                                                        ${place.exists
-                                                            ? 'bg-gray-200 border-gray-300'
-                                                            : selectedPlaces.has(place.id)
-                                                                ? 'bg-blue-600 border-blue-600'
-                                                                : 'border-gray-300 bg-white'
-                                                        }
-                                                    `}>
-                                                        {place.exists && <CheckCircle2 className="w-3.5 h-3.5 text-gray-500" />}
-                                                        {!place.exists && selectedPlaces.has(place.id) && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedPlaces.has(place.id)}
+                                                    onChange={() => togglePlace(place.id)}
+                                                    disabled={place.exists}
+                                                    className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                />
+                                                {place.photoUrl ? (
+                                                    <img src={place.photoUrl} alt={place.name} className="w-12 h-12 rounded-lg object-cover" />
+                                                ) : (
+                                                    <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
+                                                        <Building2 className="w-6 h-6 text-gray-400" />
                                                     </div>
-
-                                                    {place.exists && (
-                                                        <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">
-                                                            Already Imported
-                                                        </span>
-                                                    )}
+                                                )}
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="font-semibold text-gray-900 truncate">{place.name}</h4>
+                                                    <p className="text-sm text-gray-500 truncate">{place.address}</p>
                                                 </div>
-
-                                                <div className="flex gap-4">
-                                                    <div className="w-16 h-16 bg-gray-200 rounded-lg flex-shrink-0 overflow-hidden">
-                                                        {place.photoUrl ? (
-                                                            <img src={place.photoUrl} alt={place.name} className="w-full h-full object-cover" />
-                                                        ) : (
-                                                            <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                                                <Building2 className="w-8 h-8" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    <div className="flex-1 min-w-0">
-                                                        <h3 className="font-semibold text-gray-900 truncate" title={place.name}>{place.name}</h3>
-                                                        <p className="text-sm text-gray-500 truncate" title={place.address}>{place.address}</p>
-                                                        <div className="flex items-center gap-2 mt-1 text-xs text-gray-500">
-                                                            {place.rating && (
-                                                                <span className="flex items-center gap-1 text-amber-600 font-medium">
-                                                                    ★ {place.rating} ({place.userRatingCount})
-                                                                </span>
-                                                            )}
-                                                            {place.businessStatus && (
-                                                                <span className="px-2 py-0.5 bg-gray-100 rounded-full capitalize">
-                                                                    {place.businessStatus.toLowerCase().replace('_', ' ')}
-                                                                </span>
-                                                            )}
-                                                        </div>
-                                                    </div>
+                                                <div className="text-right flex-shrink-0">
+                                                    {place.rating && (
+                                                        <div className="text-sm font-bold text-yellow-600">⭐ {place.rating}</div>
+                                                    )}
+                                                    {place.exists && (
+                                                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full font-medium">Already exists</span>
+                                                    )}
                                                 </div>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
+                            )}
 
-                                {/* Right: Actions & Logs */}
-                                <div className="w-80 flex-shrink-0">
-                                    <div className="bg-gray-50 rounded-xl p-6 sticky top-24 border border-gray-200">
-                                        <h3 className="font-bold text-gray-900 mb-4">Import Actions</h3>
+                            {/* Manual Import Logs */}
+                            {importLogs.length > 0 && (
+                                <div className="bg-gray-900 rounded-2xl p-4 max-h-64 overflow-y-auto">
+                                    <h4 className="text-green-400 font-mono text-sm mb-2">Import Logs</h4>
+                                    {importLogs.map((log, i) => (
+                                        <div key={i} className={`text-xs font-mono py-0.5 ${log.status === 'success' ? 'text-green-400' : log.status === 'error' ? 'text-red-400' : 'text-gray-400'}`}>
+                                            <span className="text-gray-600">[{log.time}]</span> {log.message}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
 
-                                        <button
-                                            onClick={handleImport}
-                                            disabled={importing || selectedPlaces.size === 0}
-                                            className="w-full py-3 bg-green-600 text-white font-bold rounded-xl shadow-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mb-6"
+                    {/* ==================== AUTO-IMPORT MODE ==================== */}
+                    {mode === 'auto' && (
+                        <div className="space-y-6">
+                            {/* Category Selection */}
+                            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                    <Zap className="w-5 h-5 text-purple-600" />
+                                    Auto-Import Settings
+                                </h3>
+                                <p className="text-sm text-gray-500 mb-4">
+                                    Select a category and click Start. The system will automatically search through all <strong>{ALL_SECTORS.length} sectors</strong> (Noida + Greater Noida + Noida Extension)
+                                    and import every business found.
+                                </p>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div>
+                                        <label className="block text-sm font-semibold text-gray-700 mb-2">Select Category</label>
+                                        <select
+                                            value={selectedCategory}
+                                            onChange={(e) => setSelectedCategory(e.target.value)}
+                                            disabled={autoRunning}
+                                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors bg-white"
                                         >
-                                            {importing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
-                                            {importing ? 'Importing...' : `Import ${selectedPlaces.size} Businesses`}
+                                            <option value="">-- Choose a category --</option>
+                                            {CATEGORIES.map(cat => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                            <option value="custom">✏️ Custom category...</option>
+                                        </select>
+                                    </div>
+                                    {selectedCategory === 'custom' && (
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">Custom Category</label>
+                                            <input
+                                                type="text"
+                                                value={customCategory}
+                                                onChange={(e) => setCustomCategory(e.target.value)}
+                                                disabled={autoRunning}
+                                                placeholder="e.g., Tuition Center, Yoga Studio..."
+                                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none transition-colors"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="flex gap-3">
+                                    {!autoRunning ? (
+                                        <button
+                                            onClick={handleAutoImport}
+                                            disabled={!(selectedCategory && (selectedCategory !== 'custom' || customCategory.trim()))}
+                                            className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl font-semibold hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 shadow-lg shadow-purple-200"
+                                        >
+                                            <Play className="w-5 h-5" />
+                                            Start Auto-Import
                                         </button>
+                                    ) : (
+                                        <button
+                                            onClick={handleStop}
+                                            className="px-8 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors flex items-center gap-2 shadow-lg shadow-red-200"
+                                        >
+                                            <StopCircle className="w-5 h-5" />
+                                            Stop
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
 
-                                        {importing && (
-                                            <div className="mb-6">
-                                                <div className="flex justify-between text-sm mb-2">
-                                                    <span className="text-gray-600">Progress</span>
-                                                    <span className="font-medium">{Math.round((importProgress.current / importProgress.total) * 100)}%</span>
-                                                </div>
-                                                <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                                                    <div
-                                                        className="bg-green-500 h-2.5 rounded-full transition-all duration-300"
-                                                        style={{ width: `${(importProgress.current / importProgress.total) * 100}%` }}
-                                                    ></div>
-                                                </div>
-                                                <div className="flex gap-4 mt-2 text-xs text-center">
-                                                    <div className="flex-1 bg-green-100 text-green-700 py-1 rounded">
-                                                        Success: {importProgress.success}
-                                                    </div>
-                                                    <div className="flex-1 bg-red-100 text-red-700 py-1 rounded">
-                                                        Failed: {importProgress.failed}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
+                            {/* Progress Dashboard */}
+                            {(autoRunning || autoLogs.length > 0) && (
+                                <>
+                                    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                                                {autoRunning && <Loader2 className="w-5 h-5 animate-spin text-purple-600" />}
+                                                <MapPin className="w-5 h-5 text-purple-600" />
+                                                {autoRunning ? `Scanning: ${autoProgress.currentSector}` : 'Import Complete'}
+                                            </h3>
+                                            <span className="text-sm font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">
+                                                {autoProgress.sectorIndex}/{autoProgress.totalSectors} sectors
+                                            </span>
+                                        </div>
 
-                                        <div className="border-t border-gray-200 pt-4">
-                                            <h4 className="text-sm font-semibold text-gray-700 mb-2">Activity Log</h4>
-                                            <div className="h-60 overflow-y-auto space-y-2 pr-2 text-xs font-mono">
-                                                {importLogs.map((log, idx) => (
-                                                    <div key={idx} className={`
-                            p-2 rounded border
-                            ${log.status === 'error' ? 'bg-red-50 border-red-100 text-red-700' :
-                                                            log.status === 'success' ? 'bg-green-50 border-green-100 text-green-700' :
-                                                                'bg-white border-gray-200 text-gray-600'}
-                          `}>
-                                                        <span className="opacity-50 mr-2">{log.time}</span>
-                                                        {log.message}
-                                                    </div>
-                                                ))}
-                                                {importLogs.length === 0 && (
-                                                    <p className="text-gray-400 italic text-center py-4">Logs will appear here...</p>
+                                        {/* Progress Bar */}
+                                        <div className="w-full bg-gray-100 rounded-full h-4 mb-4 overflow-hidden">
+                                            <div
+                                                className="h-4 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 transition-all duration-500 flex items-center justify-center"
+                                                style={{ width: `${percentComplete}%` }}
+                                            >
+                                                {percentComplete > 10 && (
+                                                    <span className="text-[10px] font-bold text-white">{percentComplete}%</span>
                                                 )}
                                             </div>
                                         </div>
 
+                                        {/* Stats Grid */}
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                            <div className="bg-blue-50 rounded-xl p-4 text-center">
+                                                <div className="text-2xl font-black text-blue-600">{autoProgress.totalFound}</div>
+                                                <div className="text-xs font-semibold text-blue-500 uppercase tracking-wide">Found</div>
+                                            </div>
+                                            <div className="bg-green-50 rounded-xl p-4 text-center">
+                                                <div className="text-2xl font-black text-green-600">{autoProgress.totalImported}</div>
+                                                <div className="text-xs font-semibold text-green-500 uppercase tracking-wide">Imported</div>
+                                            </div>
+                                            <div className="bg-yellow-50 rounded-xl p-4 text-center">
+                                                <div className="text-2xl font-black text-yellow-600">{autoProgress.totalSkipped}</div>
+                                                <div className="text-xs font-semibold text-yellow-500 uppercase tracking-wide">Skipped</div>
+                                            </div>
+                                            <div className="bg-red-50 rounded-xl p-4 text-center">
+                                                <div className="text-2xl font-black text-red-600">{autoProgress.totalFailed}</div>
+                                                <div className="text-xs font-semibold text-red-500 uppercase tracking-wide">Failed</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
+                                    {/* Live Logs */}
+                                    <div className="bg-gray-900 rounded-2xl overflow-hidden">
+                                        <div className="px-4 py-3 bg-gray-800 flex items-center justify-between">
+                                            <h4 className="text-green-400 font-mono text-sm font-bold">📋 Live Import Logs</h4>
+                                            <span className="text-xs text-gray-500 font-mono">{autoLogs.length} entries</span>
+                                        </div>
+                                        <div className="p-4 max-h-[400px] overflow-y-auto font-mono text-xs">
+                                            {autoLogs.map((log, i) => (
+                                                <div key={i} className={`py-0.5 ${log.status === 'success' ? 'text-green-400' :
+                                                    log.status === 'error' ? 'text-red-400' :
+                                                        'text-gray-400'
+                                                    }`}>
+                                                    <span className="text-gray-600">[{log.time}]</span> {log.message}
+                                                </div>
+                                            ))}
+                                            <div ref={logsEndRef} />
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </>

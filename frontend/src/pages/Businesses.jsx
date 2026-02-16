@@ -25,59 +25,33 @@ const Businesses = () => {
   const [sortBy, setSortBy] = useState('name'); // 'name', 'category', 'newest'
   const [viewMode, setViewMode] = useState('grid');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 12;
 
   const categories = ['All', 'Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
 
-  useEffect(() => {
-    fetchBusinesses();
-  }, []);
-
-  useEffect(() => {
-    // Update URL params
-    const params = new URLSearchParams();
-    if (searchTerm) params.set('search', searchTerm);
-    if (selectedCategory !== 'All') params.set('category', selectedCategory);
-    setSearchParams(params, { replace: true });
-    setCurrentPage(1); // Reset to first page on filter change
-  }, [searchTerm, selectedCategory, setSearchParams]);
-
-  // Handle URL search param on mount
-  useEffect(() => {
-    const urlSearch = searchParams.get('search');
-    if (urlSearch && urlSearch !== searchTerm) {
-      setSearchTerm(urlSearch);
-      trackSearch(urlSearch);
-    }
-  }, []);
-
-  const fetchBusinesses = useCallback(async () => {
+  // Server-side fetch with pagination
+  const fetchBusinesses = useCallback(async (page = 1) => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/business`);
-      
-      // Check if response is JSON before parsing
+      const response = await fetch(`${API_BASE_URL}/business?limit=${itemsPerPage}&page=${page}`);
+
       const contentType = response.headers.get('content-type');
       let data;
-      
+
       if (contentType && contentType.includes('application/json')) {
-        try {
-          data = await response.json();
-        } catch (jsonError) {
-          const text = await response.text();
-          throw new Error(`Invalid JSON response: ${text.substring(0, 100)}`);
-        }
+        data = await response.json();
       } else {
         const text = await response.text();
         throw new Error(`Server returned non-JSON response (${response.status}): ${text.substring(0, 200)}`);
       }
 
-      // Backend already filters to approved only, but add extra safety check
-      const activeBusinesses = data.businesses.filter(
+      const activeBusinesses = (data.businesses || []).filter(
         business => business.status === 'approved'
       );
 
       setBusinesses(activeBusinesses);
+      setTotalItems(data.total || activeBusinesses.length);
     } catch (error) {
       console.error('Error fetching businesses:', error);
       toast.error('Failed to load businesses. Please try again.');
@@ -86,16 +60,34 @@ const Businesses = () => {
     }
   }, [toast]);
 
-  // Optimize filtering with useMemo - only recalculates when dependencies change
+  useEffect(() => {
+    fetchBusinesses(currentPage);
+  }, [currentPage, fetchBusinesses]);
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('search', searchTerm);
+    if (selectedCategory !== 'All') params.set('category', selectedCategory);
+    setSearchParams(params, { replace: true });
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, setSearchParams]);
+
+  useEffect(() => {
+    const urlSearch = searchParams.get('search');
+    if (urlSearch && urlSearch !== searchTerm) {
+      setSearchTerm(urlSearch);
+      trackSearch(urlSearch);
+    }
+  }, []);
+
+  // Client-side filtering of current page data
   const filteredBusinesses = useMemo(() => {
     let filtered = [...businesses];
 
-    // Category filter
     if (selectedCategory !== 'All') {
       filtered = filtered.filter(business => business.category === selectedCategory);
     }
 
-    // Search filter
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(business =>
@@ -106,7 +98,6 @@ const Businesses = () => {
       );
     }
 
-    // Sort
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'name':
@@ -123,14 +114,7 @@ const Businesses = () => {
     return filtered;
   }, [businesses, selectedCategory, searchTerm, sortBy]);
 
-  // Pagination - memoized
-  const { totalPages, paginatedBusinesses } = useMemo(() => {
-    const total = Math.ceil(filteredBusinesses.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginated = filteredBusinesses.slice(startIndex, endIndex);
-    return { totalPages: total, paginatedBusinesses: paginated };
-  }, [filteredBusinesses, currentPage, itemsPerPage]);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   const getCategoryColor = useCallback((category) => {
     const colors = {
@@ -243,8 +227,8 @@ const Businesses = () => {
                       trackButtonClick(`filter_category_${category}`, 'businesses_page');
                     }}
                     className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-semibold text-xs sm:text-sm transition-all duration-200 whitespace-nowrap ${selectedCategory === category
-                        ? 'bg-blue-600 text-white shadow-lg scale-105'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-blue-600 text-white shadow-lg scale-105'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                   >
                     {category}
@@ -303,7 +287,7 @@ const Businesses = () => {
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-gray-200">
               <div className="text-gray-600">
                 <span className="font-semibold text-gray-800">{filteredBusinesses.length}</span> of{' '}
-                <span className="font-semibold text-gray-800">{businesses.length}</span> businesses
+                <span className="font-semibold text-gray-800">{totalItems}</span> businesses
                 {(searchTerm || selectedCategory !== 'All') && (
                   <button
                     onClick={clearFilters}
@@ -348,7 +332,7 @@ const Businesses = () => {
                   : 'space-y-4'
               }
             >
-              {paginatedBusinesses.map((business, index) => (
+              {filteredBusinesses.map((business, index) => (
                 <motion.div
                   key={business.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -361,8 +345,8 @@ const Businesses = () => {
                   {/* Business Image */}
                   <div
                     className={`${viewMode === 'list'
-                        ? 'md:w-72 md:h-56 flex-shrink-0'
-                        : 'h-56'
+                      ? 'md:w-72 md:h-56 flex-shrink-0'
+                      : 'h-56'
                       } bg-gradient-to-br from-blue-100 to-purple-100 relative overflow-hidden`}
                   >
                     {business.logoUrl ? (
@@ -438,7 +422,7 @@ const Businesses = () => {
                               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
                             </svg>
                             <a
-                              href={`https://wa.me/${business.whatsapp.replace(/[^0-9]/g, '')}`}
+                              href={`https://wa.me/91${business.whatsapp.replace(/[^0-9]/g, '')}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:text-green-600 transition-colors font-medium"
@@ -502,7 +486,7 @@ const Businesses = () => {
           )}
 
           {/* Pagination */}
-          {filteredBusinesses.length > 0 && (
+          {totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
@@ -511,7 +495,7 @@ const Businesses = () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               itemsPerPage={itemsPerPage}
-              totalItems={filteredBusinesses.length}
+              totalItems={totalItems}
             />
           )}
         </div>
