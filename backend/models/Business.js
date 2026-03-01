@@ -23,7 +23,7 @@ class Business {
    */
   static async create(data) {
     // FINAL SAFETY CHECK - ensure category is ALWAYS valid
-    const validCategories = ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Other'];
+    const validCategories = ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Coaching Center', 'Hospital', 'Cafe', 'Dentist', 'Physiotherapist', 'Yoga Center', 'Dance Academy', 'Pet Shop', 'Veterinary', 'Car Repair', 'Bike Repair', 'Electrician', 'Plumber', 'Grocery Store', 'Supermarket', 'Sweet Shop', 'Clothing Store', 'Electronics Store', 'Mobile Shop', 'Jewellery Store', 'Optical Store', 'Book Store', 'Stationery Shop', 'Furniture Store', 'Hardware Store', 'Paint Store', 'Nursery', 'Florist', 'Laundry', 'Dry Cleaner', 'Tailor', 'Photographer', 'Caterer', 'Event Planner', 'Real Estate Agent', 'Lawyer', 'CA', 'Insurance Agent', 'ATM', 'Petrol Pump', 'Parking', 'Mosque', 'Church', 'Gurudwara', 'Park', 'Playground', 'Swimming Pool', 'Sports Complex', 'Other'];
 
     // Comprehensive mapping for any category that slips through - matches controller mapping
     const categoryMap = {
@@ -44,7 +44,20 @@ class Business {
       'fitness': 'Fitness', 'entertainment': 'Entertainment', 'tourism': 'Tourism',
       'food & beverage': 'Food & Beverage', 'retail': 'Retail', 'wholesale': 'Wholesale',
       'manufacturing': 'Manufacturing', 'construction': 'Construction', 'other': 'Other',
-      'hospital': 'Clinic', 'lodging': 'Hotel', 'food': 'Restaurant', 'general': 'Services', 'misc': 'Other'
+      'hospital': 'Hospital', 'lodging': 'Hotel', 'food': 'Restaurant', 'general': 'Services', 'misc': 'Other',
+      'coaching center': 'Coaching Center', 'cafe': 'Cafe', 'dentist': 'Dentist', 'physiotherapist': 'Physiotherapist',
+      'yoga center': 'Yoga Center', 'dance academy': 'Dance Academy', 'pet shop': 'Pet Shop', 'veterinary': 'Veterinary',
+      'car repair': 'Car Repair', 'bike repair': 'Bike Repair', 'electrician': 'Electrician', 'plumber': 'Plumber',
+      'grocery store': 'Grocery Store', 'supermarket': 'Supermarket', 'sweet shop': 'Sweet Shop', 'clothing store': 'Clothing Store',
+      'electronics store': 'Electronics Store', 'mobile shop': 'Mobile Shop', 'jewellery store': 'Jewellery Store',
+      'optical store': 'Optical Store', 'book store': 'Book Store', 'stationery shop': 'Stationery Shop',
+      'furniture store': 'Furniture Store', 'hardware store': 'Hardware Store', 'paint store': 'Paint Store',
+      'nursery': 'Nursery', 'florist': 'Florist', 'laundry': 'Laundry', 'dry cleaner': 'Dry Cleaner',
+      'tailor': 'Tailor', 'photographer': 'Photographer', 'caterer': 'Caterer', 'event planner': 'Event Planner',
+      'real estate agent': 'Real Estate Agent', 'lawyer': 'Lawyer', 'ca': 'CA', 'insurance agent': 'Insurance Agent',
+      'atm': 'ATM', 'petrol pump': 'Petrol Pump', 'parking': 'Parking', 'mosque': 'Mosque', 'church': 'Church',
+      'gurudwara': 'Gurudwara', 'park': 'Park', 'playground': 'Playground', 'swimming pool': 'Swimming Pool',
+      'sports complex': 'Sports Complex'
     };
 
     let safeCategory = 'Services'; // Default

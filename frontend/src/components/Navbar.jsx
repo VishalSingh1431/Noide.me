@@ -319,6 +319,15 @@ const Navbar = () => {
                 Pricing
               </Link>
               <Link
+                to="/portfolio-demo"
+                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/portfolio-demo')
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-700 hover:text-blue-600 hover:bg-blue-50'
+                  }`}
+              >
+                Portfolio
+              </Link>
+              <Link
                 to="/contact"
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 ${isActivePath('/contact')
                   ? 'text-blue-600 bg-blue-50'
@@ -513,6 +522,16 @@ const Navbar = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Pricing
+                </Link>
+                <Link
+                  to="/portfolio-demo"
+                  className={`px-4 py-2 text-base font-medium rounded-md transition-all duration-200 ${isActivePath('/portfolio-demo')
+                    ? 'text-blue-600 bg-blue-50'
+                    : 'text-black hover:text-blue-600 hover:bg-blue-50'
+                    }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Portfolio
                 </Link>
                 <Link
                   to="/contact"

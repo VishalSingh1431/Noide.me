@@ -1,5 +1,6 @@
 import Analytics from '../models/Analytics.js';
 import Business from '../models/Business.js';
+import User from '../models/User.js';
 
 /**
  * Track an analytics event
@@ -21,7 +22,8 @@ export const trackEvent = async (req, res, next) => {
       'call_click': 'call_clicks',
       'whatsapp_click': 'whatsapp_clicks',
       'gallery_view': 'gallery_views',
-      'map_click': 'map_clicks'
+      'map_click': 'map_clicks',
+      'inquiry_click': 'inquiry_clicks'
     };
 
     const metric = metricMap[eventType];

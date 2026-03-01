@@ -217,7 +217,7 @@ export const initializeDatabase = async () => {
         id SERIAL PRIMARY KEY,
         business_name VARCHAR(255) NOT NULL,
         owner_name VARCHAR(255),
-        category VARCHAR(50) NOT NULL CHECK (category IN ('Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Other')),
+        category VARCHAR(100) NOT NULL CHECK (category IN ('Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Coaching Center', 'Hospital', 'Cafe', 'Dentist', 'Physiotherapist', 'Yoga Center', 'Dance Academy', 'Pet Shop', 'Veterinary', 'Car Repair', 'Bike Repair', 'Electrician', 'Plumber', 'Grocery Store', 'Supermarket', 'Sweet Shop', 'Clothing Store', 'Electronics Store', 'Mobile Shop', 'Jewellery Store', 'Optical Store', 'Book Store', 'Stationery Shop', 'Furniture Store', 'Hardware Store', 'Paint Store', 'Nursery', 'Florist', 'Laundry', 'Dry Cleaner', 'Tailor', 'Photographer', 'Caterer', 'Event Planner', 'Real Estate Agent', 'Lawyer', 'CA', 'Insurance Agent', 'ATM', 'Petrol Pump', 'Parking', 'Mosque', 'Church', 'Gurudwara', 'Park', 'Playground', 'Swimming Pool', 'Sports Complex', 'Other')),
         mobile VARCHAR(20) NOT NULL,
         email VARCHAR(255) NOT NULL,
         address TEXT NOT NULL,
@@ -324,10 +324,22 @@ export const initializeDatabase = async () => {
         whatsapp_clicks INTEGER DEFAULT 0,
         gallery_views INTEGER DEFAULT 0,
         map_clicks INTEGER DEFAULT 0,
+        inquiry_clicks INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Check and add inquiry_clicks column to analytics table if it doesn't exist
+    const inquiryColumnCheck = await pool.query(`
+      SELECT column_name 
+      FROM information_schema.columns 
+      WHERE table_name = 'analytics' AND column_name = 'inquiry_clicks'
+    `);
+    if (inquiryColumnCheck.rows.length === 0) {
+      await pool.query(`ALTER TABLE analytics ADD COLUMN inquiry_clicks INTEGER DEFAULT 0`);
+      console.log('✅ Added missing "inquiry_clicks" column to analytics table');
+    }
 
     // Create analytics_events table if it doesn't exist
     await pool.query(`

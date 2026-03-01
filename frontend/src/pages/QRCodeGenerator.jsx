@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Download, QrCode, FileImage, FileText } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { businessAPI } from '../config/api';
-import jsPDF from 'jspdf';
 
 const QRCodeGenerator = () => {
   const { id } = useParams();
@@ -41,46 +40,6 @@ const QRCodeGenerator = () => {
     document.body.removeChild(link);
   };
 
-  const downloadPDF = () => {
-    if (!qrData?.qrCode) return;
-
-    try {
-      // Create new PDF document
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: [100, 100], // Square format for QR code
-      });
-
-      // Add QR code image to PDF
-      const img = new Image();
-      img.src = qrData.qrCode;
-      
-      img.onload = () => {
-        // Calculate dimensions to fit QR code in PDF
-        const qrSize = 80; // mm
-        const x = (100 - qrSize) / 2;
-        const y = 5;
-
-        pdf.addImage(qrData.qrCode, 'PNG', x, y, qrSize, qrSize);
-        
-        // Add business name below QR code
-        pdf.setFontSize(10);
-        pdf.text(qrData.businessName, 50, 95, { align: 'center', maxWidth: 90 });
-        
-        // Save PDF
-        const filename = `${qrData.businessName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_qrcode.pdf`;
-        pdf.save(filename);
-      };
-
-      img.onerror = () => {
-        alert('Error loading image for PDF. Please try again.');
-      };
-    } catch (err) {
-      console.error('Error generating PDF:', err);
-      alert('Error generating PDF. Please try again.');
-    }
-  };
 
   if (loading) {
     return (
@@ -175,13 +134,6 @@ const QRCodeGenerator = () => {
                     <FileImage className="w-5 h-5" />
                     <span>Download PNG</span>
                   </button>
-                  <button
-                    onClick={downloadPDF}
-                    className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-xl hover:from-red-700 hover:to-pink-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
-                  >
-                    <FileText className="w-5 h-5" />
-                    <span>Download PDF</span>
-                  </button>
                 </div>
               </div>
             </div>
@@ -196,7 +148,7 @@ const QRCodeGenerator = () => {
             <ul className="space-y-3 text-gray-700">
               <li className="flex items-start gap-3">
                 <span className="text-purple-600 font-bold text-lg">1.</span>
-                <span>Download the QR code as PNG or PDF</span>
+                <span>Download the QR code as PNG</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="text-purple-600 font-bold text-lg">2.</span>

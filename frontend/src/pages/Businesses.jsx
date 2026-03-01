@@ -28,7 +28,7 @@ const Businesses = () => {
   const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 12;
 
-  const categories = ['All', 'Shop', 'Clinic', 'Library', 'Hotel', 'Restaurant', 'Services'];
+  const categories = ['All', 'Gym', 'Restaurant', 'Salon', 'Hospital', 'School', 'College', 'Coaching Center', 'Pharmacy', 'Hotel', 'Cafe', 'Clinic', 'Library', 'Shop', 'Services', 'Other'];
 
   // Server-side fetch with pagination
   const fetchBusinesses = useCallback(async (page = 1) => {

@@ -1,8 +1,15 @@
-import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+
+// Load .env from backend directory (Must be before other imports that use env vars)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: join(__dirname, '.env') });
+
+import express from 'express';
+console.log('🚀🚀🚀 NOIDAHUB SERVER STARTING - V1.1 🚀🚀🚀');
+import cors from 'cors';
 import compression from 'compression';
 import morgan from 'morgan';
 import { initializeDatabase } from './config/database.js';
@@ -17,16 +24,19 @@ import abTestRoutes from './routes/abTestRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 import googlePlacesRoutes from './routes/googlePlacesRoutes.js';
 import sitemapRoutes from './routes/sitemapRoutes.js';
-
-// Load .env from backend directory (works even when run from different directory)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-dotenv.config({ path: join(__dirname, '.env') });
+import portfolioRoutes from './routes/portfolioRoutes.js';
 
 // Validate environment variables
 validateEnv();
 
 const app = express();
+
+// Global request logger
+app.use((req, res, next) => {
+  console.log(`[REQ] ${req.method} ${req.url}`);
+  next();
+});
+
 const PORT = process.env.PORT || 50002;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -54,6 +64,7 @@ const corsOptions = {
       const allowedDomains = [
         'https://noida.me',
         'https://www.noida.me',
+        'http://localhost:5173',
         /^https:\/\/[\w-]+\.noida\.me$/  // Any subdomain
       ];
 
@@ -74,7 +85,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Security middleware
 app.use(securityMiddleware);
 
 // Request logging
@@ -142,6 +152,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/google-places', googlePlacesRoutes);
+app.use('/api/portfolio', portfolioRoutes);
 
 // Sitemap route (must come before subdomain routing)
 app.use('/', sitemapRoutes);

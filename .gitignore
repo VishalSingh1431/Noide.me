@@ -140,3 +140,6 @@ playwright/.cache/
 .cache/
 .temp/
 
+# Output files
+stats_output.json
+

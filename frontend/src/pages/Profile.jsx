@@ -10,7 +10,8 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [businesses, setBusinesses] = useState([]);
-  const [loadingBusinesses, setLoadingBusinesses] = useState(true);
+  const [loadingBusinesses, setLoadingBusinesses] = useState(false);
+  const [hasLoadedWebsites, setHasLoadedWebsites] = useState(false);
   const [userRole, setUserRole] = useState('normal');
   const [adminStats, setAdminStats] = useState(null);
   const [pendingApprovals, setPendingApprovals] = useState([]);
@@ -29,6 +30,7 @@ const Profile = () => {
     phone: '',
     bio: '',
   });
+  const [bulkSearch, setBulkSearch] = useState('');
   const [refreshing, setRefreshing] = useState(false);
 
   const refetchUserData = useCallback(async () => {
@@ -122,69 +124,63 @@ const Profile = () => {
     };
 
     fetchUserData();
-
-    // Fetch user's businesses
-    const fetchBusinesses = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.log('No token found');
-          setLoadingBusinesses(false);
-          return;
-        }
-
-        console.log('Fetching businesses for user...');
-        const response = await businessAPI.getUserBusinesses();
-        console.log('Businesses response:', response);
-        setBusinesses(response.businesses || []);
-
-        if (!response.businesses || response.businesses.length === 0) {
-          console.log('No businesses found for this user');
-        }
-      } catch (error) {
-        console.error('Error fetching businesses:', error);
-        console.error('Error details:', error.message, error.stack);
-        setBusinesses([]);
-        // Don't show alert for token expiration - auto-logout handles it
-        if (!error.isTokenExpired) {
-          alert(`Error loading your websites: ${error.message || 'Please try refreshing the page'}`);
-        }
-      } finally {
-        setLoadingBusinesses(false);
-      }
-    };
-
-    fetchBusinesses();
-
-    // Fetch admin data if user is main_admin
-    const fetchAdminData = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (token) {
-          const userData = JSON.parse(localStorage.getItem('user') || '{}');
-          if (userData.role === 'main_admin') {
-            setLoadingAdmin(true);
-            const [statsRes, approvalsRes, editApprovalsRes, usersRes] = await Promise.all([
-              businessAPI.getAdminStats(),
-              businessAPI.getPendingApprovals(),
-              businessAPI.getPendingEditApprovals(),
-              businessAPI.getAllUsers(),
-            ]);
-            setAdminStats(statsRes.stats);
-            setPendingApprovals(approvalsRes.businesses || []);
-            setPendingEditApprovals(editApprovalsRes.businesses || []);
-            setAllUsers(usersRes.users || []);
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching admin data:', error);
-      } finally {
-        setLoadingAdmin(false);
-      }
-    };
-
     fetchAdminData();
   }, [navigate]);
+
+  const fetchBusinesses = async () => {
+    try {
+      setLoadingBusinesses(true);
+      setHasLoadedWebsites(true);
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token found');
+        setLoadingBusinesses(false);
+        return;
+      }
+
+      console.log('Fetching businesses for user...');
+      const response = await businessAPI.getUserBusinesses();
+      console.log('Businesses response:', response);
+      setBusinesses(response.businesses || []);
+
+      if (!response.businesses || response.businesses.length === 0) {
+        console.log('No businesses found for this user');
+      }
+    } catch (error) {
+      console.error('Error fetching businesses:', error);
+      if (!error.isTokenExpired) {
+        alert(`Error loading your websites: ${error.message || 'Please try refreshing the page'}`);
+      }
+    } finally {
+      setLoadingBusinesses(false);
+    }
+  };
+
+  const fetchAdminData = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        if (userData.role === 'main_admin') {
+          setLoadingAdmin(true);
+          const [statsRes, approvalsRes, editApprovalsRes, usersRes] = await Promise.all([
+            businessAPI.getAdminStats(),
+            businessAPI.getPendingApprovals(),
+            businessAPI.getPendingEditApprovals(),
+            businessAPI.getAllUsers(),
+          ]);
+          setAdminStats(statsRes.stats);
+          setPendingApprovals(approvalsRes.businesses || []);
+          setPendingEditApprovals(editApprovalsRes.businesses || []);
+          setAllUsers(usersRes.users || []);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching admin data:', error);
+    } finally {
+      setLoadingAdmin(false);
+    }
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -516,29 +512,12 @@ const Profile = () => {
                   >
                     All Websites
                   </button>
-                  <button
-                    onClick={async () => {
-                      setActiveTab('analytics');
-                      if (!unifiedAnalytics) {
-                        setLoadingAnalytics(true);
-                        try {
-                          const res = await businessAPI.getAllAnalytics();
-                          setUnifiedAnalytics(res);
-                        } catch (error) {
-                          console.error('Error fetching unified analytics:', error);
-                          alert('Error: ' + error.message);
-                        } finally {
-                          setLoadingAnalytics(false);
-                        }
-                      }
-                    }}
-                    className={`px-4 md:px-6 py-3 font-semibold transition-all whitespace-nowrap ${activeTab === 'analytics'
-                      ? 'text-purple-600 border-b-2 border-purple-600'
-                      : 'text-gray-500 hover:text-gray-700'
-                      }`}
+                  <Link
+                    to="/admin/analytics"
+                    className={`px-4 md:px-6 py-3 font-semibold transition-all whitespace-nowrap text-gray-500 hover:text-purple-600 flex items-center gap-2`}
                   >
-                    📊 All Analytics
-                  </button>
+                    <span>📊 Overall Analytics</span>
+                  </Link>
                 </div>
               </div>
 
@@ -1021,111 +1000,6 @@ const Profile = () => {
                 </div>
               )}
 
-              {/* Unified Analytics Tab */}
-              {activeTab === 'analytics' && (
-                <div className="p-6 md:p-8">
-                  {loadingAnalytics ? (
-                    <div className="text-center py-12">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-                      <p className="mt-4 text-gray-600">Loading unified analytics...</p>
-                    </div>
-                  ) : unifiedAnalytics ? (
-                    <div className="space-y-6">
-                      {/* Overall Totals */}
-                      <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-xl p-6 md:p-8 border-2 border-purple-200">
-                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6">Overall Platform Analytics</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                          <div className="bg-white rounded-xl p-4 shadow-lg">
-                            <p className="text-sm text-gray-600 mb-1">Total Visitors</p>
-                            <p className="text-2xl md:text-3xl font-bold text-blue-600">{unifiedAnalytics.totals.totalVisitors.toLocaleString('en-IN')}</p>
-                          </div>
-                          <div className="bg-white rounded-xl p-4 shadow-lg">
-                            <p className="text-sm text-gray-600 mb-1">Call Clicks</p>
-                            <p className="text-2xl md:text-3xl font-bold text-green-600">{unifiedAnalytics.totals.totalCallClicks.toLocaleString('en-IN')}</p>
-                          </div>
-                          <div className="bg-white rounded-xl p-4 shadow-lg">
-                            <p className="text-sm text-gray-600 mb-1">WhatsApp Clicks</p>
-                            <p className="text-2xl md:text-3xl font-bold text-emerald-600">{unifiedAnalytics.totals.totalWhatsAppClicks.toLocaleString('en-IN')}</p>
-                          </div>
-                          <div className="bg-white rounded-xl p-4 shadow-lg">
-                            <p className="text-sm text-gray-600 mb-1">Gallery Views</p>
-                            <p className="text-2xl md:text-3xl font-bold text-purple-600">{unifiedAnalytics.totals.totalGalleryViews.toLocaleString('en-IN')}</p>
-                          </div>
-                          <div className="bg-white rounded-xl p-4 shadow-lg">
-                            <p className="text-sm text-gray-600 mb-1">Map Clicks</p>
-                            <p className="text-2xl md:text-3xl font-bold text-red-600">{unifiedAnalytics.totals.totalMapClicks.toLocaleString('en-IN')}</p>
-                          </div>
-                          <div className="bg-white rounded-xl p-4 shadow-lg">
-                            <p className="text-sm text-gray-600 mb-1">Total Interactions</p>
-                            <p className="text-2xl md:text-3xl font-bold text-indigo-600">{unifiedAnalytics.totals.totalInteractions.toLocaleString('en-IN')}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Individual Business Analytics */}
-                      <div>
-                        <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">Business-wise Analytics</h3>
-                        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                          <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                              <thead className="bg-gray-50">
-                                <tr>
-                                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Business</th>
-                                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Visitors</th>
-                                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Calls</th>
-                                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">WhatsApp</th>
-                                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Gallery</th>
-                                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Maps</th>
-                                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Total</th>
-                                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
-                                </tr>
-                              </thead>
-                              <tbody className="bg-white divide-y divide-gray-200">
-                                {unifiedAnalytics.businesses.map((analytics) => (
-                                  <tr key={analytics.businessId} className="hover:bg-gray-50">
-                                    <td className="px-4 py-3 whitespace-nowrap">
-                                      <div className="text-sm font-semibold text-gray-900">{analytics.businessName}</div>
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                                      <span className="text-sm font-bold text-blue-600">{parseInt(analytics.visitor_count || 0).toLocaleString('en-IN')}</span>
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                                      <span className="text-sm font-bold text-green-600">{parseInt(analytics.call_clicks || 0).toLocaleString('en-IN')}</span>
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                                      <span className="text-sm font-bold text-emerald-600">{parseInt(analytics.whatsapp_clicks || 0).toLocaleString('en-IN')}</span>
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                                      <span className="text-sm font-bold text-purple-600">{parseInt(analytics.gallery_views || 0).toLocaleString('en-IN')}</span>
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                                      <span className="text-sm font-bold text-red-600">{parseInt(analytics.map_clicks || 0).toLocaleString('en-IN')}</span>
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                                      <span className="text-sm font-bold text-indigo-600">{analytics.totalInteractions.toLocaleString('en-IN')}</span>
-                                    </td>
-                                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                                      <Link
-                                        to={`/analytics/${analytics.businessId}`}
-                                        className="inline-flex items-center gap-1 px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all text-xs font-medium"
-                                      >
-                                        <BarChart3 className="w-3 h-3" />
-                                        Details
-                                      </Link>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <p className="text-gray-600 text-center py-8">No analytics data available</p>
-                  )}
-                </div>
-              )}
             </div>
           )}
 
@@ -1171,7 +1045,21 @@ const Profile = () => {
             </div>
 
             <div className="p-6 md:p-8">
-              {loadingBusinesses ? (
+              {!hasLoadedWebsites ? (
+                <div className="text-center py-12 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                  <Building2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-600 text-lg mb-6 shadow-sm p-4 bg-white rounded-xl inline-block border border-gray-100">Click below to view all your business websites</p>
+                  <div className="flex justify-center">
+                    <button
+                      onClick={fetchBusinesses}
+                      className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 active:scale-95"
+                    >
+                      <RefreshCw className={`w-5 h-5 ${loadingBusinesses ? 'animate-spin' : ''}`} />
+                      Load all website
+                    </button>
+                  </div>
+                </div>
+              ) : loadingBusinesses ? (
                 <div className="text-center py-12">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                   <p className="mt-4 text-gray-600">Loading your websites...</p>
@@ -1189,9 +1077,9 @@ const Profile = () => {
                   </Link>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                  {businesses.slice(0, 5).map((business) => (
-                    <div key={business.id} className="border-2 border-blue-200 rounded-xl p-5 md:p-6 hover:border-blue-400 hover:shadow-xl transition-all bg-white flex flex-col">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 animate-fade-in-up">
+                  {businesses.map((business) => (
+                    <div key={business.id} className="border-2 border-blue-200 rounded-xl p-5 md:p-6 hover:border-blue-400 hover:shadow-xl transition-all bg-white flex flex-col group">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex-1 min-w-0">
                           <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 truncate">{business.businessName}</h3>

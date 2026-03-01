@@ -16,6 +16,7 @@ import Privacy from './pages/Privacy'
 import Businesses from './pages/Businesses'
 import EditWebsite from './pages/EditWebsite'
 import Analytics from './pages/Analytics'
+import AdminAnalytics from './pages/AdminAnalytics'
 import QRCodeGenerator from './pages/QRCodeGenerator'
 import NoidaHighlight from './pages/NoidaHighlight'
 import WebsiteDesign from './pages/services/WebsiteDesign'
@@ -25,6 +26,7 @@ import Blog from './pages/Blog'
 import BlogPost from './pages/BlogPost'
 import BusinessWebsite from './pages/BusinessWebsite'
 import BulkImport from './pages/BulkImport'
+import PortfolioDemo from './pages/PortfolioDemo'
 import WhatsAppWidget from './components/WhatsAppWidget'
 import { initGoogleAnalytics, trackPageView } from './utils/analytics'
 import './App.css'
@@ -71,6 +73,9 @@ function App() {
             <PageTracker />
             <WhatsAppWidget />
             <Routes>
+              {/* Allow portfolio-demo even on subdomains */}
+              <Route path="/portfolio-demo" element={<PortfolioDemo />} />
+              <Route path="/portfolio-demo/" element={<PortfolioDemo />} />
               <Route path="*" element={<BusinessWebsite />} />
             </Routes>
           </ErrorBoundary>
@@ -91,7 +96,14 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-website" element={<CreateWebsite />} />
+
+            {/* Robust portfolio-demo routing */}
+            <Route path="/portfolio-demo" element={<PortfolioDemo />} />
+            <Route path="/portfolio-demo/" element={<PortfolioDemo />} />
+            <Route path="/portfolio-demo." element={<PortfolioDemo />} />
+
             <Route path="/admin/bulk-import" element={<BulkImport />} />
+            <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/edit-website/:id" element={<EditWebsite />} />
             <Route path="/analytics/:businessId" element={<Analytics />} />
             <Route path="/qrcode/:id" element={<QRCodeGenerator />} />

@@ -401,6 +401,8 @@ const WebsitePreview = ({ formData, onClose }) => {
                   {(formData.services && formData.services.length > 0) && (
                     <a onClick={() => scrollToSection('services')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">Services</a>
                   )}
+                  <a onClick={() => scrollToSection('pricing')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">Pricing</a>
+                  <a onClick={() => scrollToSection('events')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">Events</a>
                   {images.length > 0 && (
                     <a onClick={() => scrollToSection('gallery')} className="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors cursor-pointer">Gallery</a>
                   )}
@@ -447,6 +449,8 @@ const WebsitePreview = ({ formData, onClose }) => {
                   {(formData.services && formData.services.length > 0) && (
                     <a href="#services" onClick={() => setShowMobileMenu(false)} className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Services</a>
                   )}
+                  <a href="#pricing" onClick={() => setShowMobileMenu(false)} className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Pricing</a>
+                  <a href="#events" onClick={() => setShowMobileMenu(false)} className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Events</a>
                   {images.length > 0 && (
                     <a href="#gallery" onClick={() => setShowMobileMenu(false)} className="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Gallery</a>
                   )}
@@ -764,7 +768,6 @@ const WebsitePreview = ({ formData, onClose }) => {
                                 const contactSection = document.getElementById('contact');
                                 if (contactSection) {
                                   contactSection.scrollIntoView({ behavior: 'smooth' });
-                                  // In a real app we'd pre-fill the form here, but for preview we just scroll
                                 }
                               }}
                               className="w-full py-3 bg-white text-gray-900 rounded-xl font-bold shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500"
@@ -797,6 +800,94 @@ const WebsitePreview = ({ formData, onClose }) => {
               </section>
             )
           }
+
+          {/* Pricing & Membership Section */}
+          <section id="pricing" className="py-12 md:py-20 bg-gray-50/50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-4">
+                  Membership <span className={`bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent`}>Plans</span>
+                </h2>
+                <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">Choose the perfect plan for your needs</p>
+                <div className={`w-24 h-2 bg-gradient-to-r ${theme.primary} mx-auto rounded-full mt-6`}></div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {(formData.pricingPlans || [
+                  { name: 'Starter', price: '999', period: 'month', features: ['Basic Access', 'Standard Support', 'Daily Sessions'], highlight: false },
+                  { name: 'Professional', price: '2499', period: 'month', features: ['Full Access', 'Priority Support', 'Personal Coach', 'Nutrition Plan'], highlight: true },
+                  { name: 'Elite', price: '4999', period: 'month', features: ['VIP Access', '24/7 Support', 'Master Training', 'All Analytics'], highlight: false }
+                ]).map((plan, idx) => (
+                  <div key={idx} className={`group relative bg-white rounded-[2rem] p-8 md:p-10 shadow-xl border-2 transition-all duration-500 hover:-translate-y-4 ${plan.highlight ? `border-indigo-500 ring-8 ring-indigo-50 scale-105 z-10` : 'border-gray-100 hover:border-indigo-200'}`}>
+                    {plan.highlight && (
+                      <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-xs font-black tracking-widest shadow-xl">
+                        MOST POPULAR
+                      </div>
+                    )}
+                    <div className="mb-8">
+                      <h3 className="text-2xl font-black text-gray-900 mb-4">{plan.name}</h3>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-black text-gray-900">₹{plan.price}</span>
+                        <span className="text-gray-400 font-bold">/{plan.period}</span>
+                      </div>
+                    </div>
+                    <ul className="space-y-4 mb-10">
+                      {plan.features.map((feature, fIdx) => (
+                        <li key={fIdx} className="flex items-center gap-3 text-gray-600 font-medium">
+                          <div className="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
+                            <Check className="w-3.5 h-3.5" />
+                          </div>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <button onClick={() => scrollToSection('contact')} className={`block w-full py-4 rounded-2xl font-black text-center transition-all duration-300 ${plan.highlight ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700' : 'bg-gray-50 text-gray-900 hover:bg-gray-100'}`}>
+                      Get Started Now
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Success Stories Section */}
+          <section id="success-stories" className="py-12 md:py-20 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+                <div className="text-center md:text-left">
+                  <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-4">
+                    Success <span className="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">Stories</span>
+                  </h2>
+                  <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">Real Results from Real People</p>
+                </div>
+                <div className="h-1.5 w-24 bg-green-500 rounded-full hidden md:block mb-4"></div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {(formData.successStories || [
+                  { name: 'Rahul Sharma', result: '95% in Board Exams', stories: 'The structured learning and personal attention helped me achieve my dreams.', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop' },
+                  { name: 'Priya Verma', result: 'IIT-JEE Qualified', stories: 'Incredible faculty and 24/7 doubt solving sessions were the key to my success.', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop' },
+                  { name: 'Ankit Gupta', result: 'NEET Top Ranker', stories: 'The regular mock tests perfectly simulated the actual exam environment.', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop' }
+                ]).map((story, idx) => (
+                  <div key={idx} className="bg-white rounded-3xl p-8 border-2 border-gray-50 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div className="flex items-center gap-4 mb-6">
+                      <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-md">
+                        <img src={story.image} alt={story.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-black text-gray-900">{story.name}</h4>
+                        <p className="text-green-600 font-bold text-sm">{story.result}</p>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <Star className="absolute -top-2 -left-2 w-8 h-8 text-gray-100 fill-current" />
+                      <p className="text-gray-600 italic relative z-10 pl-6">{story.stories || story.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
 
           {/* Enhanced Special Offers Section - Carousel with Countdown */}
           {
@@ -906,6 +997,44 @@ const WebsitePreview = ({ formData, onClose }) => {
               </section>
             )
           }
+
+          {/* Events & Updates Section */}
+          <section id="events" className="py-12 md:py-20 bg-gray-900 text-white relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-[150px]"></div>
+              <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 rounded-full blur-[150px]"></div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl md:text-5xl font-black mb-4">Latest <span className="text-blue-400">Updates</span></h2>
+                <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Don't Miss Out on What's New</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {(formData.upcomingEvents || [
+                  { title: 'New Batch Launches', date: 'March 15, 2026', description: 'Fresh batches for 2026 sessions are opening. Register early for discounts.' },
+                  { title: 'Workshop: Modern Career Skills', date: 'March 20, 2026', description: 'A free workshop with industry experts to guide your career path.' }
+                ]).map((event, idx) => (
+                  <div key={idx} className="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
+                    <div className="flex items-start gap-6">
+                      <div className="bg-blue-600 rounded-2xl px-4 py-3 text-center shrink-0">
+                        <span className="block text-xl font-black">{event.date?.split(' ')[1]?.replace(',', '') || '15'}</span>
+                        <span className="block text-xs font-bold uppercase">{event.date?.split(' ')[0] || 'MAR'}</span>
+                      </div>
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-black group-hover:text-blue-400 transition-colors">{event.title}</h3>
+                        <p className="text-gray-400 leading-relaxed">{event.description}</p>
+                        <button onClick={() => scrollToSection('contact')} className="inline-flex items-center gap-2 text-blue-400 font-bold hover:gap-3 transition-all">
+                          Learn More <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
 
           {/* Business Attributes Section */}
           {
@@ -1555,6 +1684,8 @@ const WebsitePreview = ({ formData, onClose }) => {
                     <li><a onClick={() => scrollToSection('home')} className="text-blue-50 hover:text-white transition-colors cursor-pointer">Home</a></li>
                     <li><a onClick={() => scrollToSection('about')} className="text-blue-50 hover:text-white transition-colors cursor-pointer">About Us</a></li>
                     <li><a onClick={() => scrollToSection('services')} className="text-blue-50 hover:text-white transition-colors cursor-pointer">Services</a></li>
+                    <li><a onClick={() => scrollToSection('pricing')} className="text-blue-50 hover:text-white transition-colors cursor-pointer">Pricing</a></li>
+                    <li><a onClick={() => scrollToSection('events')} className="text-blue-50 hover:text-white transition-colors cursor-pointer">Events</a></li>
                     <li><a onClick={() => scrollToSection('gallery')} className="text-blue-50 hover:text-white transition-colors cursor-pointer">Gallery</a></li>
                   </ul>
                 </div>

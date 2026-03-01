@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from 'react';
-import { Search, Loader2, CheckCircle2, XCircle, AlertCircle, RefreshCw, Upload, Building2, MapPin, Zap, StopCircle, Play } from 'lucide-react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Search, Loader2, CheckCircle2, XCircle, AlertCircle, RefreshCw, Upload, Building2, MapPin, Zap, StopCircle, Play, Sparkles } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { textSearch, getPlaceDetails, extractBusinessData } from '../services/googlePlaces';
 import { businessAPI } from '../config/api';
@@ -100,6 +100,26 @@ const BulkImport = () => {
         totalFailed: 0,
     });
     const [autoLogs, setAutoLogs] = useState([]);
+
+    // Admin Dashboard States
+    const [adminStats, setAdminStats] = useState(null);
+    const [bulkSearch, setBulkSearch] = useState('');
+    const [loadingAdmin, setLoadingAdmin] = useState(false);
+
+    useEffect(() => {
+        const fetchAdminStats = async () => {
+            try {
+                setLoadingAdmin(true);
+                const res = await businessAPI.getAdminStats();
+                setAdminStats(res.stats);
+            } catch (error) {
+                console.error('Error fetching admin stats:', error);
+            } finally {
+                setLoadingAdmin(false);
+            }
+        };
+        fetchAdminStats();
+    }, []);
     const stopRef = useRef(false);
     const logsEndRef = useRef(null);
 
@@ -180,7 +200,7 @@ const BulkImport = () => {
                 submitData.append('businessName', businessData.businessName);
                 submitData.append('address', businessData.address);
                 submitData.append('description', businessData.description || `${businessData.businessName} is a premier destination in ${location}.`);
-                submitData.append('category', query.split(' ')[0] || 'Other');
+                submitData.append('category', query || 'Other');
                 submitData.append('ownerName', 'Admin Import');
                 submitData.append('mobileNumber', businessData.phoneNumber ? businessData.phoneNumber.replace(/\D/g, '').slice(-10) : '9792894561');
                 submitData.append('email', 'vishalsingh05072003@gmail.com');
@@ -398,6 +418,132 @@ const BulkImport = () => {
                         </h1>
                         <p className="text-gray-600">Search Google Maps and import businesses to populate the directory</p>
                     </div>
+
+                    {/* Bulk Import Control Center */}
+                    {adminStats && (
+                        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden mb-8">
+                            <div className="bg-gray-50/50 px-6 py-6 border-b border-gray-100">
+                                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                                    <div>
+                                        <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                            <Sparkles className="w-6 h-6 text-indigo-600" />
+                                            Bulk Import Control Center
+                                        </h3>
+                                        <p className="text-sm text-gray-500 mt-1 font-medium">Manage and track data coverage across all categories</p>
+                                    </div>
+
+                                    <div className="flex flex-col sm:flex-row items-center gap-3">
+                                        <div className="relative w-full sm:w-64">
+                                            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                            <input
+                                                type="text"
+                                                placeholder="Search categories..."
+                                                className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-xl bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm shadow-sm"
+                                                value={bulkSearch}
+                                                onChange={(e) => setBulkSearch(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="flex items-center bg-white border border-gray-200 rounded-xl p-1 shadow-sm font-black text-[10px] uppercase tracking-tighter">
+                                            <div className="px-3 py-1 flex items-center gap-2 border-r border-gray-100">
+                                                <span className="text-gray-400">DONE</span>
+                                                <span className="text-green-600 text-sm">{(adminStats.bulkImportStats || []).length}</span>
+                                            </div>
+                                            <div className="px-3 py-1 flex items-center gap-2">
+                                                <span className="text-gray-400">REMAINS</span>
+                                                <span className="text-orange-600 text-sm">
+                                                    {(adminStats.allCategories || []).length - (adminStats.bulkImportStats || []).length}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="overflow-x-auto max-h-[400px]">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50 uppercase text-[10px] font-black text-gray-500 tracking-widest sticky top-0 z-10">
+                                        <tr>
+                                            <th scope="col" className="px-6 py-3 text-left">Category</th>
+                                            <th scope="col" className="px-6 py-3 text-left">Status</th>
+                                            <th scope="col" className="px-6 py-3 text-left">Count</th>
+                                            <th scope="col" className="px-6 py-3 text-left">Last Run</th>
+                                            <th scope="col" className="px-6 py-3 text-right">Act</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-100 font-bold uppercase">
+                                        {(() => {
+                                            const bulkStats = adminStats.bulkImportStats || [];
+                                            const allCats = adminStats.allCategories || [
+                                                'Gym', 'Restaurant', 'Salon', 'Hospital', 'School', 'College',
+                                                'Pharmacy', 'Hotel', 'Cafe', 'Library'
+                                            ];
+
+                                            const tableData = allCats.map(cat => {
+                                                const match = bulkStats.find(s =>
+                                                    s.category?.trim().toLowerCase() === cat.trim().toLowerCase()
+                                                );
+                                                return {
+                                                    category: cat,
+                                                    count: match ? match.count : 0,
+                                                    lastRun: match ? match.lastRun : null,
+                                                    status: match ? 'Completed' : 'Remaining'
+                                                };
+                                            }).filter(item =>
+                                                item.category.toLowerCase().includes(bulkSearch.toLowerCase())
+                                            ).sort((a, b) => {
+                                                if (a.status !== b.status) return a.status === 'Completed' ? -1 : 1;
+                                                return b.count - a.count;
+                                            });
+
+                                            if (tableData.length === 0) return <tr><td colSpan="5" className="px-6 py-12 text-center text-gray-500">No matches found</td></tr>;
+
+                                            return tableData.map((item, idx) => (
+                                                <tr key={idx} className="hover:bg-gray-50/50 transition-colors">
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center gap-3 text-gray-900 text-sm">
+                                                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.status === 'Completed' ? 'bg-green-50 text-green-600' : 'bg-orange-50 text-orange-600'}`}>
+                                                                <Building2 className="w-4 h-4" />
+                                                            </div>
+                                                            {item.category}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black tracking-tighter ${item.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                                                            }`}>
+                                                            {item.status === 'Completed' ? 'RUNNED' : 'REMAINS'}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-black text-gray-900">
+                                                        {item.count} <span className="text-[10px] text-gray-400">BIZ</span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                        {item.lastRun ? new Date(item.lastRun).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : '---'}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                        <button
+                                                            onClick={() => {
+                                                                if (mode === 'manual') {
+                                                                    setQuery(item.category);
+                                                                    window.scrollTo({ top: document.querySelector('form')?.offsetTop - 100, behavior: 'smooth' });
+                                                                } else {
+                                                                    setSelectedCategory(item.category);
+                                                                    window.scrollTo({ top: document.querySelector('.bg-white.rounded-2xl.shadow-lg.border.border-gray-100.p-6')?.offsetTop - 100, behavior: 'smooth' });
+                                                                }
+                                                            }}
+                                                            className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest ${item.status === 'Completed' ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' : 'bg-orange-600 text-white hover:bg-orange-700'
+                                                                }`}
+                                                        >
+                                                            {item.status === 'Completed' ? 'Update' : 'Run'}
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ));
+                                        })()}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
 
                     {/* Mode Toggle */}
                     <div className="flex justify-center gap-2 mb-8">

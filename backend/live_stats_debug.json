@@ -1,0 +1,475 @@
+{
+  "totalUsers": 1,
+  "totalBusinesses": 31878,
+  "pendingApprovals": 6105,
+  "pendingEdits": 0,
+  "approvedBusinesses": 25773,
+  "rejectedBusinesses": 0,
+  "bulkImportStats": [
+    {
+      "category": "DEBUG_TEST",
+      "count": 123,
+      "lastRun": "2026-03-01T12:34:38.402Z"
+    },
+    {
+      "category": "Wholesale",
+      "count": 1797,
+      "lastRun": "2026-02-17T05:28:15.570Z"
+    },
+    {
+      "category": "Real Estate",
+      "count": 1663,
+      "lastRun": "2026-02-21T13:57:53.186Z"
+    },
+    {
+      "category": "IT Services",
+      "count": 1647,
+      "lastRun": "2026-02-21T13:56:05.027Z"
+    },
+    {
+      "category": "Retail",
+      "count": 1647,
+      "lastRun": "2026-02-18T15:36:10.169Z"
+    },
+    {
+      "category": "Repair Services",
+      "count": 1372,
+      "lastRun": "2026-02-18T15:42:09.344Z"
+    },
+    {
+      "category": "Automobile",
+      "count": 1245,
+      "lastRun": "2026-02-18T15:36:27.850Z"
+    },
+    {
+      "category": "Electronics",
+      "count": 1167,
+      "lastRun": "2026-02-18T15:38:13.847Z"
+    },
+    {
+      "category": "Services",
+      "count": 1062,
+      "lastRun": "2026-02-18T14:41:16.908Z"
+    },
+    {
+      "category": "Entertainment",
+      "count": 1046,
+      "lastRun": "2026-02-17T06:39:49.817Z"
+    },
+    {
+      "category": "Pharmacy",
+      "count": 1016,
+      "lastRun": "2026-02-17T01:44:07.220Z"
+    },
+    {
+      "category": "School",
+      "count": 1008,
+      "lastRun": "2026-02-16T15:04:00.180Z"
+    },
+    {
+      "category": "Restaurant",
+      "count": 948,
+      "lastRun": "2026-02-15T15:37:33.065Z"
+    },
+    {
+      "category": "Fashion",
+      "count": 910,
+      "lastRun": "2026-02-18T15:27:25.255Z"
+    },
+    {
+      "category": "Travel Agency",
+      "count": 852,
+      "lastRun": "2026-02-17T02:43:37.747Z"
+    },
+    {
+      "category": "Furniture",
+      "count": 799,
+      "lastRun": "2026-02-18T15:24:58.826Z"
+    },
+    {
+      "category": "Dentist",
+      "count": 734,
+      "lastRun": "2026-03-01T05:40:11.897Z"
+    },
+    {
+      "category": "Food & Beverage",
+      "count": 671,
+      "lastRun": "2026-02-18T15:20:49.834Z"
+    },
+    {
+      "category": "Physiotherapist",
+      "count": 657,
+      "lastRun": "2026-03-01T05:47:49.772Z"
+    },
+    {
+      "category": "Hotel",
+      "count": 648,
+      "lastRun": "2026-02-15T14:36:25.085Z"
+    },
+    {
+      "category": "College",
+      "count": 628,
+      "lastRun": "2026-02-16T16:11:30.168Z"
+    },
+    {
+      "category": "Bakery",
+      "count": 628,
+      "lastRun": "2026-02-16T16:57:49.119Z"
+    },
+    {
+      "category": "Gym",
+      "count": 594,
+      "lastRun": "2026-02-15T13:50:56.704Z"
+    },
+    {
+      "category": "Spa",
+      "count": 584,
+      "lastRun": "2026-02-17T00:51:00.059Z"
+    },
+    {
+      "category": "Photography",
+      "count": 521,
+      "lastRun": "2026-02-21T07:09:25.802Z"
+    },
+    {
+      "category": "Event Management",
+      "count": 503,
+      "lastRun": "2026-02-21T00:15:31.083Z"
+    },
+    {
+      "category": "Catering",
+      "count": 420,
+      "lastRun": "2026-02-18T16:27:52.982Z"
+    },
+    {
+      "category": "Hardware Store",
+      "count": 362,
+      "lastRun": "2026-03-01T06:03:35.173Z"
+    },
+    {
+      "category": "Clinic",
+      "count": 343,
+      "lastRun": "2026-02-16T15:24:48.272Z"
+    },
+    {
+      "category": "Jewellery Store",
+      "count": 333,
+      "lastRun": "2026-03-01T06:54:22.780Z"
+    },
+    {
+      "category": "Yoga Center",
+      "count": 330,
+      "lastRun": "2026-02-21T07:56:11.881Z"
+    },
+    {
+      "category": "Electrician",
+      "count": 323,
+      "lastRun": "2026-03-01T05:48:54.788Z"
+    },
+    {
+      "category": "Tailor",
+      "count": 321,
+      "lastRun": "2026-03-01T06:10:24.447Z"
+    },
+    {
+      "category": "Grocery Store",
+      "count": 303,
+      "lastRun": "2026-03-01T06:02:07.537Z"
+    },
+    {
+      "category": "Stationery Shop",
+      "count": 278,
+      "lastRun": "2026-02-21T06:59:20.343Z"
+    },
+    {
+      "category": "Sports Complex",
+      "count": 277,
+      "lastRun": "2026-02-28T06:55:27.085Z"
+    },
+    {
+      "category": "Insurance Agent",
+      "count": 261,
+      "lastRun": "2026-03-01T06:27:36.343Z"
+    },
+    {
+      "category": "Dry Cleaner",
+      "count": 252,
+      "lastRun": "2026-03-01T06:51:50.854Z"
+    },
+    {
+      "category": "Bike Repair",
+      "count": 231,
+      "lastRun": "2026-03-01T03:15:56.036Z"
+    },
+    {
+      "category": "Laundry",
+      "count": 229,
+      "lastRun": "2026-03-01T05:04:08.167Z"
+    },
+    {
+      "category": "Clothing Store",
+      "count": 223,
+      "lastRun": "2026-03-01T06:07:40.791Z"
+    },
+    {
+      "category": "Cafe",
+      "count": 216,
+      "lastRun": "2026-02-28T06:44:27.071Z"
+    },
+    {
+      "category": "Dance Academy",
+      "count": 214,
+      "lastRun": "2026-03-01T04:07:46.357Z"
+    },
+    {
+      "category": "Bank",
+      "count": 208,
+      "lastRun": "2026-02-16T11:47:57.651Z"
+    },
+    {
+      "category": "Pet Shop",
+      "count": 208,
+      "lastRun": "2026-02-21T07:51:37.333Z"
+    },
+    {
+      "category": "Playground",
+      "count": 183,
+      "lastRun": "2026-03-01T06:27:35.159Z"
+    },
+    {
+      "category": "Paint Store",
+      "count": 180,
+      "lastRun": "2026-03-01T06:47:22.682Z"
+    },
+    {
+      "category": "Fitness",
+      "count": 153,
+      "lastRun": "2026-02-21T12:46:42.687Z"
+    },
+    {
+      "category": "Library",
+      "count": 152,
+      "lastRun": "2026-02-15T12:20:37.673Z"
+    },
+    {
+      "category": "Swimming Pool",
+      "count": 141,
+      "lastRun": "2026-02-28T06:46:33.023Z"
+    },
+    {
+      "category": "Sweet Shop",
+      "count": 133,
+      "lastRun": "2026-03-01T05:18:29.080Z"
+    },
+    {
+      "category": "Event Planner",
+      "count": 114,
+      "lastRun": "2026-03-01T05:14:41.353Z"
+    },
+    {
+      "category": "Car Repair",
+      "count": 110,
+      "lastRun": "2026-03-01T03:07:59.437Z"
+    },
+    {
+      "category": "Nursery",
+      "count": 103,
+      "lastRun": "2026-03-01T07:04:29.195Z"
+    },
+    {
+      "category": "ATM",
+      "count": 98,
+      "lastRun": "2026-03-01T06:23:26.544Z"
+    },
+    {
+      "category": "Coaching Center",
+      "count": 91,
+      "lastRun": "2026-02-21T12:42:59.610Z"
+    },
+    {
+      "category": "Plumber",
+      "count": 90,
+      "lastRun": "2026-03-01T06:41:04.932Z"
+    },
+    {
+      "category": "Veterinary",
+      "count": 77,
+      "lastRun": "2026-03-01T05:38:20.559Z"
+    },
+    {
+      "category": "Book Store",
+      "count": 76,
+      "lastRun": "2026-03-01T07:04:25.695Z"
+    },
+    {
+      "category": "Parking",
+      "count": 64,
+      "lastRun": "2026-02-28T06:55:32.153Z"
+    },
+    {
+      "category": "Petrol Pump",
+      "count": 61,
+      "lastRun": "2026-03-01T06:22:34.814Z"
+    },
+    {
+      "category": "Caterer",
+      "count": 57,
+      "lastRun": "2026-03-01T05:13:23.904Z"
+    },
+    {
+      "category": "Photographer",
+      "count": 57,
+      "lastRun": "2026-03-01T03:57:38.821Z"
+    },
+    {
+      "category": "Hospital",
+      "count": 32,
+      "lastRun": "2026-03-01T05:22:21.643Z"
+    },
+    {
+      "category": "Supermarket",
+      "count": 25,
+      "lastRun": "2026-03-01T06:27:28.273Z"
+    },
+    {
+      "category": "Mobile Shop",
+      "count": 24,
+      "lastRun": "2026-03-01T06:27:34.623Z"
+    },
+    {
+      "category": "Accounting",
+      "count": 24,
+      "lastRun": "2026-02-16T11:32:57.178Z"
+    },
+    {
+      "category": "Salon",
+      "count": 22,
+      "lastRun": "2026-02-15T15:41:36.153Z"
+    },
+    {
+      "category": "Manufacturing",
+      "count": 20,
+      "lastRun": "2026-02-15T15:45:29.774Z"
+    },
+    {
+      "category": "Temple",
+      "count": 20,
+      "lastRun": "2026-02-15T15:39:40.384Z"
+    },
+    {
+      "category": "Jewelry",
+      "count": 20,
+      "lastRun": "2026-02-16T11:29:30.052Z"
+    },
+    {
+      "category": "Shop",
+      "count": 20,
+      "lastRun": "2026-02-17T00:18:28.493Z"
+    },
+    {
+      "category": "Tourism",
+      "count": 19,
+      "lastRun": "2026-02-15T15:46:43.026Z"
+    },
+    {
+      "category": "Beauty",
+      "count": 18,
+      "lastRun": "2026-02-15T15:48:05.130Z"
+    },
+    {
+      "category": "Education",
+      "count": 15,
+      "lastRun": "2026-02-16T11:28:29.502Z"
+    }
+  ],
+  "allCategories": [
+    "Shop",
+    "Restaurant",
+    "Hotel",
+    "Clinic",
+    "Library",
+    "Services",
+    "Temple",
+    "School",
+    "College",
+    "Gym",
+    "Salon",
+    "Spa",
+    "Pharmacy",
+    "Bank",
+    "Travel Agency",
+    "Real Estate",
+    "Law Firm",
+    "Accounting",
+    "IT Services",
+    "Photography",
+    "Event Management",
+    "Catering",
+    "Bakery",
+    "Jewelry",
+    "Fashion",
+    "Electronics",
+    "Furniture",
+    "Automobile",
+    "Repair Services",
+    "Education",
+    "Healthcare",
+    "Beauty",
+    "Fitness",
+    "Entertainment",
+    "Tourism",
+    "Food & Beverage",
+    "Retail",
+    "Wholesale",
+    "Manufacturing",
+    "Construction",
+    "Coaching Center",
+    "Hospital",
+    "Cafe",
+    "Dentist",
+    "Physiotherapist",
+    "Yoga Center",
+    "Dance Academy",
+    "Pet Shop",
+    "Veterinary",
+    "Car Repair",
+    "Bike Repair",
+    "Electrician",
+    "Plumber",
+    "Grocery Store",
+    "Supermarket",
+    "Sweet Shop",
+    "Clothing Store",
+    "Electronics Store",
+    "Mobile Shop",
+    "Jewellery Store",
+    "Optical Store",
+    "Book Store",
+    "Stationery Shop",
+    "Furniture Store",
+    "Hardware Store",
+    "Paint Store",
+    "Nursery",
+    "Florist",
+    "Laundry",
+    "Dry Cleaner",
+    "Tailor",
+    "Photographer",
+    "Caterer",
+    "Event Planner",
+    "Real Estate Agent",
+    "Lawyer",
+    "CA",
+    "Insurance Agent",
+    "ATM",
+    "Petrol Pump",
+    "Parking",
+    "Mosque",
+    "Church",
+    "Gurudwara",
+    "Park",
+    "Playground",
+    "Swimming Pool",
+    "Sports Complex"
+  ]
+}

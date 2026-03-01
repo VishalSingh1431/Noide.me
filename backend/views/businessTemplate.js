@@ -1233,6 +1233,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           <a href="#home" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Home</a>
           ${business.description ? `<a href="#about" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">About</a>` : ''}
           ${business.services && business.services.length > 0 ? `<a href="#services" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Services</a>` : ''}
+          <a href="#pricing" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Pricing</a>
+          <a href="#events" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Events</a>
           ${business.imagesUrl && business.imagesUrl.length > 0 ? `<a href="#gallery" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Gallery</a>` : ''}
           <a href="#contact" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Contact</a>
           
@@ -1262,6 +1264,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
         <a href="#home" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Home</a>
         ${business.description ? `<a href="#about" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">About</a>` : ''}
         ${business.services && business.services.length > 0 ? `<a href="#services" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Services</a>` : ''}
+        <a href="#pricing" onclick="toggleMobileMenu()" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Pricing</a>
+        <a href="#events" onclick="toggleMobileMenu()" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Events</a>
         ${business.imagesUrl && business.imagesUrl.length > 0 ? `<a href="#gallery" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Gallery</a>` : ''}
         <a href="#contact" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Contact</a>
         <div class="flex gap-2 pt-2">
@@ -1362,7 +1366,9 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
                     <p class="text-sm font-bold text-gray-900">${(() => {
       const today = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       const hours = business.businessHours && business.businessHours[today];
-      return hours && hours.open ? `${hours.start} - ${hours.end}` : "Open Daily";
+      if (hours && hours.open) return `${hours.start} - ${hours.end}`;
+      if (hours && !hours.open && (hours.start !== '09:00' || hours.end !== '18:00')) return "Closed";
+      return "Open Daily";
     })()}</p>
                   </div>
                   <div class="bg-white/90 backdrop-blur-md p-5 rounded-3xl shadow-lg border border-white/50 transform hover:-translate-y-1 transition-transform">
@@ -1574,6 +1580,94 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       </section>
       ` : ''}
 
+      <!-- Pricing & Membership Section -->
+      <section id="pricing" class="py-12 md:py-20 bg-gray-50/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">
+              Membership <span class="bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent">Plans</span>
+            </h2>
+            <p class="text-gray-500 font-bold uppercase tracking-widest text-sm">Choose the perfect plan for your needs</p>
+            <div class="w-24 h-2 bg-gradient-to-r ${theme.primary} mx-auto rounded-full mt-6"></div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            ${(business.pricingPlans || [
+      { name: 'Starter', price: '999', period: 'month', features: ['Basic Access', 'Standard Support', 'Daily Sessions'], highlight: false },
+      { name: 'Professional', price: '2499', period: 'month', features: ['Full Access', 'Priority Support', 'Personal Coach', 'Nutrition Plan'], highlight: true },
+      { name: 'Elite', price: '4999', period: 'month', features: ['VIP Access', '24/7 Support', 'Master Training', 'All Analytics'], highlight: false }
+    ]).map(plan => `
+              <div class="group relative bg-white rounded-[2rem] p-8 md:p-10 shadow-xl border-2 transition-all duration-500 hover:-translate-y-4 ${plan.highlight ? `border-indigo-500 ring-8 ring-indigo-50 scale-105 z-10` : 'border-gray-100 hover:border-indigo-200'}">
+                ${plan.highlight ? `
+                  <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-xs font-black tracking-widest shadow-xl">
+                    MOST POPULAR
+                  </div>
+                ` : ''}
+                <div class="mb-8">
+                  <h3 class="text-2xl font-black text-gray-900 mb-4">${escapeHtml(plan.name)}</h3>
+                  <div class="flex items-baseline gap-1">
+                    <span class="text-4xl font-black text-gray-900">₹${escapeHtml(plan.price)}</span>
+                    <span class="text-gray-400 font-bold">/${escapeHtml(plan.period)}</span>
+                  </div>
+                </div>
+                <ul class="space-y-4 mb-10">
+                  ${plan.features.map(feature => `
+                    <li class="flex items-center gap-3 text-gray-600 font-medium">
+                      <div class="w-5 h-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                      </div>
+                      ${escapeHtml(feature)}
+                    </li>
+                  `).join('')}
+                </ul>
+                <a href="#contact" class="block w-full py-4 rounded-2xl font-black text-center transition-all duration-300 ${plan.highlight ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 hover:bg-indigo-700' : 'bg-gray-50 text-gray-900 hover:bg-gray-100'}">
+                  Get Started Now
+                </a>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>
+
+      <!-- Success Stories Section -->
+      <section id="success-stories" class="py-12 md:py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
+            <div class="text-center md:text-left">
+              <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">
+                Success <span class="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">Stories</span>
+              </h2>
+              <p class="text-gray-500 font-bold uppercase tracking-widest text-sm">Real Results from Real People</p>
+            </div>
+            <div class="h-1.5 w-24 bg-green-500 rounded-full hidden md:block mb-4"></div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            ${(business.successStories || [
+      { name: 'Rahul Sharma', result: '95% in Board Exams', stories: 'The structured learning and personal attention helped me achieve my dreams.', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop' },
+      { name: 'Priya Verma', result: 'IIT-JEE Qualified', stories: 'Incredible faculty and 24/7 doubt solving sessions were the key to my success.', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop' },
+      { name: 'Ankit Gupta', result: 'NEET Top Ranker', stories: 'The regular mock tests perfectly simulated the actual exam environment.', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop' }
+    ]).map(story => `
+              <div class="bg-white rounded-3xl p-8 border-2 border-gray-50 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                <div class="flex items-center gap-4 mb-6">
+                  <div class="w-16 h-16 rounded-2xl overflow-hidden shadow-md">
+                    <img src="${escapeHtml(story.image)}" alt="${escapeHtml(story.name)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                  </div>
+                  <div>
+                    <h4 class="text-xl font-black text-gray-900">${escapeHtml(story.name)}</h4>
+                    <p class="text-green-600 font-bold text-sm">${escapeHtml(story.result)}</p>
+                  </div>
+                </div>
+                <div class="relative">
+                  <svg class="absolute -top-2 -left-2 w-8 h-8 text-gray-100" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19C19.5523 16 20 15.5523 20 15V9C20 8.44772 19.5523 8 19 8H15C14.4477 8 14 7.55228 14 7V5C14 4.44772 14.4477 4 15 4H20C21.1046 4 22 4.89543 22 6V15C22 18.3137 19.3137 21 16 21H14.017ZM4.017 21L4.017 18C4.017 16.8954 4.91243 16 6.017 16H9C9.55228 16 10 15.5523 10 15V9C10 8.44772 9.55228 8 9 8H5C4.44772 8 4 7.55228 4 7V5C4 4.44772 4.44772 4 5 4H10C11.1046 4 12 4.89543 12 6V15C12 18.3137 9.31371 21 6 21H4.017Z"/></svg>
+                  <p class="text-gray-600 italic relative z-10 pl-6">${escapeHtml(story.stories || story.description || '')}</p>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>
+
 
   ${business.specialOffers && business.specialOffers.length > 0 ? `
       <section id="offers" class="py-6 md:py-8 bg-gradient-to-br from-red-50 via-orange-50 to-yellow-50 relative overflow-hidden">
@@ -1641,8 +1735,45 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
         </div>
       </section>
-      ` : ''
-    }
+      ` : ''}
+
+      <!-- Events & Updates Section -->
+      <section id="events" class="py-12 md:py-20 bg-gray-900 text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+          <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-[150px]"></div>
+          <div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-500 rounded-full blur-[150px]"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-5xl font-black mb-4">Latest <span class="text-blue-400">Updates</span></h2>
+            <p class="text-gray-400 font-bold uppercase tracking-widest text-sm">Don't Miss Out on What's New</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            ${(business.upcomingEvents || [
+      { title: 'New Batch Launches', date: 'March 15, 2026', description: 'Fresh batches for 2026 sessions are opening. Register early for discounts.' },
+      { title: 'Workshop: Modern Career Skills', date: 'March 20, 2026', description: 'A free workshop with industry experts to guide your career path.' }
+    ]).map(event => `
+              <div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
+                <div class="flex items-start gap-6">
+                  <div class="bg-blue-600 rounded-2xl px-4 py-3 text-center shrink-0">
+                    <span class="block text-xl font-black">${escapeHtml(event.date?.split(' ')[1]?.replace(',', '') || '15')}</span>
+                    <span class="block text-xs font-bold uppercase">${escapeHtml(event.date?.split(' ')[0] || 'MAR')}</span>
+                  </div>
+                  <div class="space-y-3">
+                    <h3 class="text-2xl font-black group-hover:text-blue-400 transition-colors">${escapeHtml(event.title)}</h3>
+                    <p class="text-gray-400 leading-relaxed">${escapeHtml(event.description || '')}</p>
+                    <a href="#contact" class="inline-flex items-center gap-2 text-blue-400 font-bold hover:gap-3 transition-all">
+                      Learn More <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>
 
 
   ${youtubeVideos.length > 0 ? `
@@ -1865,15 +1996,9 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
         </div>
       </section>
-      ` : ''
-    }
+      ` : ''}
 
-
-
-
-    }
-
-  ${business.faqs && business.faqs.length > 0 ? `
+    ${business.faqs && business.faqs.length > 0 ? `
       <section id="faq" class="py-6 bg-gray-50 px-4 sm:px-6 lg:px-8">
         <div class="max-w-3xl mx-auto">
           <div class="text-center mb-12">
@@ -1897,9 +2022,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
         </div>
       </section>
-      ` : ''
-    }
-
+      ` : ''}
 
 
     </main>
@@ -1957,6 +2080,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
               <h4 class="text-white font-bold mb-6">Quick Links</h4>
               <ul class="space-y-3 text-sm text-blue-100">
                 <li><a href="#about" class="hover:text-white transition-colors">About Us</a></li>
+                <li><a href="#pricing" class="hover:text-white transition-colors">Pricing Plans</a></li>
+                <li><a href="#events" class="hover:text-white transition-colors">Latest Updates</a></li>
                 <li><a href="#gallery" class="hover:text-white transition-colors">Photo Gallery</a></li>
                 <li><a href="#reviews" class="hover:text-white transition-colors">Customer Reviews</a></li>
                 <li><a href="#faq" class="hover:text-white transition-colors">FAQs</a></li>

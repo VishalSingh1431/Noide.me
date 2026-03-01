@@ -25,7 +25,7 @@ export const testCreateCollege = async (req, res) => {
     } = req.body;
 
     // Validate and normalize category using the same logic as createBusiness
-    const validCategories = ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Other'];
+    const validCategories = ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Coaching Center', 'Hospital', 'Cafe', 'Dentist', 'Physiotherapist', 'Yoga Center', 'Dance Academy', 'Pet Shop', 'Veterinary', 'Car Repair', 'Bike Repair', 'Electrician', 'Plumber', 'Grocery Store', 'Supermarket', 'Sweet Shop', 'Clothing Store', 'Electronics Store', 'Mobile Shop', 'Jewellery Store', 'Optical Store', 'Book Store', 'Stationery Shop', 'Furniture Store', 'Hardware Store', 'Paint Store', 'Nursery', 'Florist', 'Laundry', 'Dry Cleaner', 'Tailor', 'Photographer', 'Caterer', 'Event Planner', 'Real Estate Agent', 'Lawyer', 'CA', 'Insurance Agent', 'ATM', 'Petrol Pump', 'Parking', 'Mosque', 'Church', 'Gurudwara', 'Park', 'Playground', 'Swimming Pool', 'Sports Complex', 'Other'];
 
     const categoryMap = {
       'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop',
@@ -45,7 +45,20 @@ export const testCreateCollege = async (req, res) => {
       'fitness': 'Fitness', 'entertainment': 'Entertainment', 'tourism': 'Tourism',
       'food & beverage': 'Food & Beverage', 'retail': 'Retail', 'wholesale': 'Wholesale',
       'manufacturing': 'Manufacturing', 'construction': 'Construction', 'other': 'Other',
-      'hospital': 'Clinic', 'lodging': 'Hotel', 'food': 'Restaurant', 'general': 'Services', 'misc': 'Other'
+      'hospital': 'Hospital', 'lodging': 'Hotel', 'food': 'Restaurant', 'general': 'Services', 'misc': 'Other',
+      'coaching center': 'Coaching Center', 'cafe': 'Cafe', 'dentist': 'Dentist', 'physiotherapist': 'Physiotherapist',
+      'yoga center': 'Yoga Center', 'dance academy': 'Dance Academy', 'pet shop': 'Pet Shop', 'veterinary': 'Veterinary',
+      'car repair': 'Car Repair', 'bike repair': 'Bike Repair', 'electrician': 'Electrician', 'plumber': 'Plumber',
+      'grocery store': 'Grocery Store', 'supermarket': 'Supermarket', 'sweet shop': 'Sweet Shop', 'clothing store': 'Clothing Store',
+      'electronics store': 'Electronics Store', 'mobile shop': 'Mobile Shop', 'jewellery store': 'Jewellery Store',
+      'optical store': 'Optical Store', 'book store': 'Book Store', 'stationery shop': 'Stationery Shop',
+      'furniture store': 'Furniture Store', 'hardware store': 'Hardware Store', 'paint store': 'Paint Store',
+      'nursery': 'Nursery', 'florist': 'Florist', 'laundry': 'Laundry', 'dry cleaner': 'Dry Cleaner',
+      'tailor': 'Tailor', 'photographer': 'Photographer', 'caterer': 'Caterer', 'event planner': 'Event Planner',
+      'real estate agent': 'Real Estate Agent', 'lawyer': 'Lawyer', 'ca': 'CA', 'insurance agent': 'Insurance Agent',
+      'atm': 'ATM', 'petrol pump': 'Petrol Pump', 'parking': 'Parking', 'mosque': 'Mosque', 'church': 'Church',
+      'gurudwara': 'Gurudwara', 'park': 'Park', 'playground': 'Playground', 'swimming pool': 'Swimming Pool',
+      'sports complex': 'Sports Complex'
     };
 
     let categoryValue = category;
@@ -265,7 +278,7 @@ export const createBusiness = async (req, res) => {
     }
 
     // Validate and normalize category - ALL categories are separate
-    const validCategories = ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Other'];
+    const validCategories = ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Coaching Center', 'Hospital', 'Cafe', 'Dentist', 'Physiotherapist', 'Yoga Center', 'Dance Academy', 'Pet Shop', 'Veterinary', 'Car Repair', 'Bike Repair', 'Electrician', 'Plumber', 'Grocery Store', 'Supermarket', 'Sweet Shop', 'Clothing Store', 'Electronics Store', 'Mobile Shop', 'Jewellery Store', 'Optical Store', 'Book Store', 'Stationery Shop', 'Furniture Store', 'Hardware Store', 'Paint Store', 'Nursery', 'Florist', 'Laundry', 'Dry Cleaner', 'Tailor', 'Photographer', 'Caterer', 'Event Planner', 'Real Estate Agent', 'Lawyer', 'CA', 'Insurance Agent', 'ATM', 'Petrol Pump', 'Parking', 'Mosque', 'Church', 'Gurudwara', 'Park', 'Playground', 'Swimming Pool', 'Sports Complex', 'Other'];
 
     // Extract category from any format (string, object, etc.)
     let categoryValue = category;
@@ -279,56 +292,37 @@ export const createBusiness = async (req, res) => {
 
     // MAPPING - Each category maps to itself (all separate categories)
     const categoryMap = {
-      // Direct matches - keep as is
       'shop': 'Shop', 'shops': 'Shop', 'store': 'Shop', 'stores': 'Shop',
       'restaurant': 'Restaurant', 'restaurants': 'Restaurant',
       'hotel': 'Hotel', 'hotels': 'Hotel',
       'clinic': 'Clinic', 'clinics': 'Clinic',
       'library': 'Library', 'libraries': 'Library',
       'services': 'Services', 'service': 'Services',
-
-      // All other categories - SEPARATE (map to themselves)
-      'temple': 'Temple', 'temples': 'Temple',
-      'school': 'School', 'schools': 'School',
-      'college': 'College', 'colleges': 'College',
-      'gym': 'Gym', 'gyms': 'Gym',
-      'salon': 'Salon', 'salons': 'Salon',
-      'spa': 'Spa', 'spas': 'Spa',
-      'pharmacy': 'Pharmacy', 'pharmacies': 'Pharmacy',
-      'bank': 'Bank', 'banks': 'Bank',
-      'travel agency': 'Travel Agency', 'travel': 'Travel Agency',
-      'real estate': 'Real Estate',
-      'law firm': 'Law Firm', 'law firms': 'Law Firm',
-      'accounting': 'Accounting',
-      'it services': 'IT Services', 'it service': 'IT Services',
-      'photography': 'Photography',
-      'event management': 'Event Management',
-      'catering': 'Catering',
-      'bakery': 'Bakery', 'bakeries': 'Bakery',
-      'jewelry': 'Jewelry',
-      'fashion': 'Fashion',
-      'electronics': 'Electronics',
-      'furniture': 'Furniture',
-      'automobile': 'Automobile', 'automobiles': 'Automobile',
-      'repair services': 'Repair Services',
-      'education': 'Education', 'educational': 'Education',
-      'healthcare': 'Healthcare',
-      'beauty': 'Beauty',
-      'fitness': 'Fitness',
-      'entertainment': 'Entertainment',
-      'tourism': 'Tourism',
-      'food & beverage': 'Food & Beverage', 'food and beverage': 'Food & Beverage',
-      'retail': 'Retail',
-      'wholesale': 'Wholesale',
-      'manufacturing': 'Manufacturing',
-      'construction': 'Construction',
-      'other': 'Other', 'others': 'Other',
-
-      // Fallbacks for variations
-      'hospital': 'Clinic', 'medical': 'Clinic',
-      'lodging': 'Hotel', 'accommodation': 'Hotel',
-      'food': 'Restaurant', 'dining': 'Restaurant',
-      'general': 'Services', 'misc': 'Other', 'miscellaneous': 'Other', 'default': 'Services'
+      'temple': 'Temple', 'school': 'School', 'college': 'College', 'gym': 'Gym',
+      'salon': 'Salon', 'spa': 'Spa', 'pharmacy': 'Pharmacy', 'bank': 'Bank',
+      'travel agency': 'Travel Agency', 'real estate': 'Real Estate', 'law firm': 'Law Firm',
+      'accounting': 'Accounting', 'it services': 'IT Services', 'photography': 'Photography',
+      'event management': 'Event Management', 'catering': 'Catering', 'bakery': 'Bakery',
+      'jewelry': 'Jewelry', 'fashion': 'Fashion', 'electronics': 'Electronics',
+      'furniture': 'Furniture', 'automobile': 'Automobile', 'repair services': 'Repair Services',
+      'education': 'Education', 'healthcare': 'Healthcare', 'beauty': 'Beauty',
+      'fitness': 'Fitness', 'entertainment': 'Entertainment', 'tourism': 'Tourism',
+      'food & beverage': 'Food & Beverage', 'retail': 'Retail', 'wholesale': 'Wholesale',
+      'manufacturing': 'Manufacturing', 'construction': 'Construction', 'other': 'Other',
+      'hospital': 'Hospital', 'lodging': 'Hotel', 'food': 'Restaurant', 'general': 'Services', 'misc': 'Other',
+      'coaching center': 'Coaching Center', 'cafe': 'Cafe', 'dentist': 'Dentist', 'physiotherapist': 'Physiotherapist',
+      'yoga center': 'Yoga Center', 'dance academy': 'Dance Academy', 'pet shop': 'Pet Shop', 'veterinary': 'Veterinary',
+      'car repair': 'Car Repair', 'bike repair': 'Bike Repair', 'electrician': 'Electrician', 'plumber': 'Plumber',
+      'grocery store': 'Grocery Store', 'supermarket': 'Supermarket', 'sweet shop': 'Sweet Shop', 'clothing store': 'Clothing Store',
+      'electronics store': 'Electronics Store', 'mobile shop': 'Mobile Shop', 'jewellery store': 'Jewellery Store',
+      'optical store': 'Optical Store', 'book store': 'Book Store', 'stationery shop': 'Stationery Shop',
+      'furniture store': 'Furniture Store', 'hardware store': 'Hardware Store', 'paint store': 'Paint Store',
+      'nursery': 'Nursery', 'florist': 'Florist', 'laundry': 'Laundry', 'dry cleaner': 'Dry Cleaner',
+      'tailor': 'Tailor', 'photographer': 'Photographer', 'caterer': 'Caterer', 'event planner': 'Event Planner',
+      'real estate agent': 'Real Estate Agent', 'lawyer': 'Lawyer', 'ca': 'CA', 'insurance agent': 'Insurance Agent',
+      'atm': 'ATM', 'petrol pump': 'Petrol Pump', 'parking': 'Parking', 'mosque': 'Mosque', 'church': 'Church',
+      'gurudwara': 'Gurudwara', 'park': 'Park', 'playground': 'Playground', 'swimming pool': 'Swimming Pool',
+      'sports complex': 'Sports Complex'
     };
 
     // Force to valid category - default to Services if anything fails

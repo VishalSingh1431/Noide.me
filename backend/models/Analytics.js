@@ -83,7 +83,7 @@ class Analytics {
         `;
       }
 
-      const dailyBreakdown = dailyBreakdownQuery 
+      const dailyBreakdown = dailyBreakdownQuery
         ? await pool.query(dailyBreakdownQuery, params)
         : { rows: [] };
 
@@ -140,12 +140,12 @@ class Analytics {
     try {
       const query = 'SELECT * FROM analytics WHERE business_id = $1';
       const result = await pool.query(query, [businessId]);
-      
+
       if (result.rows.length === 0) {
         // Create analytics record if it doesn't exist
         return await this.create(businessId);
       }
-      
+
       return this.mapRowToAnalytics(result.rows[0]);
     } catch (error) {
       console.error('Error finding analytics by business ID:', error);
@@ -165,12 +165,12 @@ class Analytics {
         RETURNING *
       `;
       const result = await pool.query(query, [businessId]);
-      
+
       if (result.rows.length === 0) {
         // Record already exists, fetch it
         return await this.findByBusinessId(businessId);
       }
-      
+
       return this.mapRowToAnalytics(result.rows[0]);
     } catch (error) {
       console.error('Error creating analytics:', error);
@@ -183,8 +183,8 @@ class Analytics {
    */
   static async increment(businessId, metric) {
     try {
-      const validMetrics = ['visitor_count', 'call_clicks', 'whatsapp_clicks', 'gallery_views', 'map_clicks'];
-      
+      const validMetrics = ['visitor_count', 'call_clicks', 'whatsapp_clicks', 'gallery_views', 'map_clicks', 'inquiry_clicks'];
+
       if (!validMetrics.includes(metric)) {
         throw new Error(`Invalid metric: ${metric}`);
       }
@@ -199,13 +199,13 @@ class Analytics {
         WHERE business_id = $1
         RETURNING *
       `;
-      
+
       const result = await pool.query(query, [businessId]);
-      
+
       if (result.rows.length === 0) {
         throw new Error('Analytics record not found');
       }
-      
+
       return this.mapRowToAnalytics(result.rows[0]);
     } catch (error) {
       console.error(`Error incrementing ${metric}:`, error);
@@ -219,17 +219,17 @@ class Analytics {
   static async getStats(businessId) {
     try {
       const analytics = await this.findByBusinessId(businessId);
-      
+
       return {
         visitorCount: analytics.visitorCount || 0,
         callClicks: analytics.callClicks || 0,
         whatsappClicks: analytics.whatsappClicks || 0,
         galleryViews: analytics.galleryViews || 0,
         mapClicks: analytics.mapClicks || 0,
-        totalInteractions: 
-          (analytics.callClicks || 0) + 
-          (analytics.whatsappClicks || 0) + 
-          (analytics.galleryViews || 0) + 
+        totalInteractions:
+          (analytics.callClicks || 0) +
+          (analytics.whatsappClicks || 0) +
+          (analytics.galleryViews || 0) +
           (analytics.mapClicks || 0),
         lastUpdated: analytics.updatedAt
       };
@@ -244,7 +244,7 @@ class Analytics {
    */
   static mapRowToAnalytics(row) {
     if (!row) return null;
-    
+
     return {
       id: row.id,
       businessId: row.business_id,

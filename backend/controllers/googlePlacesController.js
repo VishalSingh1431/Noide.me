@@ -48,17 +48,28 @@ const parseOpeningHours = (weekdayDescriptions) => {
 
     if (!matchedDay) return;
 
+    // Handle "Open 24 hours"
+    if (lowerDesc.includes('open 24 hours')) {
+      businessHours[matchedDay] = {
+        open: true,
+        start: '00:00',
+        end: '23:59',
+      };
+      return;
+    }
+
     // Check if closed
     if (lowerDesc.includes('closed')) {
       businessHours[matchedDay].open = false;
       return;
     }
 
-    // Parse time range (e.g., "9:00 AM – 6:00 PM" or "9:00 AM - 6:00 PM")
-    const timeMatch = description.match(/(\d{1,2}):(\d{2})\s*(AM|PM)\s*[–-]\s*(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    // Parse time range (e.g., "9:00 AM – 6:00 PM", "9 AM - 6 PM", etc.)
+    // Improved regex to handle optional minutes and different dash types
+    const timeMatch = description.match(/(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\s*[–-]\s*(\d{1,2})(?::(\d{2}))?\s*(AM|PM)/i);
 
     if (timeMatch) {
-      const [, startHour, startMin, startPeriod, endHour, endMin, endPeriod] = timeMatch;
+      const [, startHour, startMin = '00', startPeriod, endHour, endMin = '00', endPeriod] = timeMatch;
 
       // Convert to 24-hour format
       const convertTo24Hour = (hour, min, period) => {
@@ -79,6 +90,10 @@ const parseOpeningHours = (weekdayDescriptions) => {
         start: convertTo24Hour(startHour, startMin, startPeriod),
         end: convertTo24Hour(endHour, endMin, endPeriod),
       };
+    } else {
+      // If we matched the day but couldn't parse the time, and it's not "closed",
+      // default to open (e.g., for cases like "Open now" strings)
+      businessHours[matchedDay].open = true;
     }
   });
 

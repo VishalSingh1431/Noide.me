@@ -301,6 +301,7 @@ export const getAdminStats = async (req, res) => {
       pendingEdits,
       approvedBusinesses,
       rejectedBusinesses,
+      bulkImportStats,
     ] = await Promise.all([
       pool.query('SELECT COUNT(*) FROM users'),
       pool.query('SELECT COUNT(*) FROM businesses'),
@@ -308,18 +309,41 @@ export const getAdminStats = async (req, res) => {
       pool.query("SELECT COUNT(*) FROM businesses WHERE edit_approval_status = 'pending'"),
       pool.query("SELECT COUNT(*) FROM businesses WHERE status = 'approved'"),
       pool.query("SELECT COUNT(*) FROM businesses WHERE status = 'rejected'"),
+      pool.query(`
+        SELECT 
+          TRIM(category) as category, 
+          COUNT(*) as count, 
+          MAX(created_at) as last_run 
+        FROM businesses 
+        GROUP BY TRIM(category) 
+        ORDER BY count DESC
+      `),
     ]);
 
-    res.json({
-      stats: {
-        totalUsers: parseInt(totalUsers.rows[0].count),
-        totalBusinesses: parseInt(totalBusinesses.rows[0].count),
-        pendingApprovals: parseInt(pendingApprovals.rows[0].count),
-        pendingEdits: parseInt(pendingEdits.rows[0].count),
-        approvedBusinesses: parseInt(approvedBusinesses.rows[0].count),
-        rejectedBusinesses: parseInt(rejectedBusinesses.rows[0].count),
-      },
-    });
+    const stats = {
+      totalUsers: parseInt(totalUsers.rows[0].count),
+      totalBusinesses: parseInt(totalBusinesses.rows[0].count),
+      pendingApprovals: parseInt(pendingApprovals.rows[0].count),
+      pendingEdits: parseInt(pendingEdits.rows[0].count),
+      approvedBusinesses: parseInt(approvedBusinesses.rows[0].count),
+      rejectedBusinesses: parseInt(rejectedBusinesses.rows[0].count),
+      bulkImportStats: [
+        { category: 'DEBUG_TEST', count: 123, lastRun: new Date() },
+        ...bulkImportStats.rows.map(row => ({
+          category: row.category,
+          count: parseInt(row.count),
+          lastRun: row.last_run
+        }))
+      ],
+      allCategories: ['Shop', 'Restaurant', 'Hotel', 'Clinic', 'Library', 'Services', 'Temple', 'School', 'College', 'Gym', 'Salon', 'Spa', 'Pharmacy', 'Bank', 'Travel Agency', 'Real Estate', 'Law Firm', 'Accounting', 'IT Services', 'Photography', 'Event Management', 'Catering', 'Bakery', 'Jewelry', 'Fashion', 'Electronics', 'Furniture', 'Automobile', 'Repair Services', 'Education', 'Healthcare', 'Beauty', 'Fitness', 'Entertainment', 'Tourism', 'Food & Beverage', 'Retail', 'Wholesale', 'Manufacturing', 'Construction', 'Coaching Center', 'Hospital', 'Cafe', 'Dentist', 'Physiotherapist', 'Yoga Center', 'Dance Academy', 'Pet Shop', 'Veterinary', 'Car Repair', 'Bike Repair', 'Electrician', 'Plumber', 'Grocery Store', 'Supermarket', 'Sweet Shop', 'Clothing Store', 'Electronics Store', 'Mobile Shop', 'Jewellery Store', 'Optical Store', 'Book Store', 'Stationery Shop', 'Furniture Store', 'Hardware Store', 'Paint Store', 'Nursery', 'Florist', 'Laundry', 'Dry Cleaner', 'Tailor', 'Photographer', 'Caterer', 'Event Planner', 'Real Estate Agent', 'Lawyer', 'CA', 'Insurance Agent', 'ATM', 'Petrol Pump', 'Parking', 'Mosque', 'Church', 'Gurudwara', 'Park', 'Playground', 'Swimming Pool', 'Sports Complex']
+    };
+
+    try {
+      const fs = await import('fs');
+      fs.writeFileSync('live_stats_debug.json', JSON.stringify(stats, null, 2));
+    } catch (e) { }
+
+    res.json({ stats });
   } catch (error) {
     console.error('Error fetching admin stats:', error);
     res.status(500).json({ error: 'Failed to fetch admin stats' });
@@ -555,56 +579,37 @@ export const getAllAnalytics = async (req, res) => {
       return res.status(403).json({ error: 'Only main admin can access this' });
     }
 
-    // Get all businesses
-    const businessesResult = await pool.query('SELECT id, business_name FROM businesses WHERE status = $1', ['approved']);
-    const businesses = businessesResult.rows;
+    // Optimized single query to fetch all approved businesses and their analytics
+    const result = await pool.query(`
+      SELECT 
+        b.id as "businessId", 
+        b.business_name as "businessName",
+        COALESCE(a.visitor_count, 0) as visitor_count,
+        COALESCE(a.call_clicks, 0) as call_clicks,
+        COALESCE(a.whatsapp_clicks, 0) as whatsapp_clicks,
+        COALESCE(a.gallery_views, 0) as gallery_views,
+        COALESCE(a.map_clicks, 0) as map_clicks,
+        COALESCE(a.inquiry_clicks, 0) as inquiry_clicks
+      FROM businesses b
+      LEFT JOIN analytics a ON b.id = a.business_id
+      WHERE b.status = 'approved'
+    `);
 
-    // Get analytics for all businesses
-    const analyticsPromises = businesses.map(async (business) => {
-      try {
-        const statsResult = await pool.query(
-          'SELECT * FROM analytics WHERE business_id = $1',
-          [business.id]
-        );
-
-        const stats = statsResult.rows[0] || {
-          visitor_count: 0,
-          call_clicks: 0,
-          whatsapp_clicks: 0,
-          gallery_views: 0,
-          map_clicks: 0,
-        };
-
-        return {
-          businessId: business.id,
-          businessName: business.business_name,
-          visitor_count: parseInt(stats.visitor_count || 0),
-          call_clicks: parseInt(stats.call_clicks || 0),
-          whatsapp_clicks: parseInt(stats.whatsapp_clicks || 0),
-          gallery_views: parseInt(stats.gallery_views || 0),
-          map_clicks: parseInt(stats.map_clicks || 0),
-          totalInteractions: parseInt(stats.call_clicks || 0) +
-            parseInt(stats.whatsapp_clicks || 0) +
-            parseInt(stats.gallery_views || 0) +
-            parseInt(stats.map_clicks || 0),
-        };
-      } catch (error) {
-        console.error(`Error fetching analytics for business ${business.id}:`, error);
-        // Return default stats if there's an error
-        return {
-          businessId: business.id,
-          businessName: business.business_name,
-          visitor_count: 0,
-          call_clicks: 0,
-          whatsapp_clicks: 0,
-          gallery_views: 0,
-          map_clicks: 0,
-          totalInteractions: 0,
-        };
-      }
-    });
-
-    const allAnalytics = await Promise.all(analyticsPromises);
+    const allAnalytics = result.rows.map(stats => ({
+      businessId: stats.businessId,
+      businessName: stats.businessName,
+      visitor_count: parseInt(stats.visitor_count),
+      call_clicks: parseInt(stats.call_clicks),
+      whatsapp_clicks: parseInt(stats.whatsapp_clicks),
+      gallery_views: parseInt(stats.gallery_views),
+      map_clicks: parseInt(stats.map_clicks),
+      inquiry_clicks: parseInt(stats.inquiry_clicks),
+      totalInteractions: parseInt(stats.call_clicks) +
+        parseInt(stats.whatsapp_clicks) +
+        parseInt(stats.gallery_views) +
+        parseInt(stats.map_clicks) +
+        parseInt(stats.inquiry_clicks),
+    }));
 
     // Calculate totals
     const totals = allAnalytics.reduce((acc, analytics) => ({
@@ -613,6 +618,7 @@ export const getAllAnalytics = async (req, res) => {
       totalWhatsAppClicks: acc.totalWhatsAppClicks + (analytics.whatsapp_clicks || 0),
       totalGalleryViews: acc.totalGalleryViews + (analytics.gallery_views || 0),
       totalMapClicks: acc.totalMapClicks + (analytics.map_clicks || 0),
+      totalInquiryClicks: acc.totalInquiryClicks + (analytics.inquiry_clicks || 0),
       totalInteractions: acc.totalInteractions + (analytics.totalInteractions || 0),
     }), {
       totalVisitors: 0,
@@ -620,6 +626,7 @@ export const getAllAnalytics = async (req, res) => {
       totalWhatsAppClicks: 0,
       totalGalleryViews: 0,
       totalMapClicks: 0,
+      totalInquiryClicks: 0,
       totalInteractions: 0,
     });
 
