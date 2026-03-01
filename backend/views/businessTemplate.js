@@ -376,7 +376,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
 
   return `
 <!DOCTYPE html>
-<html lang="en" itemscope itemtype="https://schema.org/LocalBusiness">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
