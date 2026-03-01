@@ -1586,23 +1586,20 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       </section>
       ` : ''}
 
-      <!-- Pricing & Membership Section -->
+      <!-- Pricing & Membership Section - only shown if business has configured pricing plans -->
+      ${business.pricingPlans && business.pricingPlans.length > 0 ? `
       <section id="pricing" class="py-12 md:py-20 bg-gray-50/50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="text-center mb-16">
             <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-4">
-              Membership <span class="bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent">Plans</span>
+              Pricing <span class="bg-gradient-to-r ${theme.primary} bg-clip-text text-transparent">Plans</span>
             </h2>
             <p class="text-gray-500 font-bold uppercase tracking-widest text-sm">Choose the perfect plan for your needs</p>
             <div class="w-24 h-2 bg-gradient-to-r ${theme.primary} mx-auto rounded-full mt-6"></div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            ${(business.pricingPlans || [
-      { name: 'Starter', price: '999', period: 'month', features: ['Basic Access', 'Standard Support', 'Daily Sessions'], highlight: false },
-      { name: 'Professional', price: '2499', period: 'month', features: ['Full Access', 'Priority Support', 'Personal Coach', 'Nutrition Plan'], highlight: true },
-      { name: 'Elite', price: '4999', period: 'month', features: ['VIP Access', '24/7 Support', 'Master Training', 'All Analytics'], highlight: false }
-    ]).map(plan => `
+            ${business.pricingPlans.map(plan => `
               <div class="group relative bg-white rounded-[2rem] p-8 md:p-10 shadow-xl border-2 transition-all duration-500 hover:-translate-y-4 ${plan.highlight ? `border-indigo-500 ring-8 ring-indigo-50 scale-105 z-10` : 'border-gray-100 hover:border-indigo-200'}">
                 ${plan.highlight ? `
                   <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-6 py-2 rounded-full text-xs font-black tracking-widest shadow-xl">
@@ -1634,8 +1631,10 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
         </div>
       </section>
+      ` : ''}  
 
-      <!-- Success Stories Section -->
+      <!-- Success Stories Section - only shown if business has configured stories -->
+      ${business.successStories && business.successStories.length > 0 ? `
       <section id="success-stories" class="py-12 md:py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
@@ -1649,11 +1648,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            ${(business.successStories || [
-      { name: 'Rahul Sharma', result: '95% in Board Exams', stories: 'The structured learning and personal attention helped me achieve my dreams.', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=1974&auto=format&fit=crop' },
-      { name: 'Priya Verma', result: 'IIT-JEE Qualified', stories: 'Incredible faculty and 24/7 doubt solving sessions were the key to my success.', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop' },
-      { name: 'Ankit Gupta', result: 'NEET Top Ranker', stories: 'The regular mock tests perfectly simulated the actual exam environment.', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop' }
-    ]).map(story => `
+            ${business.successStories.map(story => `
               <div class="bg-white rounded-3xl p-8 border-2 border-gray-50 shadow-sm hover:shadow-xl transition-all duration-300 group">
                 <div class="flex items-center gap-4 mb-6">
                   <div class="w-16 h-16 rounded-2xl overflow-hidden shadow-md">
@@ -1673,6 +1668,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
         </div>
       </section>
+      ` : ''}
 
 
   ${business.specialOffers && business.specialOffers.length > 0 ? `
@@ -1743,7 +1739,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       </section>
       ` : ''}
 
-      <!-- Events & Updates Section -->
+      <!-- Events & Updates Section - only shown if business has configured events -->
+      ${business.upcomingEvents && business.upcomingEvents.length > 0 ? `
       <section id="events" class="py-12 md:py-20 bg-gray-900 text-white relative overflow-hidden">
         <div class="absolute inset-0 opacity-10">
           <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full blur-[150px]"></div>
@@ -1757,10 +1754,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
 
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            ${(business.upcomingEvents || [
-      { title: 'New Batch Launches', date: 'March 15, 2026', description: 'Fresh batches for 2026 sessions are opening. Register early for discounts.' },
-      { title: 'Workshop: Modern Career Skills', date: 'March 20, 2026', description: 'A free workshop with industry experts to guide your career path.' }
-    ]).map(event => `
+            ${business.upcomingEvents.map(event => `
               <div class="bg-white/5 backdrop-blur-md rounded-3xl p-8 border border-white/10 hover:bg-white/10 transition-all duration-300 group">
                 <div class="flex items-start gap-6">
                   <div class="bg-blue-600 rounded-2xl px-4 py-3 text-center shrink-0">
@@ -1780,6 +1774,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           </div>
         </div>
       </section>
+      ` : ''}
 
 
   ${youtubeVideos.length > 0 ? `
