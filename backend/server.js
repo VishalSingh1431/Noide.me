@@ -157,26 +157,52 @@ app.use('/api/portfolio', portfolioRoutes);
 // Sitemap route (must come before subdomain routing)
 app.use('/', sitemapRoutes);
 
-// Subdomain routing handler (for business websites)
-// This will be called when accessing: business-slug.noida.me
+// Subdomain routing handler — serves SSR HTML to Google and real users on business subdomains
+// e.g. aaradhyagreennursery.noida.me → server fetches business data and renders full HTML
 app.use(async (req, res, next) => {
   const subdomain = req.subdomain;
 
-  // We are moving to React-based rendering for subdomains.
-  // The frontend code (App.jsx) detects the subdomain and renders the appropriate component.
-  // The backend should simpler serve the API or let the request fall through to the static file server (for the React app).
-
-  // Originally:
-  // If there's a subdomain and it's not 'www' or 'api', treat it as a business slug
-  /*
-  if (subdomain && subdomain !== 'www' && subdomain !== 'api' && !req.path.startsWith('/api')) {
-    const { getBusinessBySubdomain } = await import('./controllers/businessController.js');
-    return getBusinessBySubdomain(req, res, next);
+  // Only handle valid business subdomains (skip www, api, etc.)
+  if (!subdomain || subdomain === 'www' || subdomain === 'api') {
+    return next();
   }
-  */
 
-  next();
+  // Skip API calls even on subdomains
+  if (req.path.startsWith('/api')) {
+    return next();
+  }
+
+  // Skip asset/file requests
+  if (req.path.includes('.') && !req.path.endsWith('/')) {
+    return next();
+  }
+
+  try {
+    const Business = (await import('./models/Business.js')).default;
+    const business = await Business.findBySlug(subdomain, ['approved']);
+
+    if (!business) {
+      console.log(`[Subdomain SSR] No approved business found for slug: ${subdomain}`);
+      return next();
+    }
+
+    console.log(`[Subdomain SSR] Rendering SSR HTML for: ${business.businessName}`);
+
+    // Build canonical URL
+    const baseDomain = process.env.BASE_DOMAIN || 'noida.me';
+    const canonicalUrl = `https://${subdomain}.${baseDomain}`;
+    business.subdomainUrl = business.subdomainUrl || canonicalUrl;
+
+    const { generateBusinessHTML } = await import('./views/businessTemplate.js');
+    const html = generateBusinessHTML(business);
+
+    return res.send(html);
+  } catch (error) {
+    console.error('[Subdomain SSR] Error rendering business page:', error);
+    return next();
+  }
 });
+
 
 // Subdirectory routing handler (for business websites)
 // This will be called when accessing: noida.me/business-slug
