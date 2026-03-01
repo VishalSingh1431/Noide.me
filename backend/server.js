@@ -25,6 +25,7 @@ import appointmentRoutes from './routes/appointmentRoutes.js';
 import googlePlacesRoutes from './routes/googlePlacesRoutes.js';
 import sitemapRoutes from './routes/sitemapRoutes.js';
 import portfolioRoutes from './routes/portfolioRoutes.js';
+import imageProxyRoutes from './routes/imageProxyRoutes.js';
 
 // Validate environment variables
 validateEnv();
@@ -153,6 +154,8 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/google-places', googlePlacesRoutes);
 app.use('/api/portfolio', portfolioRoutes);
+app.use('/api', imageProxyRoutes); // Image proxy: /api/img?url=...
+
 
 // Sitemap route (must come before subdomain routing)
 app.use('/', sitemapRoutes);

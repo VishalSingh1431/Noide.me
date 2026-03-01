@@ -1,75 +1,95 @@
-import Business from '../models/Business.js';
+import { pool } from '../config/database.js';
 
 /**
- * Generate dynamic XML sitemap for VaranasiHub
- * Includes all static pages and approved business listings
+ * Generate dynamic XML sitemap for noida.me
+ * Includes static pages + all approved business subdomain URLs
  */
 export const generateSitemap = async (req, res) => {
     try {
+        const BASE_DOMAIN = process.env.BASE_DOMAIN || 'noida.me';
         const baseUrl = process.env.NODE_ENV === 'production'
-            ? `https://${process.env.BASE_DOMAIN || 'varanasihub.com'}`
+            ? `https://${BASE_DOMAIN}`
             : 'http://localhost:5173';
 
-        // Static pages with priority and change frequency
+        const today = new Date().toISOString().split('T')[0];
+
+        // Static pages
         const staticPages = [
             { url: '/', priority: '1.0', changefreq: 'daily' },
             { url: '/about', priority: '0.8', changefreq: 'monthly' },
-            { url: '/pricing', priority: '0.9', changefreq: 'weekly' },
             { url: '/contact', priority: '0.7', changefreq: 'monthly' },
             { url: '/businesses', priority: '0.9', changefreq: 'daily' },
-            { url: '/blog', priority: '0.8', changefreq: 'weekly' },
             { url: '/terms', priority: '0.5', changefreq: 'yearly' },
             { url: '/privacy', priority: '0.5', changefreq: 'yearly' },
-            { url: '/services/website-design-varanasi', priority: '0.8', changefreq: 'monthly' },
-            { url: '/services/website-hosting-varanasi', priority: '0.8', changefreq: 'monthly' },
-            { url: '/services/online-presence-varanasi', priority: '0.8', changefreq: 'monthly' },
         ];
 
-        // Fetch all approved businesses
+        // Category pages - one per category for local SEO
+        const categoryPages = [
+            'Restaurant', 'Hotel', 'Clinic', 'Gym', 'Salon', 'School',
+            'Hospital', 'Pharmacy', 'Grocery Store', 'Coaching Center',
+            'Nursery', 'Cafe', 'Dentist', 'Yoga Center', 'Jewellery Store',
+            'Furniture Store', 'Electronics Store', 'Real Estate', 'Bakery',
+            'Pet Shop', 'Photography', 'Event Management', 'Catering'
+        ].map(cat => ({
+            url: `/category/${encodeURIComponent(cat.toLowerCase().replace(/ /g, '-'))}`,
+            priority: '0.8',
+            changefreq: 'weekly'
+        }));
+
+        // Fetch all approved businesses from DB
         let businesses = [];
         try {
-            businesses = await Business.findAll(['approved']);
+            const result = await pool.query(
+                `SELECT slug, subdomain_url, category, updated_at, created_at 
+                 FROM businesses 
+                 WHERE status IN ('approved', 'active') 
+                 ORDER BY updated_at DESC`
+            );
+            businesses = result.rows;
         } catch (error) {
-            console.error('Error fetching businesses for sitemap:', error);
-            // Continue with static pages even if business fetch fails
+            console.error('[Sitemap] Error fetching businesses:', error.message);
         }
 
-        // Build XML sitemap
+        // Build XML
         let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
         xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
-        // Add static pages
-        staticPages.forEach(page => {
+        // Static pages
+        [...staticPages, ...categoryPages].forEach(page => {
             xml += '  <url>\n';
             xml += `    <loc>${baseUrl}${page.url}</loc>\n`;
-            xml += `    <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>\n`;
+            xml += `    <lastmod>${today}</lastmod>\n`;
             xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
             xml += `    <priority>${page.priority}</priority>\n`;
             xml += '  </url>\n';
         });
 
-        // Add business pages
+        // Business subdomain pages (primary - best for SEO)
         businesses.forEach(business => {
-            if (business.slug) {
+            if (business.subdomain_url) {
+                const lastmod = business.updated_at || business.created_at
+                    ? new Date(business.updated_at || business.created_at).toISOString().split('T')[0]
+                    : today;
+
                 xml += '  <url>\n';
-                xml += `    <loc>${baseUrl}/${business.slug}</loc>\n`;
-                // Use business updatedAt or createdAt for lastmod
-                const lastmod = business.updatedAt || business.createdAt || new Date();
-                xml += `    <lastmod>${new Date(lastmod).toISOString().split('T')[0]}</lastmod>\n`;
+                xml += `    <loc>${business.subdomain_url}</loc>\n`;
+                xml += `    <lastmod>${lastmod}</lastmod>\n`;
                 xml += `    <changefreq>weekly</changefreq>\n`;
-                xml += `    <priority>0.7</priority>\n`;
+                xml += `    <priority>0.8</priority>\n`;
                 xml += '  </url>\n';
             }
         });
 
         xml += '</urlset>';
 
-        // Set proper headers for XML
         res.setHeader('Content-Type', 'application/xml; charset=utf-8');
-        res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+        res.setHeader('Cache-Control', 'public, max-age=3600'); // cache 1 hour
+        res.setHeader('X-Robots-Tag', 'noindex'); // sitemap itself shouldn't be indexed
         res.send(xml);
+
+        console.log(`[Sitemap] Generated with ${businesses.length} businesses + ${staticPages.length + categoryPages.length} static pages`);
     } catch (error) {
-        console.error('Error generating sitemap:', error);
+        console.error('[Sitemap] Error generating sitemap:', error);
         res.status(500).send('Error generating sitemap');
     }
 };

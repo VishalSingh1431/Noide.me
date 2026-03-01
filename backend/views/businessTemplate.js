@@ -409,7 +409,6 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   <link rel="alternate" hreflang="x-default" href="${escapeHtml(canonicalUrl)}">
   
   <!-- DNS Prefetch for Performance -->
-  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
   <link rel="dns-prefetch" href="https://fonts.googleapis.com">
   <link rel="dns-prefetch" href="https://fonts.gstatic.com">
   <link rel="dns-prefetch" href="https://www.google.com">
@@ -1227,7 +1226,15 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
             </div>
           `}
           <div class="min-w-0 flex-1">
-            <h1 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 truncate">${escapeHtml(business.businessName)}</h1>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h1 class="text-base sm:text-lg md:text-xl font-bold text-gray-900 truncate">${escapeHtml(business.businessName)}</h1>
+              ${business.googlePlacesData?.placeId || business.googlePlacesData?.name ? `
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 border border-green-200 rounded-full text-xs font-bold text-green-700 whitespace-nowrap">
+                  <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                  Verified on Google
+                </span>
+              ` : ''}
+            </div>
           </div>
         </a>
 
@@ -1236,8 +1243,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           <a href="#home" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Home</a>
           ${business.description ? `<a href="#about" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">About</a>` : ''}
           ${business.services && business.services.length > 0 ? `<a href="#services" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Services</a>` : ''}
-          <a href="#pricing" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Pricing</a>
-          <a href="#events" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Events</a>
+          ${business.pricingPlans && business.pricingPlans.length > 0 ? `<a href="#pricing" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Pricing</a>` : ''}
+          ${business.upcomingEvents && business.upcomingEvents.length > 0 ? `<a href="#events" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Events</a>` : ''}
           ${business.imagesUrl && business.imagesUrl.length > 0 ? `<a href="#gallery" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Gallery</a>` : ''}
           <a href="#contact" class="text-gray-700 hover:text-blue-600 font-bold whitespace-nowrap transition-colors">Contact</a>
           
@@ -1267,8 +1274,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
         <a href="#home" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Home</a>
         ${business.description ? `<a href="#about" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">About</a>` : ''}
         ${business.services && business.services.length > 0 ? `<a href="#services" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Services</a>` : ''}
-        <a href="#pricing" onclick="toggleMobileMenu()" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Pricing</a>
-        <a href="#events" onclick="toggleMobileMenu()" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Events</a>
+        ${business.pricingPlans && business.pricingPlans.length > 0 ? `<a href="#pricing" onclick="toggleMobileMenu()" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Pricing</a>` : ''}
+        ${business.upcomingEvents && business.upcomingEvents.length > 0 ? `<a href="#events" onclick="toggleMobileMenu()" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Events</a>` : ''}
         ${business.imagesUrl && business.imagesUrl.length > 0 ? `<a href="#gallery" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Gallery</a>` : ''}
         <a href="#contact" class="block px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">Contact</a>
         <div class="flex gap-2 pt-2">
