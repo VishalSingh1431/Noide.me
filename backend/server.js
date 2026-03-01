@@ -253,10 +253,17 @@ app.get('/:slug', async (req, res, next) => {
   }
 });
 
+// Serve static files from backend public (business.css etc.)
+app.use(express.static(join(__dirname, 'public'), {
+  maxAge: '1y',
+  immutable: true,
+}));
+
 // Serve static files from React build (production only)
 if (NODE_ENV === 'production') {
   const frontendBuildPath = join(__dirname, '../frontend/dist');
-  app.use(express.static(frontendBuildPath));
+  app.use(express.static(frontendBuildPath, { maxAge: '1h' }));
+
 
   // Catch-all route for subdomains - serve React app
   app.get('*', (req, res, next) => {

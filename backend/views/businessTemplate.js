@@ -511,7 +511,10 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
   </script>
   ` : ''}
   
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Preload hero image for LCP optimization -->
+  ${business.imagesUrl && business.imagesUrl[0] ? `<link rel="preload" as="image" href="${escapeHtml(business.imagesUrl[0])}" fetchpriority="high">` : ''}
+  <!-- Bundled Tailwind CSS (local, cached 1 year, non-render-blocking link) -->
+  <link rel="stylesheet" href="/business.css">
   <style>
     /* Glassmorphism Utilities */
     .glass {
@@ -1217,7 +1220,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       <div class="flex items-center justify-between gap-2 sm:gap-4">
         <a href="#home" class="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
           ${business.logoUrl ? `
-            <img src="${escapeHtml(business.logoUrl)}" alt="${escapeHtml(business.businessName)}" class="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-lg flex-shrink-0 shadow-md" />
+            <img src="${escapeHtml(business.logoUrl)}" alt="${escapeHtml(business.businessName)}" width="48" height="48" class="w-10 h-10 sm:w-12 sm:h-12 object-contain rounded-lg flex-shrink-0 shadow-md" />
           ` : `
             <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md">
               <span class="text-white font-bold text-lg sm:text-xl">${escapeHtml(business.businessName.charAt(0).toUpperCase())}</span>
@@ -1353,6 +1356,8 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
               <div class="relative bg-white rounded-[40px] shadow-2xl border-4 border-white overflow-hidden aspect-[4/3]">
                 <img src="${business.imagesUrl && business.imagesUrl[0] ? escapeHtml(business.imagesUrl[0]) : 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop'}" 
                      alt="${escapeHtml(business.businessName)}" 
+                     width="800" height="600"
+                     fetchpriority="high"
                      class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-1000" />
                 
                 <div class="absolute bottom-6 left-6 right-6 grid grid-cols-2 gap-4">
@@ -1506,9 +1511,10 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
             ${(business.imagesUrl || []).map((img, idx) => `
               <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 cursor-pointer" onclick="openLightbox(${idx})">
                 <img src="${escapeHtml(img)}" 
-                     alt="Business Image ${idx + 1}" 
+                     alt="${escapeHtml(business.businessName)} - ${escapeHtml(business.category || 'Business')} Image ${idx + 1}" 
+                     width="400" height="400"
                      class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 loading-shimmer" 
-                     loading="lazy" />
+                     loading="${idx < 2 ? 'eager' : 'lazy'}" />
                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
                   <div class="text-white">
                     <div class="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center mb-2">
@@ -1651,7 +1657,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
               <div class="bg-white rounded-3xl p-8 border-2 border-gray-50 shadow-sm hover:shadow-xl transition-all duration-300 group">
                 <div class="flex items-center gap-4 mb-6">
                   <div class="w-16 h-16 rounded-2xl overflow-hidden shadow-md">
-                    <img src="${escapeHtml(story.image)}" alt="${escapeHtml(story.name)}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img src="${escapeHtml(story.image)}" alt="${escapeHtml(story.name)}" width="64" height="64" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
                   </div>
                   <div>
                     <h4 class="text-xl font-black text-gray-900">${escapeHtml(story.name)}</h4>

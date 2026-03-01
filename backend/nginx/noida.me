@@ -1,0 +1,147 @@
+# ==============================================
+# NGINX CONFIG FOR noida.me
+# Deploy: sudo cp nginx/noida.me /etc/nginx/sites-available/noida.me
+# Then: sudo nginx -t && sudo nginx -s reload
+# ==============================================
+
+# Main domain server block
+server {
+    server_name noida.me www.noida.me;
+    root /var/www/noida/frontend/dist;
+    index index.html;
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/xml+rss application/atom+xml image/svg+xml;
+
+    # Cache static assets from frontend build (hashed filenames = safe to cache long)
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|webp)$ {
+        root /var/www/noida/frontend/dist;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        add_header Vary "Accept-Encoding";
+        try_files $uri =404;
+    }
+
+    # Backend API proxy
+    location /api {
+        proxy_pass http://localhost:50002;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # React SPA - serve index.html for all other routes
+    location / {
+        try_files $uri $uri/ /index.html;
+        add_header Cache-Control "no-cache, no-store, must-revalidate";
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/noida.me/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/noida.me/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+# Subdomain server block (business pages - SSR via Node.js)
+server {
+    server_name *.noida.me;
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/xml+rss application/atom+xml image/svg+xml;
+
+    # Cache the bundled business CSS (1 year — filename won't change matter since it's rebuilt)
+    location = /business.css {
+        proxy_pass http://localhost:50002/business.css;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        expires 7d;
+        add_header Cache-Control "public, max-age=604800";
+        add_header Vary "Accept-Encoding";
+    }
+
+    # Cache static assets (images, fonts)
+    location ~* \.(png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot|webp)$ {
+        root /var/www/noida/frontend/dist;
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000";
+        add_header Vary "Accept-Encoding";
+        try_files $uri @backend;
+    }
+
+    location @backend {
+        proxy_pass http://localhost:50002;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # API routes
+    location /api {
+        proxy_pass http://localhost:50002;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # All other requests → Node.js SSR backend
+    location / {
+        proxy_pass http://localhost:50002;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Cache SSR HTML for 5 minutes (balance freshness vs performance)
+        proxy_cache_valid 200 5m;
+        add_header X-Cache-Status $upstream_cache_status;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/noida.me/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/noida.me/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+}
+
+# HTTP to HTTPS redirect
+server {
+    if ($host = www.noida.me) { return 301 https://$host$request_uri; }
+    if ($host = noida.me) { return 301 https://$host$request_uri; }
+    listen 80;
+    server_name noida.me www.noida.me;
+    return 404;
+}
+
+server {
+    listen 80;
+    server_name *.noida.me;
+    return 301 https://$host$request_uri;
+}
