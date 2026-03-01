@@ -351,12 +351,30 @@ export const initializeDatabase = async () => {
       )
     `);
 
+    // Create daily_business_stats table for pre-aggregated analytics
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS daily_business_stats (
+        id SERIAL PRIMARY KEY,
+        business_id INTEGER NOT NULL REFERENCES businesses(id) ON DELETE CASCADE,
+        date DATE NOT NULL,
+        visitor_count INTEGER DEFAULT 0,
+        call_clicks INTEGER DEFAULT 0,
+        whatsapp_clicks INTEGER DEFAULT 0,
+        gallery_views INTEGER DEFAULT 0,
+        map_clicks INTEGER DEFAULT 0,
+        inquiry_clicks INTEGER DEFAULT 0,
+        UNIQUE(business_id, date)
+      )
+    `);
+
     // Create indexes for analytics tables
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_analytics_business_id ON analytics(business_id);
       CREATE INDEX IF NOT EXISTS idx_analytics_events_business_id ON analytics_events(business_id);
       CREATE INDEX IF NOT EXISTS idx_analytics_events_event_type ON analytics_events(event_type);
       CREATE INDEX IF NOT EXISTS idx_analytics_events_created_at ON analytics_events(created_at);
+      CREATE INDEX IF NOT EXISTS idx_analytics_events_composite ON analytics_events(business_id, created_at, event_type);
+      CREATE INDEX IF NOT EXISTS idx_daily_stats_business_date ON daily_business_stats(business_id, date);
     `);
 
     // Create trigger to update analytics updated_at

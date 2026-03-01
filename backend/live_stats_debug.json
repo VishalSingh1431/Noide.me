@@ -1,15 +1,15 @@
 {
   "totalUsers": 1,
-  "totalBusinesses": 31878,
-  "pendingApprovals": 6105,
+  "totalBusinesses": 31991,
+  "pendingApprovals": 1,
   "pendingEdits": 0,
-  "approvedBusinesses": 25773,
+  "approvedBusinesses": 31990,
   "rejectedBusinesses": 0,
   "bulkImportStats": [
     {
       "category": "DEBUG_TEST",
       "count": 123,
-      "lastRun": "2026-03-01T12:34:38.402Z"
+      "lastRun": "2026-03-01T14:19:43.364Z"
     },
     {
       "category": "Wholesale",
@@ -222,14 +222,19 @@
       "lastRun": "2026-03-01T04:07:46.357Z"
     },
     {
+      "category": "Pet Shop",
+      "count": 208,
+      "lastRun": "2026-02-21T07:51:37.333Z"
+    },
+    {
       "category": "Bank",
       "count": 208,
       "lastRun": "2026-02-16T11:47:57.651Z"
     },
     {
-      "category": "Pet Shop",
-      "count": 208,
-      "lastRun": "2026-02-21T07:51:37.333Z"
+      "category": "Nursery",
+      "count": 189,
+      "lastRun": "2026-03-01T07:13:14.194Z"
     },
     {
       "category": "Playground",
@@ -272,9 +277,9 @@
       "lastRun": "2026-03-01T03:07:59.437Z"
     },
     {
-      "category": "Nursery",
+      "category": "Book Store",
       "count": 103,
-      "lastRun": "2026-03-01T07:04:29.195Z"
+      "lastRun": "2026-03-01T07:08:01.852Z"
     },
     {
       "category": "ATM",
@@ -295,11 +300,6 @@
       "category": "Veterinary",
       "count": 77,
       "lastRun": "2026-03-01T05:38:20.559Z"
-    },
-    {
-      "category": "Book Store",
-      "count": 76,
-      "lastRun": "2026-03-01T07:04:25.695Z"
     },
     {
       "category": "Parking",

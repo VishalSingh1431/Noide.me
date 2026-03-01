@@ -579,8 +579,40 @@ export const getAllAnalytics = async (req, res) => {
       return res.status(403).json({ error: 'Only main admin can access this' });
     }
 
-    // Optimized single query to fetch all approved businesses and their analytics
-    const result = await pool.query(`
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 100;
+    const offset = (page - 1) * limit;
+
+    // 1. Get Totals (Fast - Aggregated across all rows)
+    const totalsResult = await pool.query(`
+      SELECT 
+        SUM(COALESCE(visitor_count, 0)) as total_visitors,
+        SUM(COALESCE(call_clicks, 0)) as total_call_clicks,
+        SUM(COALESCE(whatsapp_clicks, 0)) as total_whatsapp_clicks,
+        SUM(COALESCE(gallery_views, 0)) as total_gallery_views,
+        SUM(COALESCE(map_clicks, 0)) as total_map_clicks,
+        SUM(COALESCE(inquiry_clicks, 0)) as total_inquiry_clicks
+      FROM analytics
+    `);
+
+    const totalsRow = totalsResult.rows[0];
+    const totals = {
+      totalVisitors: parseInt(totalsRow.total_visitors || 0),
+      totalCallClicks: parseInt(totalsRow.total_call_clicks || 0),
+      totalWhatsAppClicks: parseInt(totalsRow.total_whatsapp_clicks || 0),
+      totalGalleryViews: parseInt(totalsRow.total_gallery_views || 0),
+      totalMapClicks: parseInt(totalsRow.total_map_clicks || 0),
+      totalInquiryClicks: parseInt(totalsRow.total_inquiry_clicks || 0),
+      totalInteractions:
+        parseInt(totalsRow.total_call_clicks || 0) +
+        parseInt(totalsRow.total_whatsapp_clicks || 0) +
+        parseInt(totalsRow.total_gallery_views || 0) +
+        parseInt(totalsRow.total_map_clicks || 0) +
+        parseInt(totalsRow.total_inquiry_clicks || 0)
+    };
+
+    // 2. Get Paginated Businesses for the table
+    const businessesResult = await pool.query(`
       SELECT 
         b.id as "businessId", 
         b.business_name as "businessName",
@@ -593,9 +625,15 @@ export const getAllAnalytics = async (req, res) => {
       FROM businesses b
       LEFT JOIN analytics a ON b.id = a.business_id
       WHERE b.status = 'approved'
-    `);
+      ORDER BY (COALESCE(a.call_clicks, 0) + COALESCE(a.whatsapp_clicks, 0) + COALESCE(a.visitor_count, 0)) DESC
+      LIMIT $1 OFFSET $2
+    `, [limit, offset]);
 
-    const allAnalytics = result.rows.map(stats => ({
+    // 3. Get Total Count for pagination
+    const countResult = await pool.query("SELECT COUNT(*) FROM businesses WHERE status = 'approved'");
+    const totalBusinesses = parseInt(countResult.rows[0].count);
+
+    const paginatedAnalytics = businessesResult.rows.map(stats => ({
       businessId: stats.businessId,
       businessName: stats.businessName,
       visitor_count: parseInt(stats.visitor_count),
@@ -611,28 +649,15 @@ export const getAllAnalytics = async (req, res) => {
         parseInt(stats.inquiry_clicks),
     }));
 
-    // Calculate totals
-    const totals = allAnalytics.reduce((acc, analytics) => ({
-      totalVisitors: acc.totalVisitors + (analytics.visitor_count || 0),
-      totalCallClicks: acc.totalCallClicks + (analytics.call_clicks || 0),
-      totalWhatsAppClicks: acc.totalWhatsAppClicks + (analytics.whatsapp_clicks || 0),
-      totalGalleryViews: acc.totalGalleryViews + (analytics.gallery_views || 0),
-      totalMapClicks: acc.totalMapClicks + (analytics.map_clicks || 0),
-      totalInquiryClicks: acc.totalInquiryClicks + (analytics.inquiry_clicks || 0),
-      totalInteractions: acc.totalInteractions + (analytics.totalInteractions || 0),
-    }), {
-      totalVisitors: 0,
-      totalCallClicks: 0,
-      totalWhatsAppClicks: 0,
-      totalGalleryViews: 0,
-      totalMapClicks: 0,
-      totalInquiryClicks: 0,
-      totalInteractions: 0,
-    });
-
     res.json({
-      businesses: allAnalytics,
+      businesses: paginatedAnalytics,
       totals,
+      pagination: {
+        total: totalBusinesses,
+        page,
+        limit,
+        pages: Math.ceil(totalBusinesses / limit)
+      }
     });
   } catch (error) {
     console.error('Error fetching all analytics:', error);

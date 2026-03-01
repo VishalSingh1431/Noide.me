@@ -345,8 +345,8 @@ export const businessAPI = {
   },
 
   // Unified analytics
-  getAllAnalytics: async () => {
-    return apiCall('/admin/analytics/all', { method: 'GET' });
+  getAllAnalytics: async (page = 1, limit = 100) => {
+    return apiCall(`/admin/analytics/all?page=${page}&limit=${limit}`, { method: 'GET' });
   },
 
   // Premium upgrade

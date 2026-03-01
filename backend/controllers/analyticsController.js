@@ -28,13 +28,8 @@ export const trackEvent = async (req, res, next) => {
 
     const metric = metricMap[eventType];
 
-    // Log the event in a separate table for time-based tracking
+    // Log the event, increment daily stats, and update all-time totals
     await Analytics.logEvent(businessId, eventType);
-
-    // Increment the counter in the main analytics table
-    if (metric) {
-      await Analytics.increment(businessId, metric);
-    }
 
     res.json({ success: true, message: 'Event tracked' });
   } catch (error) {

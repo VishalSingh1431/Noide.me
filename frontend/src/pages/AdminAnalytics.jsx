@@ -8,26 +8,47 @@ import { businessAPI } from '../config/api';
 
 const AdminAnalytics = () => {
     const [data, setData] = useState(null);
+    const [businesses, setBusinesses] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(null);
+    const [page, setPage] = useState(1);
+    const [pagination, setPagination] = useState({ total: 0, pages: 0 });
+
+    const fetchAllAnalytics = async (pageNumber = 1, append = false) => {
+        try {
+            if (append) setLoadingMore(true);
+            else setLoading(true);
+
+            const response = await businessAPI.getAllAnalytics(pageNumber, 100);
+
+            if (append) {
+                setBusinesses(prev => [...prev, ...response.businesses]);
+            } else {
+                setData(response);
+                setBusinesses(response.businesses);
+            }
+
+            setPagination(response.pagination);
+            setError(null);
+        } catch (err) {
+            console.error('Error fetching admin analytics:', err);
+            setError(err.message || 'Failed to load analytics');
+        } finally {
+            setLoading(false);
+            setLoadingMore(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchAllAnalytics = async () => {
-            try {
-                setLoading(true);
-                const response = await businessAPI.getAllAnalytics();
-                setData(response);
-                setError(null);
-            } catch (err) {
-                console.error('Error fetching admin analytics:', err);
-                setError(err.message || 'Failed to load analytics');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchAllAnalytics();
+        fetchAllAnalytics(1, false);
     }, []);
+
+    const loadMore = () => {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchAllAnalytics(nextPage, true);
+    };
 
     if (loading) {
         return (
@@ -59,7 +80,6 @@ const AdminAnalytics = () => {
     }
 
     const totals = data.totals;
-    const businesses = data.businesses || [];
 
     // Prepare chart data for top 10 businesses by interactions
     const chartData = businesses
@@ -224,6 +244,31 @@ const AdminAnalytics = () => {
                             </tbody>
                         </table>
                     </div>
+
+                    {/* Pagination / Load More */}
+                    {page < pagination.pages && (
+                        <div className="p-8 bg-gray-50 border-t border-gray-200 flex justify-center">
+                            <button
+                                onClick={loadMore}
+                                disabled={loadingMore}
+                                className="px-8 py-3 bg-white border-2 border-blue-600 text-blue-600 font-black rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-lg active:scale-95 disabled:opacity-50 flex items-center gap-2"
+                            >
+                                {loadingMore ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        LOADING MORE...
+                                    </>
+                                ) : (
+                                    <>
+                                        LOAD MORE BUSINESSES
+                                        <span className="text-[10px] ml-2 px-2 py-0.5 bg-blue-100 text-blue-600 rounded-full">
+                                            {businesses.length} / {pagination.total}
+                                        </span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
             <Footer />
