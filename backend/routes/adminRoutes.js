@@ -14,7 +14,16 @@ import {
   updateBusinessAdmin,
   getAllAnalytics,
   toggleBusinessVerification,
+  getWhatsAppStatus,
+  markWhatsAppSent,
 } from '../controllers/adminController.js';
+import {
+  getWAQR,
+  getWAStatus,
+  connectWA,
+  startWAWorker,
+  stopWAWorker,
+} from '../controllers/whatsappController.js';
 import { verifyToken } from '../middleware/auth.js';
 import upload from '../config/cloudinary.js';
 
@@ -50,6 +59,17 @@ router.get('/analytics/all', getAllAnalytics);
 
 // Business verification
 router.post('/businesses/:id/verify', toggleBusinessVerification);
+
+// WhatsApp notification manager (manual click-to-send)
+router.get('/whatsapp-status', getWhatsAppStatus);
+router.post('/whatsapp-sent/:id', markWhatsAppSent);
+
+// WhatsApp Automation (Baileys)
+router.post('/wa/connect', connectWA);
+router.get('/wa/qr', getWAQR);
+router.get('/wa/status', getWAStatus);
+router.post('/wa/start', startWAWorker);
+router.post('/wa/stop', stopWAWorker);
 
 export default router;
 

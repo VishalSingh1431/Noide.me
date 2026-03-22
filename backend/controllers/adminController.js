@@ -705,3 +705,75 @@ export const toggleBusinessVerification = async (req, res) => {
   }
 };
 
+/**
+ * Get businesses for WhatsApp notification manager
+ * status=pending → not yet notified, status=sent → already notified
+ */
+export const getWhatsAppStatus = async (req, res) => {
+  try {
+    const user = await User.findById(req.user?.userId);
+    if (!user || user.role !== 'main_admin') {
+      return res.status(403).json({ error: 'Only main admin can access this' });
+    }
+
+    const status = req.query.status || 'pending';
+    const page = parseInt(req.query.page) || 1;
+    const limit = 100;
+    const offset = (page - 1) * limit;
+    const isNotified = status === 'sent';
+
+    // Ensure columns exist
+    try {
+      await pool.query(`ALTER TABLE businesses ADD COLUMN IF NOT EXISTS whatsapp_notified BOOLEAN DEFAULT FALSE`);
+      await pool.query(`ALTER TABLE businesses ADD COLUMN IF NOT EXISTS whatsapp_notified_at TIMESTAMP`);
+    } catch (e) { /* columns may already exist */ }
+
+    const result = await pool.query(
+      `SELECT id, business_name, subdomain_url, mobile, whatsapp, whatsapp_notified, whatsapp_notified_at
+       FROM businesses
+       WHERE status = 'approved'
+         AND COALESCE(whatsapp_notified, false) = $1
+       ORDER BY created_at DESC
+       LIMIT $2 OFFSET $3`,
+      [isNotified, limit, offset]
+    );
+
+    const countResult = await pool.query(
+      `SELECT COUNT(*) FROM businesses WHERE status = 'approved' AND COALESCE(whatsapp_notified, false) = $1`,
+      [isNotified]
+    );
+
+    res.json({
+      businesses: result.rows,
+      total: parseInt(countResult.rows[0].count),
+      page,
+      limit,
+    });
+  } catch (error) {
+    console.error('Error fetching WhatsApp status:', error);
+    res.status(500).json({ error: 'Failed to fetch WhatsApp status' });
+  }
+};
+
+/**
+ * Mark a business as WhatsApp-notified
+ */
+export const markWhatsAppSent = async (req, res) => {
+  try {
+    const user = await User.findById(req.user?.userId);
+    if (!user || user.role !== 'main_admin') {
+      return res.status(403).json({ error: 'Only main admin can do this' });
+    }
+
+    const { id } = req.params;
+    await pool.query(
+      `UPDATE businesses SET whatsapp_notified = TRUE, whatsapp_notified_at = CURRENT_TIMESTAMP WHERE id = $1`,
+      [id]
+    );
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error marking WhatsApp sent:', error);
+    res.status(500).json({ error: 'Failed to mark WhatsApp sent' });
+  }
+};
