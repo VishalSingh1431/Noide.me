@@ -13,7 +13,7 @@ export const refreshBusinessImages = async (slug) => {
     try {
         // 1. Get Google Place ID from business data
         const res = await client.query(
-            "SELECT id, google_places_data FROM businesses WHERE slug = $1",
+            "SELECT id, business_name, address, google_places_data, logo_url FROM businesses WHERE slug = $1",
             [slug]
         );
 
@@ -21,11 +21,34 @@ export const refreshBusinessImages = async (slug) => {
         const business = res.rows[0];
 
         let placeId = null;
-        if (business.google_places_data) {
-            const data = typeof business.google_places_data === 'string'
-                ? JSON.parse(business.google_places_data)
-                : business.google_places_data;
-            placeId = data.id || data.place_id;
+        const data = typeof business.google_places_data === 'string'
+            ? (JSON.parse(business.google_places_data) || {})
+            : (business.google_places_data || {});
+
+        placeId = data.id || data.place_id;
+
+        // Fallback: If no placeId, search for it using name and address
+        if (!placeId) {
+            console.log(`[SmartProxy] No Place ID for ${slug}. Attempting lookup...`);
+            const searchText = `${business.businessName || business.business_name} ${business.address}`;
+            const searchUrl = `https://places.googleapis.com/v1/places:searchText?key=${GOOGLE_PLACES_API_KEY}`;
+
+            const searchResponse = await fetch(searchUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Goog-FieldMask': 'places.id,places.displayName'
+                },
+                body: JSON.stringify({ textQuery: searchText })
+            });
+
+            if (searchResponse.ok) {
+                const searchData = await searchResponse.json();
+                if (searchData.places && searchData.places.length > 0) {
+                    placeId = searchData.places[0].id;
+                    console.log(`[SmartProxy] Found Place ID for ${slug}: ${placeId}`);
+                }
+            }
         }
 
         if (!placeId) throw new Error('No Google Place ID found for business');
