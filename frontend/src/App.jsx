@@ -27,6 +27,7 @@ import BlogPost from './pages/BlogPost'
 import BusinessWebsite from './pages/BusinessWebsite'
 import BulkImport from './pages/BulkImport'
 import PortfolioDemo from './pages/PortfolioDemo'
+import WhatsAppAdmin from './pages/WhatsAppAdmin'
 import WhatsAppWidget from './components/WhatsAppWidget'
 import { initGoogleAnalytics, trackPageView } from './utils/analytics'
 import './App.css'
@@ -104,6 +105,7 @@ function App() {
 
             <Route path="/admin/bulk-import" element={<BulkImport />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
+            <Route path="/admin/whatsapp" element={<WhatsAppAdmin />} />
             <Route path="/edit-website/:id" element={<EditWebsite />} />
             <Route path="/analytics/:businessId" element={<Analytics />} />
             <Route path="/qrcode/:id" element={<QRCodeGenerator />} />

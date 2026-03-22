@@ -110,9 +110,13 @@ const BusinessWebsite = () => {
 
                 setFormData(mappedBusiness);
 
-                // Setup initial images
-                if (business.logoUrl) setLogoUrl(business.logoUrl);
-                if (business.imagesUrl) setImages(business.imagesUrl);
+                // Setup initial images with Self-Healing Proxy
+                if (business.logoUrl) {
+                    setLogoUrl(business.logoUrl.includes('google') ? `${API_BASE_URL}/smart-img/${slug}/logo?type=logo` : business.logoUrl);
+                }
+                if (business.imagesUrl && Array.isArray(business.imagesUrl)) {
+                    setImages(business.imagesUrl.map((_, i) => `${API_BASE_URL}/smart-img/${slug}/${i}?type=hero`));
+                }
 
                 // Setup service images
                 const sImgs = {};

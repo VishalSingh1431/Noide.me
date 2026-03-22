@@ -296,7 +296,7 @@ class Business {
   static async findAll(statusFilter = null, limit = 12, offset = 0) {
     // Only select columns needed for directory cards - NO heavy JSONB blobs
     const lightColumns = `id, business_name, owner_name, category, mobile, email, address,
-      whatsapp, description, logo_url, slug, subdomain_url, subdirectory_url, 
+      whatsapp, description, logo_url, images_url, slug, subdomain_url, subdirectory_url, 
       status, is_premium, verified, created_at,
       google_places_data->>'rating' as gpd_rating,
       google_places_data->>'totalRatings' as gpd_total_ratings`;
@@ -335,6 +335,7 @@ class Business {
         isPremium: row.is_premium,
         verified: row.verified,
         createdAt: row.created_at,
+        imagesUrl: Business.safeParseJSON(row.images_url, []),
       };
       if (row.gpd_rating) {
         business.googlePlacesData = {

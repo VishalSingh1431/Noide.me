@@ -351,13 +351,13 @@ const Businesses = () => {
                   >
                     {business.logoUrl ? (
                       <LazyImage
-                        src={business.logoUrl}
+                        src={business.logoUrl.includes('google') ? `${API_BASE_URL}/smart-img/${business.slug}/logo?type=thumb` : business.logoUrl}
                         alt={business.businessName}
                         className="w-full h-full"
                       />
                     ) : business.imagesUrl && business.imagesUrl.length > 0 ? (
                       <LazyImage
-                        src={business.imagesUrl[0]}
+                        src={`${API_BASE_URL}/smart-img/${business.slug}/0?type=thumb`}
                         alt={business.businessName}
                         className="w-full h-full"
                       />

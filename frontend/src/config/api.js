@@ -425,7 +425,36 @@ export const businessAPI = {
     }
     return data;
   },
+  // WhatsApp notification manager
+  getWhatsAppStatus: async (status = 'pending', page = 1) => {
+    return apiCall(`/admin/whatsapp-status?status=${status}&page=${page}`, { method: 'GET' });
+  },
+
+  markWhatsAppSent: async (id) => {
+    return apiCall(`/admin/whatsapp-sent/${id}`, { method: 'POST' });
+  },
+
+  // WhatsApp Automation (Baileys)
+  waConnect: async () => {
+    return apiCall('/admin/wa/connect', { method: 'POST' });
+  },
+  waGetQR: async () => {
+    return apiCall('/admin/wa/qr', { method: 'GET' });
+  },
+  waGetStatus: async () => {
+    return apiCall('/admin/wa/status', { method: 'GET' });
+  },
+  waStart: async (category) => {
+    return apiCall('/admin/wa/start', {
+      method: 'POST',
+      body: JSON.stringify({ category })
+    });
+  },
+  waStop: async () => {
+    return apiCall('/admin/wa/stop', { method: 'POST' });
+  },
 };
+
 
 // Contact & Newsletter API functions
 export const contactAPI = {

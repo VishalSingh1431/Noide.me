@@ -518,6 +518,12 @@ const Profile = () => {
                   >
                     <span>📊 Overall Analytics</span>
                   </Link>
+                  <Link
+                    to="/admin/whatsapp"
+                    className={`px-4 md:px-6 py-3 font-semibold transition-all whitespace-nowrap text-gray-500 hover:text-green-600 flex items-center gap-2`}
+                  >
+                    <span>📱 WhatsApp</span>
+                  </Link>
                 </div>
               </div>
 

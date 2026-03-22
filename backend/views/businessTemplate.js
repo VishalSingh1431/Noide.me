@@ -1361,7 +1361,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
             <div class="relative lg:block">
               <div class="absolute -inset-4 bg-gradient-to-tr ${theme.primary} rounded-[40px] opacity-10 blur-2xl animate-pulse"></div>
               <div class="relative bg-white rounded-[40px] shadow-2xl border-4 border-white overflow-hidden aspect-[4/3]">
-                <img src="${business.imagesUrl && business.imagesUrl[0] ? escapeHtml(business.imagesUrl[0]) : 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop'}" 
+                <img src="${business.imagesUrl && business.imagesUrl[0] ? `/api/smart-img/${business.slug}/0?type=hero` : 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=2070&auto=format&fit=crop'}" 
                      alt="${escapeHtml(business.businessName)}" 
                      width="800" height="600"
                      fetchpriority="high"
@@ -1517,7 +1517,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             ${(business.imagesUrl || []).map((img, idx) => `
               <div class="group relative aspect-square overflow-hidden rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl transition-all duration-500 cursor-pointer" onclick="openLightbox(${idx})">
-                <img src="${escapeHtml(img)}" 
+                <img src="/api/smart-img/${business.slug}/${idx}?type=gallery" 
                      alt="${escapeHtml(business.businessName)} - ${escapeHtml(business.category || 'Business')} Image ${idx + 1}" 
                      width="400" height="400"
                      class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 loading-shimmer" 
@@ -2050,7 +2050,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
             <div class="space-y-6">
               <div class="flex items-center gap-3">
                 ${business.logoUrl ? `
-                  <img src="${escapeHtml(business.logoUrl)}" alt="${escapeHtml(business.businessName)}" class="w-12 h-12 rounded-xl object-contain bg-white p-1" />
+                  <img src="${business.logoUrl.includes('google') ? `/api/smart-img/${business.slug}/logo` : escapeHtml(business.logoUrl)}" alt="${escapeHtml(business.businessName)}" class="w-12 h-12 rounded-xl object-contain bg-white p-1" />
                 ` : `
                   <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg border border-white/20">
                     ${escapeHtml(business.businessName.charAt(0).toUpperCase())}
@@ -2178,7 +2178,7 @@ export const generateBusinessHTML = (business, apiBaseUrl = null) => {
       <script>
         // Global State
         let currentLightboxIdx = 0;
-        const galleryImages = ${JSON.stringify(business.imagesUrl || [])};
+        const galleryImages = [${(business.imagesUrl || []).map((_, idx) => `"/api/smart-img/${business.slug}/${idx}?type=gallery"`).join(', ')}];
         let currentReviewIdx = 0;
 
         // Mobile Menu Toggle
